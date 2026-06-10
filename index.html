@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>匿名探索支持</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f7f4ee;
+      color: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 720px;
+      background: #ffffff;
+      border: 1px solid #ded8ce;
+      border-radius: 8px;
+      padding: 32px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 32px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin: 28px 0 12px;
+      font-size: 22px;
+    }
+
+    p {
+      line-height: 1.7;
+    }
+
+    .muted {
+      color: #666;
+    }
+
+    .notice {
+      background: #edf7f2;
+      border-left: 4px solid #2f8f68;
+      padding: 14px 16px;
+      margin: 20px 0;
+      line-height: 1.6;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 1px solid #222;
+      background: #222;
+      color: #fff;
+      border-radius: 6px;
+      padding: 14px 16px;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    button:hover {
+      background: #444;
+    }
+
+    .secondary {
+      background: #fff;
+      color: #222;
+    }
+
+    .secondary:hover {
+      background: #f1eee8;
+    }
+
+    .result {
+      display: none;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #ded8ce;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 8px;
+      font-weight: bold;
+    }
+
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 16px;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .thanks {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: #f1eee8;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>匿名探索支持</h1>
+    <p class="muted">一个给高中生的性取向探索支持小工具。它不会判断你是谁，也不会要求你留下姓名、学校或联系方式。</p>
+
+    <div class="notice">
+      如果你正在面对伤害、威胁或强烈情绪压力，请优先联系可信任的成年人、学校心理老师、当地心理热线或紧急服务。
+    </div>
+
+    <section id="question">
+      <h2>你现在最想被回应的问题是什么？</h2>
+      <div class="options">
+        <button onclick="showResponse('uncertain')">我不确定自己喜欢谁，这正常吗？</button>
+        <button onclick="showResponse('accepted')">我担心别人不接受我。</button>
+        <button onclick="showResponse('privacy')">我想查资料，但担心隐私。</button>
+        <button onclick="showResponse('talk')">我不知道能不能和别人聊这件事。</button>
+      </div>
+    </section>
+
+    <section class="result" id="result">
+      <h2 id="result-title"></h2>
+      <p id="result-text"></p>
+      <p class="muted">提醒：这个页面不是测试，也不会给你贴标签。你可以慢慢理解自己，不需要马上得出结论。</p>
+
+      <h2>匿名反馈</h2>
+      <label for="understood">这个回应让我感觉被理解</label>
+      <select id="understood">
+        <option value="">请选择</option>
+        <option>1 分：完全没有</option>
+        <option>2 分：有一点</option>
+        <option>3 分：一般</option>
+        <option>4 分：比较有</option>
+        <option>5 分：非常有</option>
+      </select>
+
+      <label for="helpful">这个回应对我有帮助</label>
+      <select id="helpful">
+        <option value="">请选择</option>
+        <option>1 分：完全没有</option>
+        <option>2 分：有一点</option>
+        <option>3 分：一般</option>
+        <option>4 分：比较有</option>
+        <option>5 分：非常有</option>
+      </select>
+
+      <label for="more">你还希望这个工具回答什么？</label>
+      <textarea id="more" placeholder="可以写一句话，也可以留空。"></textarea>
+
+      <button onclick="submitFeedback()">提交匿名反馈</button>
+      <button class="secondary" onclick="resetPage()">重新选择一个问题</button>
+
+      <div class="thanks" id="thanks">谢谢你的反馈。这个最小版本会用这些回答来判断：哪些问题最需要被支持，哪些回应真的有帮助。</div>
+    </section>
+  </main>
+
+  <script>
+    const responses = {
+      uncertain: {
+        title: "不确定是可以存在的",
+        text: "很多人在成长过程中都会经历不确定。你不需要立刻给自己一个固定标签。可以先观察：哪些关系让你感到自然、安心、被吸引，哪些只是好奇、压力或想象。慢慢来是可以的。"
+      },
+      accepted: {
+        title: "先保护自己的安全感",
+        text: "担心别人不接受是很真实的压力。你不需要向所有人解释自己，也不需要在不安全的时候出柜。可以先寻找一个更可信任、更尊重边界的人，或者先用匿名方式了解资料和支持资源。"
+      },
+      privacy: {
+        title: "隐私很重要",
+        text: "想查资料但担心被看到，这个顾虑很合理。你可以使用更安全的设备、清理浏览记录，或选择可信、非刺激化的信息来源。不要在不放心的平台留下姓名、学校、联系方式或具体个人经历。"
+      },
+      talk: {
+        title: "可以聊，但要选对对象",
+        text: "不是所有人都适合成为第一个倾诉对象。你可以先想：这个人是否尊重隐私？是否会嘲笑或传播？是否能听你说完？如果答案不确定，先写下来、匿名提问，或找专业心理支持会更稳。"
+      }
+    };
+
+    let selectedQuestion = "";
+
+    function showResponse(key) {
+      selectedQuestion = key;
+      document.getElementById("result-title").textContent = responses[key].title;
+      document.getElementById("result-text").textContent = responses[key].text;
+      document.getElementById("result").style.display = "block";
+      document.getElementById("thanks").style.display = "none";
+      document.getElementById("result").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function submitFeedback() {
+      const feedback = {
+        selectedQuestion,
+        understood: document.getElementById("understood").value,
+        helpful: document.getElementById("helpful").value,
+        more: document.getElementById("more").value
+      };
+
+      console.log("匿名反馈：", feedback);
+      document.getElementById("thanks").style.display = "block";
+    }
+
+    function resetPage() {
+      selectedQuestion = "";
+      document.getElementById("result").style.display = "none";
+      document.getElementById("understood").value = "";
+      document.getElementById("helpful").value = "";
+      document.getElementById("more").value = "";
+      document.getElementById("question").scrollIntoView({ behavior: "smooth" });
+    }
+  </script>
+</body>
+</html>
