@@ -1,12 +1,33 @@
 # Research Summary
 
-本项目关注高中生在性取向探索过程中的困惑、隐私顾虑和支持需求。MVP 不试图判断用户的身份，而是提供匿名、非诊断式、支持性的回应，并通过反馈了解哪些困惑最常见、哪些回应最有帮助。
+## Topic
 
-目前的切入点是：高中生可能需要的不是“测出自己是谁”，而是一个低压力、可匿名、保护隐私的入口，帮助他们理解不确定感、表达风险、资料查找和求助边界。
+This project studies how an anonymous, low-pressure interactive website might help high school students who are questioning or exploring sexual orientation feel understood, protect their privacy, and identify safe next steps.
 
-后续研究需要补充：
+The product deliberately avoids diagnosing, labeling, or asking users to disclose identity. The MVP is a support check-in: users choose the concern closest to their situation, read a short supportive response, and rate whether it felt helpful.
 
-- 青少年性取向探索中的心理健康和社会支持研究
-- LGBTQ+ 青少年隐私、安全和求助需求
-- 学校环境、家庭环境对青少年表达安全感的影响
-- 现有匿名支持工具、热线或教育资源的做法
+## What is already known
+
+LGBTQ+ and questioning youth often face elevated mental health risk, not because of sexual orientation or gender identity itself, but because of stigma, bullying, discrimination, and lack of support. The Trevor Project's 2025 U.S. National Survey reports that 36% of LGBTQ+ young people seriously considered attempting suicide in the past year, and the report frames suicide risk as connected to mistreatment and stigma rather than identity itself. CDC's 2023 YRBS materials also identify LGBTQ+ students as one of the student groups especially impacted in the youth mental health crisis.
+
+Supportive environments matter. The Trevor Project reports that LGBTQ+ youth in very accepting communities attempted suicide at about one-third the rate of those in very unaccepting communities. CDC also describes school connectedness as a protective factor related to lower long-term health risks, including violence and mental health risks. GLSEN's National School Climate Survey shows that hostile school climates are associated with lower self-esteem, higher depression, lower GPAs, and more missed school among LGBTQ+ students.
+
+Online spaces are complicated but important. Trevor's 2025 survey reports that 77% of LGBTQ+ young people identify online spaces as supportive. A peer-reviewed JMIR systematic review found that LGBTQ youth use social media for peer connection, identity exploration, strategic disclosure, and social support; it also warns that online spaces can involve risks such as discrimination, outing, and weak privacy protections.
+
+## Gap this project can explore
+
+Many existing resources are either information-heavy, crisis-focused, or community-based. A high school student who is not ready to label themselves or talk to someone may need a smaller first step: a private, anonymous interaction that says "you are not forced to decide right now," gives basic safety guidance, and asks whether the response helped.
+
+This project's research gap is not "what sexual orientation is this user?" The better question is: can a very small anonymous support interaction help students feel understood and identify what kind of support they need next?
+
+## Design implications for the MVP
+
+- The tool should not ask for name, school, contact information, exact location, or detailed sexual experiences.
+- The tool should not infer or assign sexual orientation labels.
+- The first version should focus on one core interaction: choose a concern, receive a supportive response, rate helpfulness.
+- Feedback should measure emotional usefulness and product usefulness: "felt understood," "helpful," and "what else do you wish it answered?"
+- Safety language should be visible but not scary: users in crisis should be directed to trusted adults, school counselors, local emergency help, or LGBTQ+ crisis resources.
+
+## Sharpened research question
+
+Can a one-page anonymous support tool help high school students who are questioning or exploring sexual orientation feel understood and identify safer next steps, without requiring them to reveal personal identity?

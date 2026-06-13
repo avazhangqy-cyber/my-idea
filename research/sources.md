@@ -1,16 +1,22 @@
 # Sources
 
-| 来源 | 主题 | 关键发现 / 可引用内容 | 证据强度 | 是否核实 |
+| Source | Theme | Key finding / useful evidence | Evidence strength | Verified |
 | --- | --- | --- | --- | --- |
-| 待补充 | 青少年性取向探索 | 待补充 | 待判断 | 否 |
-| 待补充 | LGBTQ+ 青少年心理支持 | 待补充 | 待判断 | 否 |
-| 待补充 | 匿名求助与隐私保护 | 待补充 | 待判断 | 否 |
-| 待补充 | 学校和家庭支持环境 | 待补充 | 待判断 | 否 |
+| The Trevor Project. (2026). *2025 U.S. National Survey on the Mental Health of LGBTQ+ Young People*. https://www.thetrevorproject.org/survey-2025/ | LGBTQ+ youth mental health; support; online spaces | Survey of more than 16,000 LGBTQ+ young people ages 13-24. Reports 36% seriously considered suicide in the past year, 10% attempted suicide, 77% identified online spaces as supportive, and very accepting communities were linked with much lower attempt rates than very unaccepting communities. Useful for showing why supportive, low-barrier spaces matter. | Strong large-scale NGO survey, but not a nationally representative probability sample. | Yes |
+| CDC. (2024). *2023 Youth Risk Behavior Survey Results*. https://www.cdc.gov/yrbs/results/2023-yrbs-results.html | High school student mental health; LGBTQ+ student data | CDC notes the youth mental health crisis and identifies LGBTQ+ students as one of the groups especially impacted. The 2023 national YRBS asked about transgender identity for the first time, improving LGBTQ+ student data. | Strong official public health data. | Yes |
+| CDC. (2024). *School Connectedness Helps Students Thrive*. https://www.cdc.gov/youth-behavior/school-connectedness/index.html | Protective factors; school belonging | CDC describes school connectedness as having long-lasting effects on health and well-being; youth who feel connected at school are less likely to have risks related to violence and mental health in adulthood. LGBTQ+ youth are named among groups that may report lower connectedness. | Strong official public health synthesis. | Yes |
+| GLSEN. (2022). *The 2021 National School Climate Survey*. https://files.eric.ed.gov/fulltext/ED625378.pdf | School climate; harassment; psychological well-being | The survey documents LGBTQ+ students' experiences with biased remarks, feeling unsafe, harassment, discrimination, and missing school. It reports hostile school climate is associated with lower self-esteem, higher depression, lower GPAs, and more missed school. | Strong long-running national school climate survey; COVID-era context matters. | Yes |
+| The Trevor Project. (2023). *School-Related Protective Factors for LGBTQ Middle and High School Students*. https://www.thetrevorproject.org/research-briefs/school-related-protective-factors-for-lgbtq-middle-and-high-school-students-aug-2023/ | Protective school factors | LGBTQ middle and high school students with at least one school-related protective factor had 26% lower odds of attempting suicide. GSAs, gender-neutral bathrooms, inclusive history, and teacher pronoun respect were associated with more affirming school experiences. | Strong research brief based on Trevor survey data; useful for intervention design. | Yes |
+| Berger, M. N., Taba, M., Marino, J. L., Lim, M. S. C., & Skinner, S. R. (2022). *Social Media Use and Health and Well-being of LGBTQ Youth: Systematic Review*. Journal of Medical Internet Research, 24(9), e38449. https://www.jmir.org/2022/9/e38449/ | Online support; anonymity; privacy risk | Review of 26 studies found LGBTQ youth use social media for community connection, identity exploration, identity management, and social support. Anonymity, multiple accounts, and audience control were important. The review also notes risks such as discrimination, outing, and weak evidence on causal mental health effects. | Strong peer-reviewed systematic review, but evidence base is mostly observational. | Yes |
+| American Psychological Association. *Just the Facts About Sexual Orientation and Youth*. https://www.apa.org/pi/lgbt/resources/just-the-facts | Youth sexual orientation; educator guidance | Provides educator-facing guidance that sexual orientation is a normal part of human diversity and that schools should provide safe, respectful environments. Useful for grounding the product's non-diagnostic and non-stigmatizing language. | Strong professional association guidance. | Yes |
+| SAMHSA. (2022). *LGBTQI+ Youth, Like All Americans, Deserve Evidence-Based Care*. https://www.samhsa.gov/blog/lgbtqi-youth-all-americans-deserve-evidence-based-care | Family acceptance; evidence-based support | Summarizes evidence that family acceptance protects against depression, suicidal behavior, substance use, and supports self-esteem and overall health for LGBT youth. Useful for explaining why supportive responses matter. | Strong government public health source; blog-style summary. | Yes |
 
-## 需要优先查的来源类型
+## Synthesis
 
-- 学术论文或综述
-- 官方机构或公共卫生组织资料
-- 青少年心理健康相关报告
-- 可信 LGBTQ+ 支持组织资源
-- 已有类似工具或匿名支持网站
+The strongest pattern across sources is that risk is social and environmental, not caused by identity itself. Stigma, bullying, discrimination, and hostile school climates are associated with worse outcomes; acceptance, school connectedness, and supportive adults are protective.
+
+For this project, the evidence suggests a safe MVP should do three things:
+
+- Offer validation without forcing a label.
+- Prioritize privacy and safety.
+- Measure whether users feel understood and whether the response helps them choose a next step.
