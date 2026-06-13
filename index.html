@@ -10,30 +10,34 @@
     }
 
     :root {
-      --bg: #f6f1ea;
-      --ink: #202124;
-      --muted: #5f6368;
-      --line: #ded6ca;
-      --paper: #fffdfa;
-      --soft-green: #e8f5ed;
-      --green: #2f7d58;
-      --soft-blue: #edf4fb;
-      --blue: #245b8f;
-      --soft-rose: #fbefef;
-      --rose: #9c4141;
-      --button: #202124;
+      --bg: #f7f3ec;
+      --paper: #fffdf8;
+      --paper-2: #fdf8f0;
+      --ink: #222222;
+      --muted: #5c5a55;
+      --line: #d9d0c3;
+      --blue: #255c8a;
+      --blue-soft: #eaf3fb;
+      --green: #2f7454;
+      --green-soft: #e8f4ed;
+      --rose: #94413f;
+      --rose-soft: #faeeee;
+      --gold: #8b6423;
+      --gold-soft: #f7ecd4;
+      --shadow: rgba(68, 55, 38, 0.08);
     }
 
     body {
       margin: 0;
       min-height: 100vh;
       font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: var(--bg);
       color: var(--ink);
+      background:
+        linear-gradient(180deg, #f5efe6 0%, #f9f6f0 42%, #f3eee5 100%);
     }
 
     main {
-      width: min(100%, 920px);
+      width: min(100%, 1060px);
       margin: 0 auto;
       padding: 28px 18px 56px;
     }
@@ -43,39 +47,60 @@
       background: var(--paper);
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 24px;
+      box-shadow: 0 12px 34px var(--shadow);
       margin-bottom: 18px;
+      padding: 24px;
+    }
+
+    header {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.55fr);
+      align-items: start;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
     }
 
     h1 {
-      margin: 0 0 12px;
-      font-size: clamp(30px, 5vw, 46px);
-      line-height: 1.12;
+      margin-bottom: 12px;
+      font-size: clamp(34px, 6vw, 58px);
+      line-height: 1.08;
       letter-spacing: 0;
     }
 
     h2 {
-      margin: 0 0 14px;
-      font-size: 24px;
-      line-height: 1.25;
+      margin-bottom: 14px;
+      font-size: clamp(24px, 3vw, 32px);
+      line-height: 1.22;
       letter-spacing: 0;
     }
 
     h3 {
-      margin: 18px 0 8px;
+      margin: 0 0 8px;
       font-size: 18px;
+      line-height: 1.35;
       letter-spacing: 0;
     }
 
-    p {
-      margin: 0 0 12px;
-      line-height: 1.75;
+    p,
+    li {
+      font-size: 16px;
+      line-height: 1.78;
     }
 
-    ul {
+    p {
+      margin-bottom: 12px;
+    }
+
+    ul,
+    ol {
       margin: 8px 0 0;
-      padding-left: 20px;
-      line-height: 1.75;
+      padding-left: 22px;
     }
 
     button,
@@ -91,8 +116,40 @@
       margin-bottom: 10px;
     }
 
+    .lead {
+      font-size: 18px;
+      line-height: 1.75;
+      max-width: 740px;
+    }
+
     .muted {
       color: var(--muted);
+    }
+
+    .header-panel {
+      background: var(--blue-soft);
+      border: 1px solid #c7d9e8;
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--muted);
+      padding: 6px 11px;
+      font-size: 14px;
     }
 
     .grid {
@@ -101,85 +158,139 @@
       gap: 14px;
     }
 
-    .notice {
-      margin-top: 16px;
-      padding: 14px 16px;
-      background: var(--soft-green);
-      border-left: 4px solid var(--green);
-      line-height: 1.65;
+    .three-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
     }
 
-    .warning {
-      background: var(--soft-rose);
-      border-left-color: var(--rose);
-    }
-
-    .small-card {
-      background: #faf7f2;
+    .card,
+    .metric {
+      background: var(--paper-2);
       border: 1px solid var(--line);
       border-radius: 8px;
       padding: 16px;
     }
 
+    .metric strong {
+      display: block;
+      color: var(--blue);
+      font-size: 30px;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .notice {
+      border-left: 4px solid var(--green);
+      background: var(--green-soft);
+      margin-top: 16px;
+      padding: 14px 16px;
+      line-height: 1.7;
+    }
+
+    .warning {
+      border-left-color: var(--rose);
+      background: var(--rose-soft);
+    }
+
+    .tool-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.92fr) minmax(0, 1.08fr);
+      gap: 18px;
+      align-items: start;
+    }
+
     .options {
       display: grid;
-      gap: 12px;
-      margin-top: 16px;
+      gap: 10px;
+      margin-top: 14px;
     }
 
     .option-button,
     .action-button {
       width: 100%;
-      border: 1px solid var(--button);
-      background: var(--button);
-      color: #fff;
+      min-height: 48px;
+      border: 1px solid #242424;
       border-radius: 6px;
-      padding: 14px 16px;
+      background: #242424;
+      color: #ffffff;
       cursor: pointer;
-      text-align: left;
       line-height: 1.45;
+      padding: 13px 15px;
+      text-align: left;
+      transition: background 0.16s ease, transform 0.16s ease, border-color 0.16s ease;
     }
 
     .option-button:hover,
     .action-button:hover {
-      background: #3a3b3c;
+      background: #3c3c3c;
+      transform: translateY(-1px);
+    }
+
+    .option-button[aria-pressed="true"] {
+      background: var(--blue);
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 92, 138, 0.16);
     }
 
     .secondary {
-      background: #fff;
+      background: #ffffff;
       color: var(--ink);
     }
 
     .secondary:hover {
-      background: #f2eee8;
+      background: #f3eee6;
     }
 
-    .result,
+    .result {
+      min-height: 380px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .empty-state {
+      display: grid;
+      min-height: 340px;
+      place-items: center;
+      border: 1px dashed #c9bfb0;
+      border-radius: 8px;
+      color: var(--muted);
+      padding: 22px;
+      text-align: center;
+    }
+
+    .response-box,
     .feedback-output {
       display: none;
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 1px solid var(--line);
+    }
+
+    .next-steps {
+      margin: 14px 0 0;
+      padding: 14px 16px;
+      background: var(--gold-soft);
+      border-left: 4px solid var(--gold);
     }
 
     label {
       display: block;
-      margin: 16px 0 8px;
       font-weight: 700;
+      margin: 16px 0 8px;
     }
 
     select,
     textarea {
       width: 100%;
-      border: 1px solid #b9b1a6;
+      border: 1px solid #b9b0a4;
       border-radius: 6px;
-      padding: 12px;
-      background: #fff;
+      background: #ffffff;
       color: var(--ink);
+      padding: 12px;
     }
 
     textarea {
-      min-height: 92px;
+      min-height: 98px;
       resize: vertical;
     }
 
@@ -190,47 +301,60 @@
       margin-top: 16px;
     }
 
-    .resource-list a {
-      color: var(--blue);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
     .feedback-code {
       white-space: pre-wrap;
       overflow-wrap: anywhere;
-      background: #f2eee8;
       border: 1px solid var(--line);
       border-radius: 6px;
+      background: #f4efe7;
       padding: 12px;
       line-height: 1.55;
     }
 
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 14px;
+    .status-line {
+      min-height: 24px;
+      color: var(--green);
+      font-weight: 700;
+      margin-top: 10px;
     }
 
-    .pill {
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 6px 10px;
-      background: #fff;
-      color: var(--muted);
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
       font-size: 14px;
     }
 
-    @media (max-width: 720px) {
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.55;
+    }
+
+    th {
+      background: #f0e9dd;
+    }
+
+    @media (max-width: 820px) {
+      header,
+      .tool-layout,
+      .grid,
+      .three-grid,
+      .button-row {
+        grid-template-columns: 1fr;
+      }
+
       header,
       section {
         padding: 20px;
       }
 
-      .grid,
-      .button-row {
-        grid-template-columns: 1fr;
+      table {
+        display: block;
+        overflow-x: auto;
       }
     }
   </style>
@@ -238,99 +362,190 @@
 <body>
   <main>
     <header>
-      <p class="eyebrow">Anonymous Support Check-In</p>
-      <h1>匿名探索支持</h1>
-      <p>这是一个给高中生的性取向探索支持小工具。它不会判断你是谁，也不会要求你留下姓名、学校、联系方式或具体个人经历。</p>
-      <div class="pill-row" aria-label="项目特点">
-        <span class="pill">匿名</span>
-        <span class="pill">不贴标签</span>
-        <span class="pill">1 分钟完成</span>
-        <span class="pill">可收集反馈</span>
+      <div>
+        <p class="eyebrow">Anonymous Support Check-In</p>
+        <h1>匿名探索支持</h1>
+        <p class="lead">这是一个给高中生的性取向探索支持小工具。它解决的问题是：当一个学生还不确定、也不一定准备当面谈时，能不能先在一个匿名、低压力、不贴标签的网页里得到安全回应。</p>
+        <div class="pill-row" aria-label="项目特点">
+          <span class="pill">匿名</span>
+          <span class="pill">不做测试</span>
+          <span class="pill">不贴标签</span>
+          <span class="pill">不收集身份信息</span>
+          <span class="pill">1 分钟体验</span>
+        </div>
       </div>
-      <div class="notice warning">
-        如果你正在面对伤害、威胁或强烈情绪压力，请优先联系可信任的成年人、学校心理老师、当地心理热线或紧急服务。这个网页不是心理咨询或危机干预服务。
-      </div>
+      <aside class="header-panel" aria-label="使用对象和安全边界">
+        <h2>给谁用</h2>
+        <p>一个正在对性取向、隐私、安全表达感到困惑，但还不一定准备和别人当面谈的高中生。</p>
+        <div class="notice warning">
+          如果你正在面对伤害、威胁或强烈情绪压力，请优先联系可信任的成年人、学校心理老师、当地心理热线或紧急服务。这个网页不是心理咨询或危机干预服务。
+        </div>
+      </aside>
     </header>
 
     <section aria-labelledby="about-title">
       <h2 id="about-title">这个作品在研究什么</h2>
       <div class="grid">
-        <div class="small-card">
+        <div class="card">
           <h3>社会议题</h3>
-          <p>一些高中生在探索性取向时，会遇到不确定、隐私担忧、表达压力和缺少安全支持的问题。</p>
+          <p>一些高中生在探索性取向时，会遇到不确定、隐私担忧、表达压力和缺少安全支持的问题。风险不是身份本身造成的，而常常来自污名、欺凌、歧视和缺少支持。</p>
         </div>
-        <div class="small-card">
-          <h3>研究问题</h3>
-          <p>一个匿名、非判断式的网页回应，能不能让用户感觉被理解，并帮助他们找到更安全的下一步？</p>
+        <div class="card">
+          <h3>核心研究问题</h3>
+          <p>一个匿名、非判断式的网页回应，能不能让正在探索性取向的高中生感觉被理解，并帮助他们找到更安全的下一步？</p>
+        </div>
+      </div>
+      <div class="three-grid" style="margin-top: 14px;">
+        <div class="metric">
+          <strong>36%</strong>
+          <p class="muted">Trevor Project 2025 调查中，LGBTQ+ 青少年过去一年曾认真考虑自杀的比例。</p>
+        </div>
+        <div class="metric">
+          <strong>77%</strong>
+          <p class="muted">同一调查中，认为线上空间能提供支持的 LGBTQ+ 青少年比例。</p>
+        </div>
+        <div class="metric">
+          <strong>0</strong>
+          <p class="muted">本原型要求用户填写的姓名、学校、联系方式或精确位置数量。</p>
         </div>
       </div>
     </section>
 
-    <section id="question" aria-labelledby="question-title">
-      <h2 id="question-title">你现在最想被回应的问题是什么？</h2>
-      <p class="muted">请选择最接近你当下感受的一项。这个选择不会被上传到任何服务器；提交后页面会生成一段匿名反馈码，你可以自愿复制给研究者。</p>
-      <div class="options">
-        <button class="option-button" onclick="showResponse('uncertain')">我不确定自己喜欢谁，这正常吗？</button>
-        <button class="option-button" onclick="showResponse('accepted')">我担心别人不接受我。</button>
-        <button class="option-button" onclick="showResponse('privacy')">我想查资料，但担心隐私。</button>
-        <button class="option-button" onclick="showResponse('talk')">我不知道能不能和别人聊这件事。</button>
-      </div>
-
-      <div class="result" id="result">
-        <h2 id="result-title"></h2>
-        <p id="result-text"></p>
-        <div class="notice">
-          提醒：这个页面不是测试，也不会给你贴标签。你可以慢慢理解自己，不需要现在就得出结论。
+    <section id="tool" aria-labelledby="tool-title">
+      <h2 id="tool-title">试用这个匿名支持工具</h2>
+      <p class="muted">请选择最接近你当下感受的一项。所有交互都在这个 HTML 文件里完成，不会自动上传到服务器。</p>
+      <div class="tool-layout">
+        <div class="card">
+          <h3>你现在最想被回应的问题是什么？</h3>
+          <div class="options">
+            <button class="option-button" type="button" data-key="uncertain" aria-pressed="false">我不确定自己喜欢谁，这正常吗？</button>
+            <button class="option-button" type="button" data-key="accepted" aria-pressed="false">我担心别人不接受我。</button>
+            <button class="option-button" type="button" data-key="privacy" aria-pressed="false">我想查资料，但担心隐私。</button>
+            <button class="option-button" type="button" data-key="talk" aria-pressed="false">我不知道能不能和别人聊这件事。</button>
+          </div>
+          <div class="notice">
+            提醒：这个页面不是性取向测试，也不会判断或预测你的身份。你可以慢慢理解自己，不需要现在就得出结论。
+          </div>
         </div>
 
-        <h2>匿名反馈</h2>
-        <label for="understood">这个回应让我感觉被理解</label>
-        <select id="understood">
-          <option value="">请选择</option>
-          <option value="1">1 分：完全没有</option>
-          <option value="2">2 分：有一点</option>
-          <option value="3">3 分：一般</option>
-          <option value="4">4 分：比较有</option>
-          <option value="5">5 分：非常有</option>
-        </select>
+        <div class="result" aria-live="polite">
+          <div class="empty-state" id="empty-state">
+            <p>选择左边任意一个问题后，这里会出现一段支持性回应和下一步建议。</p>
+          </div>
 
-        <label for="helpful">这个回应对我有帮助</label>
-        <select id="helpful">
-          <option value="">请选择</option>
-          <option value="1">1 分：完全没有</option>
-          <option value="2">2 分：有一点</option>
-          <option value="3">3 分：一般</option>
-          <option value="4">4 分：比较有</option>
-          <option value="5">5 分：非常有</option>
-        </select>
+          <div class="response-box" id="response-box">
+            <h3 id="result-title"></h3>
+            <p id="result-text"></p>
+            <div class="next-steps">
+              <h3>可以尝试的下一步</h3>
+              <ul id="next-step-list"></ul>
+            </div>
 
-        <label for="more">你还希望这个工具回答什么？</label>
-        <textarea id="more" maxlength="400" placeholder="可以写一句话，也可以留空。请不要写姓名、学校、联系方式或任何能识别你的信息。"></textarea>
+            <h3 style="margin-top: 20px;">匿名反馈</h3>
+            <p class="muted">MVP 只收集最少的匿名反馈：你选择了哪一个困惑、两个 1-5 分评分，以及你还希望这个工具回答什么。</p>
 
-        <div class="button-row">
-          <button class="action-button" onclick="submitFeedback()">生成匿名反馈码</button>
-          <button class="action-button secondary" onclick="resetPage()">重新选择一个问题</button>
-        </div>
+            <label for="understood">这个回应让我感觉被理解</label>
+            <select id="understood">
+              <option value="">请选择</option>
+              <option value="1">1 分：完全没有</option>
+              <option value="2">2 分：有一点</option>
+              <option value="3">3 分：一般</option>
+              <option value="4">4 分：比较有</option>
+              <option value="5">5 分：非常有</option>
+            </select>
 
-        <div class="feedback-output" id="feedback-output">
-          <h3>匿名反馈码</h3>
-          <p class="muted">这段文字保存在你的浏览器里，没有自动上传。你可以复制给研究者，用来统计这个原型是否有帮助。</p>
-          <div class="feedback-code" id="feedback-code"></div>
-          <div class="button-row">
-            <button class="action-button" onclick="copyFeedback()">复制反馈码</button>
-            <button class="action-button secondary" onclick="downloadFeedback()">下载 CSV</button>
+            <label for="helpful">这个回应对我有帮助</label>
+            <select id="helpful">
+              <option value="">请选择</option>
+              <option value="1">1 分：完全没有</option>
+              <option value="2">2 分：有一点</option>
+              <option value="3">3 分：一般</option>
+              <option value="4">4 分：比较有</option>
+              <option value="5">5 分：非常有</option>
+            </select>
+
+            <label for="more">你还希望这个工具回答什么？</label>
+            <textarea id="more" maxlength="400" placeholder="可以写一句话，也可以留空。请不要写姓名、学校、联系方式或任何能识别你的信息。"></textarea>
+
+            <div class="button-row">
+              <button class="action-button" type="button" id="submit-feedback">生成匿名反馈码</button>
+              <button class="action-button secondary" type="button" id="reset-tool">重新选择</button>
+            </div>
+            <p class="status-line" id="status-line" role="status"></p>
+
+            <div class="feedback-output" id="feedback-output">
+              <h3>匿名反馈码</h3>
+              <p class="muted">这段文字只显示在你的浏览器里。你可以自愿复制给研究者，用来统计这个原型是否有帮助。</p>
+              <div class="feedback-code" id="feedback-code"></div>
+              <div class="button-row">
+                <button class="action-button" type="button" id="copy-feedback">复制反馈码</button>
+                <button class="action-button secondary" type="button" id="download-feedback">下载 CSV</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section aria-labelledby="next-title">
-      <h2 id="next-title">如果你需要更多支持</h2>
-      <ul class="resource-list">
-        <li>优先联系你信任的成年人、学校心理老师或当地专业支持资源。</li>
-        <li>如果你处于紧急危险中，请联系当地紧急服务。</li>
-        <li>如果你想继续了解，优先选择专业机构、学校心理资源或可信公共卫生信息。</li>
-      </ul>
+    <section aria-labelledby="scope-title">
+      <h2 id="scope-title">MVP 范围</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>它做什么</h3>
+          <ol>
+            <li>用户打开网页，看到匿名和隐私说明。</li>
+            <li>用户从四个按钮里选择最接近自己的困惑。</li>
+            <li>页面显示一段对应的支持性回应和安全提醒。</li>
+            <li>用户用 1-5 分评价“是否感觉被理解”和“是否有帮助”。</li>
+            <li>用户可以写一句开放反馈：还希望这个工具回答什么。</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>它不做什么</h3>
+          <ul>
+            <li>不做性取向测试。</li>
+            <li>不判断或预测用户身份。</li>
+            <li>不收集姓名、学校、联系方式、精确位置。</li>
+            <li>不要求用户描述具体个人经历。</li>
+            <li>不做登录、AI 聊天、社区或长期用户档案。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="research-title">
+      <h2 id="research-title">研究依据整理</h2>
+      <p>资料显示，支持性的学校、家庭、社区和线上空间都可能成为保护因素；同时，匿名和隐私保护对仍在探索、还不准备公开表达的学生很重要。</p>
+      <table>
+        <thead>
+          <tr>
+            <th>来源</th>
+            <th>对本作品的启发</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>The Trevor Project 2025 U.S. National Survey</td>
+            <td>说明 LGBTQ+ 青少年面临的心理健康压力，也显示线上支持空间的重要性。</td>
+          </tr>
+          <tr>
+            <td>CDC 2023 Youth Risk Behavior Survey 与 School Connectedness 资料</td>
+            <td>强调 LGBTQ+ 学生是受青年心理健康危机影响较大的群体，学校连接感是保护因素。</td>
+          </tr>
+          <tr>
+            <td>GLSEN 2021 National School Climate Survey</td>
+            <td>说明不友好的学校气候可能影响自尊、抑郁、成绩和出勤。</td>
+          </tr>
+          <tr>
+            <td>Berger et al. 2022 JMIR systematic review</td>
+            <td>显示 LGBTQ+ 青少年会使用线上空间进行连接、身份探索和社会支持，同时也需要注意隐私和被迫曝光风险。</td>
+          </tr>
+          <tr>
+            <td>APA 与 SAMHSA 相关资料</td>
+            <td>支持非污名化、尊重、多元和以安全为中心的表达方式。</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
   </main>
 
@@ -339,40 +554,91 @@
       uncertain: {
         label: "不确定自己喜欢谁",
         title: "不确定是可以存在的",
-        text: "很多人在成长过程中都会经历不确定。你不需要立刻给自己一个固定标签。可以先观察：哪些关系让你感到自然、安心、被吸引，哪些只是好奇、压力或想象。慢慢来是可以的。"
+        text: "很多人在成长过程中都会经历不确定。你不需要立刻给自己一个固定标签。可以先观察：哪些关系让你感到自然、安心、被吸引，哪些只是好奇、压力或想象。慢慢来是可以的。",
+        next: [
+          "先允许自己不急着定义答案。",
+          "把问题写成一句话，例如“我现在最困惑的是……”。",
+          "只看可信、非评判的信息来源，避免用测试替你下结论。"
+        ]
       },
       accepted: {
         label: "担心别人不接受",
         title: "先保护自己的安全感",
-        text: "担心别人不接受是很真实的压力。你不需要向所有人解释自己，也不需要在不安全的时候出柜。可以先寻找一个更可信任、更尊重边界的人，或者先用匿名方式了解资料和支持资源。"
+        text: "担心别人不接受是很真实的压力。你不需要向所有人解释自己，也不需要在不安全的时候出柜。可以先寻找一个更可信任、更尊重边界的人，或者先用匿名方式了解资料和支持资源。",
+        next: [
+          "先判断对方是否尊重隐私、是否会传播你的话。",
+          "如果环境不安全，暂时不说也是一种保护自己。",
+          "优先找可信成年人、学校心理老师或专业支持资源。"
+        ]
       },
       privacy: {
         label: "担心查资料的隐私",
         title: "隐私很重要",
-        text: "想查资料但担心被看到，这个顾虑很合理。你可以使用更安全的设备、清理浏览记录，或选择可信、非刺激化的信息来源。不要在不放心的平台留下姓名、学校、联系方式或具体个人经历。"
+        text: "想查资料但担心被看到，这个顾虑很合理。你可以使用更安全的设备、清理浏览记录，或选择可信、非刺激化的信息来源。不要在不放心的平台留下姓名、学校、联系方式或具体个人经历。",
+        next: [
+          "不要在陌生网站留下姓名、学校、联系方式或精确位置。",
+          "使用共享设备后，记得关闭页面并清理浏览记录。",
+          "如果有人威胁公开你的信息，优先向可信成年人或学校支持人员求助。"
+        ]
       },
       talk: {
         label: "不知道能不能和别人聊",
         title: "可以聊，但要选对对象",
-        text: "不是所有人都适合成为第一个倾诉对象。你可以先想：这个人是否尊重隐私？是否会嘲笑或传播？是否能听你说完？如果答案不确定，先写下来、匿名提问，或找专业心理支持会更稳。"
+        text: "不是所有人都适合成为第一个倾诉对象。你可以先想：这个人是否尊重隐私？是否会嘲笑或传播？是否能听你说完？如果答案不确定，先写下来、匿名提问，或找专业心理支持会更稳。",
+        next: [
+          "先列出 1-2 个你相对信任、也比较稳的人。",
+          "可以先问一个小问题，观察对方是否尊重边界。",
+          "如果谈话后感觉更危险，请停止继续透露，并寻求可信支持。"
+        ]
       }
     };
 
     let selectedQuestion = "";
     let latestFeedback = "";
 
+    const buttons = document.querySelectorAll(".option-button");
+    const emptyState = document.getElementById("empty-state");
+    const responseBox = document.getElementById("response-box");
+    const nextStepList = document.getElementById("next-step-list");
+    const statusLine = document.getElementById("status-line");
+
+    buttons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        showResponse(button.dataset.key);
+      });
+    });
+
+    document.getElementById("submit-feedback").addEventListener("click", submitFeedback);
+    document.getElementById("reset-tool").addEventListener("click", resetTool);
+    document.getElementById("copy-feedback").addEventListener("click", copyFeedback);
+    document.getElementById("download-feedback").addEventListener("click", downloadFeedback);
+
     function showResponse(key) {
       selectedQuestion = key;
-      document.getElementById("result-title").textContent = responses[key].title;
-      document.getElementById("result-text").textContent = responses[key].text;
-      document.getElementById("result").style.display = "block";
+      const response = responses[key];
+
+      buttons.forEach(function (button) {
+        button.setAttribute("aria-pressed", String(button.dataset.key === key));
+      });
+
+      document.getElementById("result-title").textContent = response.title;
+      document.getElementById("result-text").textContent = response.text;
+      nextStepList.innerHTML = "";
+      response.next.forEach(function (item) {
+        const li = document.createElement("li");
+        li.textContent = item;
+        nextStepList.appendChild(li);
+      });
+
+      emptyState.style.display = "none";
+      responseBox.style.display = "block";
       document.getElementById("feedback-output").style.display = "none";
-      document.getElementById("result").scrollIntoView({ behavior: "smooth", block: "start" });
+      statusLine.textContent = "已选择：" + response.label;
     }
 
     function submitFeedback() {
       if (!selectedQuestion) {
-        alert("请先选择一个问题。");
+        statusLine.textContent = "请先选择一个问题。";
         return;
       }
 
@@ -380,7 +646,7 @@
       const helpful = document.getElementById("helpful").value;
 
       if (!understood || !helpful) {
-        alert("请先选择两个 1-5 分评分。");
+        statusLine.textContent = "请先选择两个 1-5 分评分。";
         return;
       }
 
@@ -388,29 +654,42 @@
       const feedback = {
         time: new Date().toISOString(),
         selectedQuestion: responses[selectedQuestion].label,
-        understood,
-        helpful,
-        more
+        understood: understood,
+        helpful: helpful,
+        more: more
       };
 
       latestFeedback = JSON.stringify(feedback, null, 2);
       localStorage.setItem("anonymous_support_feedback", latestFeedback);
       document.getElementById("feedback-code").textContent = latestFeedback;
       document.getElementById("feedback-output").style.display = "block";
-      document.getElementById("feedback-output").scrollIntoView({ behavior: "smooth", block: "start" });
+      statusLine.textContent = "匿名反馈码已生成。";
     }
 
     function copyFeedback() {
-      if (!latestFeedback) return;
+      if (!latestFeedback) {
+        statusLine.textContent = "请先生成匿名反馈码。";
+        return;
+      }
+
+      if (!navigator.clipboard) {
+        statusLine.textContent = "当前浏览器不支持一键复制，可以手动选中文本复制。";
+        return;
+      }
+
       navigator.clipboard.writeText(latestFeedback).then(function () {
-        alert("已复制匿名反馈码。");
+        statusLine.textContent = "已复制匿名反馈码。";
       }).catch(function () {
-        alert("复制失败，可以手动选中文本复制。");
+        statusLine.textContent = "复制失败，可以手动选中文本复制。";
       });
     }
 
     function downloadFeedback() {
-      if (!latestFeedback) return;
+      if (!latestFeedback) {
+        statusLine.textContent = "请先生成匿名反馈码。";
+        return;
+      }
+
       const data = JSON.parse(latestFeedback);
       const csv = [
         "time,selectedQuestion,understood,helpful,more",
@@ -420,6 +699,7 @@
           })
           .join(",")
       ].join("\n");
+
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -427,17 +707,22 @@
       a.download = "anonymous-feedback.csv";
       a.click();
       URL.revokeObjectURL(url);
+      statusLine.textContent = "CSV 已下载。";
     }
 
-    function resetPage() {
+    function resetTool() {
       selectedQuestion = "";
       latestFeedback = "";
-      document.getElementById("result").style.display = "none";
-      document.getElementById("feedback-output").style.display = "none";
+      buttons.forEach(function (button) {
+        button.setAttribute("aria-pressed", "false");
+      });
       document.getElementById("understood").value = "";
       document.getElementById("helpful").value = "";
       document.getElementById("more").value = "";
-      document.getElementById("question").scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("feedback-output").style.display = "none";
+      responseBox.style.display = "none";
+      emptyState.style.display = "grid";
+      statusLine.textContent = "";
     }
   </script>
 </body>
