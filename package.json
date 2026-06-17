@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build:ppt": "node make-pptx.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  }
+}

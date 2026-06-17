@@ -1,3 +1,4 @@
 .tools/
 week3-review.html
 .vercel
+node_modules/

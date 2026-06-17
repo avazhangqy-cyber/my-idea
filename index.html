@@ -338,6 +338,55 @@
       background: #f0e9dd;
     }
 
+    .research-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .research-toggle {
+      width: auto;
+      min-height: 44px;
+      border: 1px solid var(--blue);
+      border-radius: 6px;
+      background: var(--blue);
+      color: #ffffff;
+      cursor: pointer;
+      padding: 10px 14px;
+      text-align: center;
+      transition: background 0.16s ease, transform 0.16s ease;
+    }
+
+    .research-toggle:hover {
+      background: #1f4d72;
+      transform: translateY(-1px);
+    }
+
+    .research-detail {
+      display: none;
+      border-top: 1px solid var(--line);
+      margin-top: 16px;
+      padding-top: 16px;
+    }
+
+    .research-detail.is-open {
+      display: block;
+    }
+
+    .research-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .research-item {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
     @media (max-width: 820px) {
       header,
       .tool-layout,
@@ -516,6 +565,40 @@
     <section aria-labelledby="research-title">
       <h2 id="research-title">研究依据整理</h2>
       <p>资料显示，支持性的学校、家庭、社区和线上空间都可能成为保护因素；同时，匿名和隐私保护对仍在探索、还不准备公开表达的学生很重要。</p>
+      <div class="research-actions">
+        <button class="research-toggle" type="button" id="research-toggle" aria-expanded="false" aria-controls="research-detail">研究 / The research</button>
+        <p class="muted" style="margin: 0;">展开后可以看到研究问题、假设、关键证据和下一步测试计划。</p>
+      </div>
+      <div class="research-detail" id="research-detail">
+        <div class="grid">
+          <div class="card">
+            <h3>Research Question</h3>
+            <p>Can a one-page anonymous support tool help high school students who are questioning or exploring sexual orientation feel understood and identify safer next steps, without requiring them to reveal personal identity?</p>
+          </div>
+          <div class="card">
+            <h3>Hypothesis</h3>
+            <p>If students can use an anonymous, non-judgmental web tool that does not label them or collect identifying information, then more than half of pilot users will rate the response as 4 or 5 out of 5 for feeling understood.</p>
+          </div>
+        </div>
+        <div class="research-list">
+          <div class="research-item">
+            <h3>为什么需要这个工具</h3>
+            <p>资料显示，风险常常来自污名、欺凌、歧视和缺少支持，而不是身份本身。本作品把重点放在低压力、安全边界和可信下一步。</p>
+          </div>
+          <div class="research-item">
+            <h3>关键证据</h3>
+            <ul>
+              <li>Trevor Project 2025 调查显示，36% 的 LGBTQ+ 青少年过去一年曾认真考虑自杀，77% 认为线上空间能提供支持。</li>
+              <li>CDC 与 GLSEN 资料强调，学校连接感、支持性成年人和安全环境都是重要保护因素。</li>
+              <li>JMIR systematic review 显示，LGBTQ+ 青少年会使用线上空间进行连接、身份探索和社会支持，但也需要隐私保护。</li>
+            </ul>
+          </div>
+          <div class="research-item">
+            <h3>测试方式</h3>
+            <p>让至少 10 个真实用户体验原型，记录两个 1-5 分匿名评分，并整理开放反馈中最常出现的下一版需求。</p>
+          </div>
+        </div>
+      </div>
       <table>
         <thead>
           <tr>
@@ -612,6 +695,15 @@
     document.getElementById("reset-tool").addEventListener("click", resetTool);
     document.getElementById("copy-feedback").addEventListener("click", copyFeedback);
     document.getElementById("download-feedback").addEventListener("click", downloadFeedback);
+
+    const researchToggle = document.getElementById("research-toggle");
+    const researchDetail = document.getElementById("research-detail");
+
+    researchToggle.addEventListener("click", function () {
+      const isOpen = researchDetail.classList.toggle("is-open");
+      researchToggle.setAttribute("aria-expanded", String(isOpen));
+      researchToggle.textContent = isOpen ? "收起研究 / Hide research" : "研究 / The research";
+    });
 
     function showResponse(key) {
       selectedQuestion = key;

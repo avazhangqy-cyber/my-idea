@@ -8,6 +8,22 @@
 
 一个正在对性取向、隐私、安全表达感到困惑，但还不一定准备和别人当面谈的高中生。
 
+## Research Question & Hypothesis
+
+### Research Question
+
+How does an anonymous support webpage affect the feeling of being understood for high school students who are questioning or exploring sexual orientation?
+
+### Hypothesis
+
+I hypothesize that after using the anonymous support webpage, high school students who are questioning or exploring sexual orientation will increase their feeling of being understood and will be more able to name a safer next step.
+
+### 变量
+
+- Independent variable: using the anonymous support webpage and choosing one of four concern scenarios.
+- Dependent variables: "felt understood" rating, "helpful" rating, and themes from open-ended feedback.
+- Success signal: at least 10 real users complete the experience; more than half give 4 or 5 on "felt understood"; open feedback produces at least 3 next-version topics.
+
 ## 核心流程
 
 1. 用户打开网页，看到匿名和隐私说明。
