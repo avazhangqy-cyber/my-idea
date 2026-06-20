@@ -3,28 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>匿名探索支持</title>
+  <title>匿名自我认同支持空间</title>
   <style>
     * {
       box-sizing: border-box;
     }
 
     :root {
-      --bg: #f7f3ec;
-      --paper: #fffdf8;
-      --paper-2: #fdf8f0;
-      --ink: #222222;
-      --muted: #5c5a55;
-      --line: #d9d0c3;
+      --bg: #f6f4ef;
+      --paper: #fffefa;
+      --paper-2: #f7f4ed;
+      --ink: #202020;
+      --muted: #5d5b55;
+      --line: #d8d0c2;
       --blue: #255c8a;
-      --blue-soft: #eaf3fb;
+      --blue-soft: #e8f1f8;
       --green: #2f7454;
-      --green-soft: #e8f4ed;
+      --green-soft: #e7f3ec;
       --rose: #94413f;
       --rose-soft: #faeeee;
-      --gold: #8b6423;
+      --gold: #886324;
       --gold-soft: #f7ecd4;
-      --shadow: rgba(68, 55, 38, 0.08);
+      --shadow: rgba(60, 48, 33, 0.08);
     }
 
     body {
@@ -32,14 +32,13 @@
       min-height: 100vh;
       font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
       color: var(--ink);
-      background:
-        linear-gradient(180deg, #f5efe6 0%, #f9f6f0 42%, #f3eee5 100%);
+      background: linear-gradient(180deg, #f4efe6 0%, #faf8f2 48%, #f0ece4 100%);
     }
 
     main {
-      width: min(100%, 1060px);
+      width: min(100%, 1120px);
       margin: 0 auto;
-      padding: 28px 18px 56px;
+      padding: 26px 18px 56px;
     }
 
     header,
@@ -54,8 +53,8 @@
 
     header {
       display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
       gap: 18px;
-      grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.55fr);
       align-items: start;
     }
 
@@ -68,14 +67,14 @@
 
     h1 {
       margin-bottom: 12px;
-      font-size: clamp(34px, 6vw, 58px);
+      font-size: clamp(32px, 5vw, 54px);
       line-height: 1.08;
       letter-spacing: 0;
     }
 
     h2 {
       margin-bottom: 14px;
-      font-size: clamp(24px, 3vw, 32px);
+      font-size: clamp(23px, 3vw, 31px);
       line-height: 1.22;
       letter-spacing: 0;
     }
@@ -88,9 +87,18 @@
     }
 
     p,
-    li {
+    li,
+    label,
+    input,
+    select,
+    textarea,
+    button {
       font-size: 16px;
-      line-height: 1.78;
+    }
+
+    p,
+    li {
+      line-height: 1.72;
     }
 
     p {
@@ -101,6 +109,11 @@
     ol {
       margin: 8px 0 0;
       padding-left: 22px;
+    }
+
+    a {
+      color: var(--blue);
+      font-weight: 700;
     }
 
     button,
@@ -118,19 +131,40 @@
 
     .lead {
       font-size: 18px;
-      line-height: 1.75;
-      max-width: 740px;
+      line-height: 1.72;
+      max-width: 780px;
     }
 
     .muted {
       color: var(--muted);
     }
 
-    .header-panel {
-      background: var(--blue-soft);
+    .header-panel,
+    .notice {
       border: 1px solid #c7d9e8;
       border-radius: 8px;
-      padding: 18px;
+      background: var(--blue-soft);
+      padding: 16px;
+    }
+
+    .notice {
+      margin-top: 14px;
+      line-height: 1.7;
+    }
+
+    .warning {
+      border-color: #e4bbb9;
+      background: var(--rose-soft);
+    }
+
+    .success {
+      border-color: #b9d7c5;
+      background: var(--green-soft);
+    }
+
+    .gold {
+      border-color: #e0cca2;
+      background: var(--gold-soft);
     }
 
     .pill-row {
@@ -164,12 +198,25 @@
       gap: 14px;
     }
 
+    .tool-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
     .card,
+    .story-card,
     .metric {
       background: var(--paper-2);
       border: 1px solid var(--line);
       border-radius: 8px;
       padding: 16px;
+    }
+
+    .card.white,
+    .story-card {
+      background: #ffffff;
     }
 
     .metric strong {
@@ -180,30 +227,12 @@
       margin-bottom: 6px;
     }
 
-    .notice {
-      border-left: 4px solid var(--green);
-      background: var(--green-soft);
-      margin-top: 16px;
-      padding: 14px 16px;
-      line-height: 1.7;
-    }
-
-    .warning {
-      border-left-color: var(--rose);
-      background: var(--rose-soft);
-    }
-
-    .tool-layout {
-      display: grid;
-      grid-template-columns: minmax(260px, 0.92fr) minmax(0, 1.08fr);
-      gap: 18px;
-      align-items: start;
-    }
-
-    .options {
+    .options,
+    .scale-list,
+    .resource-list,
+    .story-list {
       display: grid;
       gap: 10px;
-      margin-top: 14px;
     }
 
     .option-button,
@@ -243,7 +272,7 @@
     }
 
     .result {
-      min-height: 380px;
+      min-height: 420px;
       background: #ffffff;
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -252,7 +281,7 @@
 
     .empty-state {
       display: grid;
-      min-height: 340px;
+      min-height: 360px;
       place-items: center;
       border: 1px dashed #c9bfb0;
       border-radius: 8px;
@@ -261,37 +290,67 @@
       text-align: center;
     }
 
-    .response-box,
-    .feedback-output {
+    .pathway-box,
+    .feedback-output,
+    .story-output {
       display: none;
     }
 
-    .next-steps {
-      margin: 14px 0 0;
-      padding: 14px 16px;
+    .path-block {
+      border-left: 4px solid var(--blue);
+      background: var(--blue-soft);
+      margin-top: 12px;
+      padding: 12px 14px;
+    }
+
+    .path-block.green {
+      border-left-color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .path-block.gold {
+      border-left-color: var(--gold);
       background: var(--gold-soft);
-      border-left: 4px solid var(--gold);
+    }
+
+    .path-block.rose {
+      border-left-color: var(--rose);
+      background: var(--rose-soft);
     }
 
     label {
       display: block;
       font-weight: 700;
-      margin: 16px 0 8px;
+      margin: 14px 0 8px;
     }
 
     select,
-    textarea {
+    textarea,
+    input[type="text"] {
       width: 100%;
       border: 1px solid #b9b0a4;
       border-radius: 6px;
       background: #ffffff;
       color: var(--ink);
-      padding: 12px;
+      padding: 11px 12px;
     }
 
     textarea {
-      min-height: 98px;
+      min-height: 110px;
       resize: vertical;
+    }
+
+    .check-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 150px;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 1px solid #ece5da;
+      padding: 10px 0;
+    }
+
+    .check-row:last-child {
+      border-bottom: 0;
     }
 
     .button-row {
@@ -301,7 +360,22 @@
       margin-top: 16px;
     }
 
-    .feedback-code {
+    .inline-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin-top: 12px;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .inline-check input {
+      margin-top: 6px;
+      flex: 0 0 auto;
+    }
+
+    .feedback-code,
+    .story-preview {
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       border: 1px solid var(--line);
@@ -316,6 +390,18 @@
       color: var(--green);
       font-weight: 700;
       margin-top: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      width: fit-content;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 5px 9px;
+      margin-bottom: 10px;
     }
 
     table {
@@ -338,67 +424,23 @@
       background: #f0e9dd;
     }
 
-    .research-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 16px 0;
-    }
-
-    .research-toggle {
-      width: auto;
-      min-height: 44px;
-      border: 1px solid var(--blue);
-      border-radius: 6px;
-      background: var(--blue);
-      color: #ffffff;
-      cursor: pointer;
-      padding: 10px 14px;
-      text-align: center;
-      transition: background 0.16s ease, transform 0.16s ease;
-    }
-
-    .research-toggle:hover {
-      background: #1f4d72;
-      transform: translateY(-1px);
-    }
-
-    .research-detail {
-      display: none;
-      border-top: 1px solid var(--line);
-      margin-top: 16px;
-      padding-top: 16px;
-    }
-
-    .research-detail.is-open {
-      display: block;
-    }
-
-    .research-list {
-      display: grid;
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .research-item {
-      background: #ffffff;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 14px;
-    }
-
-    @media (max-width: 820px) {
+    @media (max-width: 860px) {
       header,
       .tool-layout,
       .grid,
       .three-grid,
-      .button-row {
+      .button-row,
+      .check-row {
         grid-template-columns: 1fr;
       }
 
       header,
       section {
         padding: 20px;
+      }
+
+      .check-row {
+        gap: 6px;
       }
 
       table {
@@ -412,409 +454,690 @@
   <main>
     <header>
       <div>
-        <p class="eyebrow">Anonymous Support Check-In</p>
-        <h1>匿名探索支持</h1>
-        <p class="lead">这是一个给高中生的性取向探索支持小工具。它解决的问题是：当一个学生还不确定、也不一定准备当面谈时，能不能先在一个匿名、低压力、不贴标签的网页里得到安全回应。</p>
+        <p class="eyebrow">Anonymous Identity Support Space</p>
+        <h1>匿名自我认同支持空间</h1>
+        <p class="lead">一个面向中国高中生的匿名支持空间：通过情境化指导、简短自评和同伴故事分享，帮助正在探索自我认同的人少一点孤单，并在表达、求助或暂缓公开前做出更安全的下一步选择。</p>
         <div class="pill-row" aria-label="项目特点">
-          <span class="pill">匿名</span>
-          <span class="pill">不做测试</span>
+          <span class="pill">无需登录</span>
+          <span class="pill">不做性取向测试</span>
           <span class="pill">不贴标签</span>
-          <span class="pill">不收集身份信息</span>
-          <span class="pill">1 分钟体验</span>
+          <span class="pill">本地交互</span>
+          <span class="pill">故事先审核再公开</span>
         </div>
       </div>
-      <aside class="header-panel" aria-label="使用对象和安全边界">
-        <h2>给谁用</h2>
-        <p>一个正在对性取向、隐私、安全表达感到困惑，但还不一定准备和别人当面谈的高中生。</p>
+      <aside class="header-panel" aria-label="安全边界">
+        <h2>安全边界</h2>
+        <p>这个网页不是心理咨询、诊断工具或危机干预服务。它只能帮你整理处境、评估风险、找到更稳的下一步。</p>
         <div class="notice warning">
-          如果你正在面对伤害、威胁或强烈情绪压力，请优先联系可信任的成年人、学校心理老师、当地心理热线或紧急服务。这个网页不是心理咨询或危机干预服务。
+          如果你正在面对暴力、威胁、被迫曝光、自伤念头或强烈情绪危机，请优先联系可信成年人、学校心理老师、当地心理援助热线，或在紧急情况下联系 110 / 120。
         </div>
       </aside>
     </header>
 
-    <section aria-labelledby="about-title">
-      <h2 id="about-title">这个作品在研究什么</h2>
-      <div class="grid">
-        <div class="card">
-          <h3>社会议题</h3>
-          <p>一些高中生在探索性取向时，会遇到不确定、隐私担忧、表达压力和缺少安全支持的问题。风险不是身份本身造成的，而常常来自污名、欺凌、歧视和缺少支持。</p>
-        </div>
-        <div class="card">
-          <h3>核心研究问题</h3>
-          <p>一个匿名、非判断式的网页回应，能不能让正在探索性取向的高中生感觉被理解，并帮助他们找到更安全的下一步？</p>
-        </div>
-      </div>
-      <div class="three-grid" style="margin-top: 14px;">
-        <div class="metric">
-          <strong>36%</strong>
-          <p class="muted">Trevor Project 2025 调查中，LGBTQ+ 青少年过去一年曾认真考虑自杀的比例。</p>
-        </div>
-        <div class="metric">
-          <strong>77%</strong>
-          <p class="muted">同一调查中，认为线上空间能提供支持的 LGBTQ+ 青少年比例。</p>
-        </div>
-        <div class="metric">
-          <strong>0</strong>
-          <p class="muted">本原型要求用户填写的姓名、学校、联系方式或精确位置数量。</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="tool" aria-labelledby="tool-title">
-      <h2 id="tool-title">试用这个匿名支持工具</h2>
-      <p class="muted">请选择最接近你当下感受的一项。所有交互都在这个 HTML 文件里完成，不会自动上传到服务器。</p>
+    <section id="pathway" aria-labelledby="pathway-title">
+      <h2 id="pathway-title">你现在遇到的是哪一种困惑？</h2>
+      <p class="muted">先选一个最接近的情境。页面不会判断你的身份，只会给出理解、风险提醒、下一步和相关故事。</p>
       <div class="tool-layout">
         <div class="card">
-          <h3>你现在最想被回应的问题是什么？</h3>
-          <div class="options">
-            <button class="option-button" type="button" data-key="uncertain" aria-pressed="false">我不确定自己喜欢谁，这正常吗？</button>
-            <button class="option-button" type="button" data-key="accepted" aria-pressed="false">我担心别人不接受我。</button>
-            <button class="option-button" type="button" data-key="privacy" aria-pressed="false">我想查资料，但担心隐私。</button>
-            <button class="option-button" type="button" data-key="talk" aria-pressed="false">我不知道能不能和别人聊这件事。</button>
+          <h3>Scenario Pathway</h3>
+          <div class="options" id="scenario-options">
+            <button class="option-button" type="button" data-key="uncertain" aria-pressed="false">我不确定自己喜欢谁</button>
+            <button class="option-button" type="button" data-key="privacy" aria-pressed="false">我害怕别人知道</button>
+            <button class="option-button" type="button" data-key="friend" aria-pressed="false">我想告诉朋友，但不知道安不安全</button>
+            <button class="option-button" type="button" data-key="family" aria-pressed="false">我想告诉家人，但很害怕</button>
+            <button class="option-button" type="button" data-key="bullying" aria-pressed="false">我被开玩笑、排挤或威胁</button>
+            <button class="option-button" type="button" data-key="alone" aria-pressed="false">我只是想确认不是只有我这样</button>
           </div>
           <div class="notice">
-            提醒：这个页面不是性取向测试，也不会判断或预测你的身份。你可以慢慢理解自己，不需要现在就得出结论。
+            这里的目标不是推动你公开表达，而是帮你判断：现在适合了解自己、找资料、找人聊，还是先保护隐私和安全。
           </div>
         </div>
 
         <div class="result" aria-live="polite">
           <div class="empty-state" id="empty-state">
-            <p>选择左边任意一个问题后，这里会出现一段支持性回应和下一步建议。</p>
+            <p>选择一个情境后，这里会出现“你可能正在经历什么、可以先做什么、先不要急着做什么、什么时候需要求助”。</p>
           </div>
 
-          <div class="response-box" id="response-box">
-            <h3 id="result-title"></h3>
-            <p id="result-text"></p>
-            <div class="next-steps">
-              <h3>可以尝试的下一步</h3>
-              <ul id="next-step-list"></ul>
+          <div class="pathway-box" id="pathway-box">
+            <span class="tag" id="scenario-tag"></span>
+            <h3 id="scenario-title"></h3>
+            <div class="path-block">
+              <h3>你可能正在经历什么</h3>
+              <p id="scenario-understand"></p>
             </div>
-
-            <h3 style="margin-top: 20px;">匿名反馈</h3>
-            <p class="muted">MVP 只收集最少的匿名反馈：你选择了哪一个困惑、两个 1-5 分评分，以及你还希望这个工具回答什么。</p>
-
-            <label for="understood">这个回应让我感觉被理解</label>
-            <select id="understood">
-              <option value="">请选择</option>
-              <option value="1">1 分：完全没有</option>
-              <option value="2">2 分：有一点</option>
-              <option value="3">3 分：一般</option>
-              <option value="4">4 分：比较有</option>
-              <option value="5">5 分：非常有</option>
-            </select>
-
-            <label for="helpful">这个回应对我有帮助</label>
-            <select id="helpful">
-              <option value="">请选择</option>
-              <option value="1">1 分：完全没有</option>
-              <option value="2">2 分：有一点</option>
-              <option value="3">3 分：一般</option>
-              <option value="4">4 分：比较有</option>
-              <option value="5">5 分：非常有</option>
-            </select>
-
-            <label for="more">你还希望这个工具回答什么？</label>
-            <textarea id="more" maxlength="400" placeholder="可以写一句话，也可以留空。请不要写姓名、学校、联系方式或任何能识别你的信息。"></textarea>
-
-            <div class="button-row">
-              <button class="action-button" type="button" id="submit-feedback">生成匿名反馈码</button>
-              <button class="action-button secondary" type="button" id="reset-tool">重新选择</button>
+            <div class="path-block green">
+              <h3>这不代表你有问题</h3>
+              <p id="scenario-normalize"></p>
             </div>
-            <p class="status-line" id="status-line" role="status"></p>
-
-            <div class="feedback-output" id="feedback-output">
-              <h3>匿名反馈码</h3>
-              <p class="muted">这段文字只显示在你的浏览器里。你可以自愿复制给研究者，用来统计这个原型是否有帮助。</p>
-              <div class="feedback-code" id="feedback-code"></div>
-              <div class="button-row">
-                <button class="action-button" type="button" id="copy-feedback">复制反馈码</button>
-                <button class="action-button secondary" type="button" id="download-feedback">下载 CSV</button>
-              </div>
+            <div class="path-block gold">
+              <h3>现在可以先做什么</h3>
+              <ul id="scenario-do"></ul>
+            </div>
+            <div class="path-block rose">
+              <h3>先不要急着做什么</h3>
+              <ul id="scenario-wait"></ul>
+            </div>
+            <div class="path-block">
+              <h3>什么时候需要找人帮忙</h3>
+              <ul id="scenario-help"></ul>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section aria-labelledby="scope-title">
-      <h2 id="scope-title">MVP 范围</h2>
+    <section id="scales" aria-labelledby="scales-title">
+      <h2 id="scales-title">三分钟自评：状态、支持、表达安全度</h2>
+      <p class="muted">这些自评用于原型研究和自我整理，不用于诊断。正式论文中可以说明：心理状态参考 PHQ-4 / WHO-5，社会支持参考 MSPSS，表达安全度参考 disclosure decision-making 研究。</p>
+      <div class="three-grid">
+        <div class="card white">
+          <h3>1. 情绪困扰筛查</h3>
+          <p class="muted">参考 PHQ-4 的 0-3 评分方式。过去两周，你被以下状态困扰的频率是？</p>
+          <div class="scale-list" id="distress-scale"></div>
+        </div>
+        <div class="card white">
+          <h3>2. 支持地图</h3>
+          <p class="muted">参考 MSPSS 的“家人、朋友、重要他人/可信成年人”三个支持来源。</p>
+          <div class="scale-list" id="support-scale"></div>
+        </div>
+        <div class="card white">
+          <h3>3. 安全表达检查</h3>
+          <p class="muted">没有任何量表能决定你“该不该出柜”。这个检查表只帮你判断：现在更适合表达、试探、暂缓，还是先找支持。</p>
+          <div class="scale-list" id="comingout-scale"></div>
+        </div>
+      </div>
+      <div class="button-row">
+        <button class="action-button" type="button" id="calculate-scales">生成自评建议</button>
+        <button class="action-button secondary" type="button" id="reset-scales">清空自评</button>
+      </div>
+      <div class="notice success" id="scale-result" aria-live="polite">
+        完成上面的选项后，点击“生成自评建议”。结果只在你的浏览器里显示，不会自动上传。
+      </div>
+    </section>
+
+    <section id="stories" aria-labelledby="stories-title">
+      <h2 id="stories-title">匿名故事墙：看见相似的人</h2>
+      <p class="muted">这里不是开放论坛，也不开放评论和私信。第一版适合做成“匿名投稿，去识别化审核后公开”的同伴故事库。</p>
+      <div class="grid story-list" id="story-list">
+        <article class="story-card" data-topic="uncertain">
+          <span class="tag">迷茫中</span>
+          <h3>“我后来发现，不急着起名字也没关系。”</h3>
+          <p>我以前一直想立刻知道自己到底是什么，但越想越焦虑。后来我给自己设了一个规则：先观察什么关系让我舒服，不急着对任何人解释。</p>
+        </article>
+        <article class="story-card" data-topic="friend">
+          <span class="tag">朋友支持</span>
+          <h3>“我先试探了一个很小的话题。”</h3>
+          <p>我没有一上来讲自己的全部经历，而是先问朋友怎么看待不同性取向。她的反应让我知道，她至少愿意认真听人说话。</p>
+        </article>
+        <article class="story-card" data-topic="family">
+          <span class="tag">家庭压力</span>
+          <h3>“暂时不说不是懦弱，是计划。”</h3>
+          <p>我很想告诉家人，但我也知道自己现在完全依赖他们。我先把重点放在稳定情绪、找可信老师、准备未来能保护自己的资源上。</p>
+        </article>
+        <article class="story-card" data-topic="bullying">
+          <span class="tag">校园流言</span>
+          <h3>“截图和记录让我没有那么慌。”</h3>
+          <p>被人在群里开玩笑后，我先保存了截图和时间，没有单独去吵。后来找了一个比较稳的老师帮我一起判断下一步。</p>
+        </article>
+      </div>
+
+      <div class="grid" style="margin-top: 16px;">
+        <div class="card">
+          <h3>匿名投稿</h3>
+          <p class="muted">投稿不会自动公开。公开前应由管理员删除或模糊化可识别信息，并拒绝发布联系方式、攻击、引战、自伤细节或危险内容。</p>
+          <label for="story-topic">故事标签</label>
+          <select id="story-topic">
+            <option value="迷茫中">迷茫中</option>
+            <option value="朋友支持">朋友支持</option>
+            <option value="家庭压力">家庭压力</option>
+            <option value="校园流言">校园流言</option>
+            <option value="慢慢接纳自己">慢慢接纳自己</option>
+          </select>
+
+          <label for="story-title">一句话标题</label>
+          <input id="story-title" type="text" maxlength="60" placeholder="例如：我先学会了慢慢来">
+
+          <label for="story-body">你的故事或观点</label>
+          <textarea id="story-body" maxlength="800" placeholder="请不要写姓名、学校、班级、联系方式、具体城市+学校、精确时间地点，或任何能识别你/他人的信息。"></textarea>
+
+          <label class="inline-check">
+            <input id="privacy-check" type="checkbox">
+            <span>我已经检查并删除了姓名、学校、班级、联系方式、具体地点等可识别信息。我理解投稿会先被审核，公开前可能被去识别化编辑。</span>
+          </label>
+
+          <div class="button-row">
+            <button class="action-button" type="button" id="generate-story">生成投稿预览</button>
+            <button class="action-button secondary" type="button" id="clear-story">清空投稿</button>
+          </div>
+          <p class="status-line" id="story-status" role="status"></p>
+        </div>
+        <div class="card white">
+          <h3>投稿预览 / 审核提示</h3>
+          <div class="empty-state" id="story-empty" style="min-height: 260px;">
+            <p>生成后会在这里看到公开前的预览和隐私风险提醒。这个版本不会把故事上传到服务器。</p>
+          </div>
+          <div class="story-output" id="story-output">
+            <div class="story-preview" id="story-preview"></div>
+            <div class="notice gold" id="story-warning"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" aria-labelledby="resources-title">
+      <h2 id="resources-title">下一步资源导航</h2>
+      <p class="muted">资源号码可能因地区接入不同而变化，上线前应再核对本地官方信息。网页里写清“适合什么情况”和“可以怎么开口”，比单纯列电话更有用。</p>
+      <div class="three-grid resource-list">
+        <div class="card">
+          <h3>不知道找谁</h3>
+          <p><strong>12355 青少年服务热线</strong></p>
+          <p class="muted">适合青少年成长困惑、心理压力、法律或权益咨询的第一入口。</p>
+          <p>可以这样说：我最近在学校/家庭里遇到一些压力，不确定该找谁，想先咨询下一步。</p>
+        </div>
+        <div class="card">
+          <h3>情绪很糟</h3>
+          <p><strong>12356 心理援助热线</strong></p>
+          <p class="muted">适合强烈焦虑、低落、失眠、崩溃感或需要心理支持时咨询。</p>
+          <p>如果有自伤危险或现实危险，请优先联系身边成年人、110 或 120。</p>
+        </div>
+        <div class="card">
+          <h3>被威胁或被侵犯权益</h3>
+          <p><strong>12348 法律援助热线</strong></p>
+          <p class="muted">适合咨询威胁、勒索、隐私传播、校园欺凌取证和维权路径。</p>
+          <p>可以先准备：时间、地点、截图、相关人、你已经告诉过谁。</p>
+        </div>
+        <div class="card">
+          <h3>校内支持</h3>
+          <p><strong>心理老师 / 班主任 / 年级组 / 德育处</strong></p>
+          <p class="muted">不需要一开始说性取向。可以先说“人际压力”“情绪压力”“被同学开玩笑”。</p>
+        </div>
+        <div class="card">
+          <h3>可信成年人</h3>
+          <p><strong>亲戚、老师、校医、朋友家长</strong></p>
+          <p class="muted">优先找能保密、不羞辱、不威胁、愿意一起想办法的人。</p>
+        </div>
+        <div class="card">
+          <h3>校园欺凌记录</h3>
+          <p><strong>时间、地点、人物、截图、目击者、影响</strong></p>
+          <p class="muted">保留原始截图和聊天记录，不要单独和施害者硬碰硬。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="research" aria-labelledby="research-title">
+      <h2 id="research-title">研究问题与量表依据</h2>
       <div class="grid">
         <div class="card">
-          <h3>它做什么</h3>
-          <ol>
-            <li>用户打开网页，看到匿名和隐私说明。</li>
-            <li>用户从四个按钮里选择最接近自己的困惑。</li>
-            <li>页面显示一段对应的支持性回应和安全提醒。</li>
-            <li>用户用 1-5 分评价“是否感觉被理解”和“是否有帮助”。</li>
-            <li>用户可以写一句开放反馈：还希望这个工具回答什么。</li>
-          </ol>
+          <h3>Research Question</h3>
+          <p>How can a moderated anonymous web space combining scenario-based guidance, brief self-assessment, and peer stories support Chinese high school students in navigating self-identity-related concerns?</p>
         </div>
         <div class="card">
-          <h3>它不做什么</h3>
-          <ul>
-            <li>不做性取向测试。</li>
-            <li>不判断或预测用户身份。</li>
-            <li>不收集姓名、学校、联系方式、精确位置。</li>
-            <li>不要求用户描述具体个人经历。</li>
-            <li>不做登录、AI 聊天、社区或长期用户档案。</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section aria-labelledby="research-title">
-      <h2 id="research-title">研究依据整理</h2>
-      <p>资料显示，支持性的学校、家庭、社区和线上空间都可能成为保护因素；同时，匿名和隐私保护对仍在探索、还不准备公开表达的学生很重要。</p>
-      <div class="research-actions">
-        <button class="research-toggle" type="button" id="research-toggle" aria-expanded="false" aria-controls="research-detail">研究 / The research</button>
-        <p class="muted" style="margin: 0;">展开后可以看到研究问题、假设、关键证据和下一步测试计划。</p>
-      </div>
-      <div class="research-detail" id="research-detail">
-        <div class="grid">
-          <div class="card">
-            <h3>Research Question</h3>
-            <p>Can a one-page anonymous support tool help high school students who are questioning or exploring sexual orientation feel understood and identify safer next steps, without requiring them to reveal personal identity?</p>
-          </div>
-          <div class="card">
-            <h3>Hypothesis</h3>
-            <p>If students can use an anonymous, non-judgmental web tool that does not label them or collect identifying information, then more than half of pilot users will rate the response as 4 or 5 out of 5 for feeling understood.</p>
-          </div>
-        </div>
-        <div class="research-list">
-          <div class="research-item">
-            <h3>为什么需要这个工具</h3>
-            <p>资料显示，风险常常来自污名、欺凌、歧视和缺少支持，而不是身份本身。本作品把重点放在低压力、安全边界和可信下一步。</p>
-          </div>
-          <div class="research-item">
-            <h3>关键证据</h3>
-            <ul>
-              <li>Trevor Project 2025 调查显示，36% 的 LGBTQ+ 青少年过去一年曾认真考虑自杀，77% 认为线上空间能提供支持。</li>
-              <li>CDC 与 GLSEN 资料强调，学校连接感、支持性成年人和安全环境都是重要保护因素。</li>
-              <li>JMIR systematic review 显示，LGBTQ+ 青少年会使用线上空间进行连接、身份探索和社会支持，但也需要隐私保护。</li>
-            </ul>
-          </div>
-          <div class="research-item">
-            <h3>测试方式</h3>
-            <p>让至少 10 个真实用户体验原型，记录两个 1-5 分匿名评分，并整理开放反馈中最常出现的下一版需求。</p>
-          </div>
+          <h3>研究定位</h3>
+          <p>这个作品不是普通日记、开放论坛或 AI 聊天，而是一个低风险的支持空间：用固定路径降低提问门槛，用量表化自评提高研究性，用审核故事墙提供同伴感。</p>
         </div>
       </div>
       <table>
         <thead>
           <tr>
-            <th>来源</th>
-            <th>对本作品的启发</th>
+            <th>模块</th>
+            <th>参考依据</th>
+            <th>在网页中的用法</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>The Trevor Project 2025 U.S. National Survey</td>
-            <td>说明 LGBTQ+ 青少年面临的心理健康压力，也显示线上支持空间的重要性。</td>
+            <td>情绪困扰</td>
+            <td>PHQ-4：由 PHQ-2 与 GAD-2 组成的焦虑/抑郁超短筛查；PHQ/GAD 官方说明为简短自评筛查工具。</td>
+            <td>用 4 个 0-3 项目快速提示“是否需要更多支持”，不输出诊断。</td>
           </tr>
           <tr>
-            <td>CDC 2023 Youth Risk Behavior Survey 与 School Connectedness 资料</td>
-            <td>强调 LGBTQ+ 学生是受青年心理健康危机影响较大的群体，学校连接感是保护因素。</td>
+            <td>主观幸福感</td>
+            <td>WHO-5 Well-Being Index：5 项幸福感筛查，常用于青少年和成人的主观幸福感研究。</td>
+            <td>论文可引用正式 WHO-5；网页原型中用简化语言提示“状态低时应找支持”。</td>
           </tr>
           <tr>
-            <td>GLSEN 2021 National School Climate Survey</td>
-            <td>说明不友好的学校气候可能影响自尊、抑郁、成绩和出勤。</td>
+            <td>社会支持</td>
+            <td>MSPSS：测量来自家人、朋友、重要他人/可信支持者的感知支持。</td>
+            <td>用 3 个来源做支持地图，帮助用户判断“先找谁更稳”。</td>
           </tr>
           <tr>
-            <td>Berger et al. 2022 JMIR systematic review</td>
-            <td>显示 LGBTQ+ 青少年会使用线上空间进行连接、身份探索和社会支持，同时也需要注意隐私和被迫曝光风险。</td>
-          </tr>
-          <tr>
-            <td>APA 与 SAMHSA 相关资料</td>
-            <td>支持非污名化、尊重、多元和以安全为中心的表达方式。</td>
+            <td>表达安全度</td>
+            <td>Disclosure Processes Model：公开/隐藏污名化身份是一个持续的情境决策过程，结果取决于对象、环境、支持和反应。</td>
+            <td>做成安全表达检查表，只给“先观察、先试探、暂缓、找支持”等建议。</td>
           </tr>
         </tbody>
       </table>
+      <div class="notice">
+        可引用资料：<a href="https://www.phqscreeners.com/" target="_blank" rel="noopener">Patient Health Questionnaire Screeners</a>；<a href="https://gzimet.wixsite.com/mspss" target="_blank" rel="noopener">MSPSS official site</a>；Kroenke et al. (2009) PHQ-4；Zimet et al. (1988) MSPSS；Chaudoir & Fisher (2010) Disclosure Processes Model；Topp et al. (2015) WHO-5 systematic review。
+      </div>
+    </section>
+
+    <section id="privacy" aria-labelledby="privacy-title">
+      <h2 id="privacy-title">隐私与审核规则</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>对用户说清楚</h3>
+          <ul>
+            <li>不登录，不要求姓名、学校、手机号、微信、邮箱或精确位置。</li>
+            <li>自评结果只在本地浏览器显示，不自动上传。</li>
+            <li>匿名投稿不等于“没人看见”：发布前会由管理员做安全审核。</li>
+            <li>公开前会删除或模糊化可识别信息。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>审核时拒绝发布</h3>
+          <ul>
+            <li>真实姓名、学校、班级、联系方式、精确地点。</li>
+            <li>攻击、辱骂、引战、歧视或煽动内容。</li>
+            <li>详细自伤方法、危险行为步骤或鼓励他人冒险。</li>
+            <li>未经同意暴露他人隐私的内容。</li>
+          </ul>
+        </div>
+      </div>
     </section>
   </main>
 
   <script>
-    const responses = {
+    const scenarios = {
       uncertain: {
-        label: "不确定自己喜欢谁",
-        title: "不确定是可以存在的",
-        text: "很多人在成长过程中都会经历不确定。你不需要立刻给自己一个固定标签。可以先观察：哪些关系让你感到自然、安心、被吸引，哪些只是好奇、压力或想象。慢慢来是可以的。",
-        next: [
-          "先允许自己不急着定义答案。",
-          "把问题写成一句话，例如“我现在最困惑的是……”。",
-          "只看可信、非评判的信息来源，避免用测试替你下结论。"
-        ]
-      },
-      accepted: {
-        label: "担心别人不接受",
-        title: "先保护自己的安全感",
-        text: "担心别人不接受是很真实的压力。你不需要向所有人解释自己，也不需要在不安全的时候出柜。可以先寻找一个更可信任、更尊重边界的人，或者先用匿名方式了解资料和支持资源。",
-        next: [
-          "先判断对方是否尊重隐私、是否会传播你的话。",
-          "如果环境不安全，暂时不说也是一种保护自己。",
-          "优先找可信成年人、学校心理老师或专业支持资源。"
+        tag: "迷茫中",
+        title: "不确定自己喜欢谁，是可以存在的",
+        understand: "你可能在反复比较自己的感受：这是喜欢、好奇、崇拜，还是只是因为外界压力才想弄清楚。越想立刻得到答案，越容易焦虑。",
+        normalize: "性取向和自我认同不是必须在某一天突然确定的考试答案。你可以先允许自己观察，而不是马上给自己贴标签。",
+        do: [
+          "把问题写得更具体：我困惑的是吸引、关系、标签，还是别人怎么看我？",
+          "看可信、非评判的资料，不用网络测试替你下结论。",
+          "如果情绪受影响，先做情绪自评，判断是否需要找人聊。"
+        ],
+        wait: [
+          "不要因为焦虑就强迫自己立刻公开或立刻确定标签。",
+          "不要把陌生网友或 AI 的一句话当作最终答案。",
+          "不要在公开平台留下能识别你的细节。"
+        ],
+        help: [
+          "如果困惑已经明显影响睡眠、学习或安全感，可以找心理老师或可信成年人。",
+          "如果出现自伤念头或现实危险，优先联系紧急支持。"
         ]
       },
       privacy: {
-        label: "担心查资料的隐私",
-        title: "隐私很重要",
-        text: "想查资料但担心被看到，这个顾虑很合理。你可以使用更安全的设备、清理浏览记录，或选择可信、非刺激化的信息来源。不要在不放心的平台留下姓名、学校、联系方式或具体个人经历。",
-        next: [
-          "不要在陌生网站留下姓名、学校、联系方式或精确位置。",
-          "使用共享设备后，记得关闭页面并清理浏览记录。",
-          "如果有人威胁公开你的信息，优先向可信成年人或学校支持人员求助。"
+        tag: "隐私安全",
+        title: "害怕别人知道，说明你在认真保护自己",
+        understand: "你可能担心浏览记录、聊天记录、同学传播、家人查看手机，或者害怕某个标签被别人拿来定义你。",
+        normalize: "保护隐私不是羞耻。对于还没有足够支持的高中生，先保证安全和边界是很重要的。",
+        do: [
+          "避免在不熟悉的平台留下姓名、学校、联系方式和具体经历。",
+          "使用共享设备后关闭页面，并清理浏览记录。",
+          "把想问的问题改写得更抽象，减少个人细节。"
+        ],
+        wait: [
+          "不要把私人故事发到没有审核、没有隐私规则的公开评论区。",
+          "不要把照片、校服、班级群截图等可识别内容发给陌生人。",
+          "不要把所有压力都放在一个不确定是否可靠的人身上。"
+        ],
+        help: [
+          "如果有人威胁公开你的隐私、聊天记录或照片，请尽快找可信成年人、学校支持人员或法律咨询。",
+          "如果隐私暴露伴随勒索、暴力或人身威胁，应优先求助或报警。"
         ]
       },
-      talk: {
-        label: "不知道能不能和别人聊",
-        title: "可以聊，但要选对对象",
-        text: "不是所有人都适合成为第一个倾诉对象。你可以先想：这个人是否尊重隐私？是否会嘲笑或传播？是否能听你说完？如果答案不确定，先写下来、匿名提问，或找专业心理支持会更稳。",
-        next: [
-          "先列出 1-2 个你相对信任、也比较稳的人。",
-          "可以先问一个小问题，观察对方是否尊重边界。",
-          "如果谈话后感觉更危险，请停止继续透露，并寻求可信支持。"
+      friend: {
+        tag: "朋友支持",
+        title: "可以聊，但先选对第一个对象",
+        understand: "你可能想被朋友理解，但又害怕对方开玩笑、传播、疏远，或者以后用这件事攻击你。",
+        normalize: "想被朋友看见是很自然的需要；但你不欠任何人一次完整坦白。表达可以是逐步的，也可以先试探。",
+        do: [
+          "先观察对方平时是否尊重隐私、是否嘲笑少数群体。",
+          "先问一个小问题，例如“你怎么看别人喜欢同性这件事？”",
+          "准备一句边界话术：我只是想先说到这里，不想被转述。"
+        ],
+        wait: [
+          "不要在冲突、玩笑、群聊或被起哄时公开重要信息。",
+          "不要把“告诉一个人”默认为“所有人都可以知道”。",
+          "不要在没有备用支持时把全部希望放在一个朋友的反应上。"
+        ],
+        help: [
+          "如果朋友威胁传播、索要细节或让你感到更不安全，请停止透露并找更稳的人。",
+          "如果出现校园流言或排挤，可以使用取证记录模板。"
+        ]
+      },
+      family: {
+        tag: "家庭沟通",
+        title: "想告诉家人之前，先评估依赖和安全",
+        understand: "你可能既想诚实，又害怕家人失望、控制手机、责骂、强迫改变，或者影响你在家里的安全感。",
+        normalize: "暂缓告诉家人不代表不诚实。对未成年人来说，生活依赖、经济依赖和家庭反应都是真实因素。",
+        do: [
+          "先评估家人平时对性别、恋爱、少数群体话题的反应。",
+          "想好你能接受说到哪里，哪些问题可以不回答。",
+          "先找一个可信成年人或心理老师，帮你预演可能反应。"
+        ],
+        wait: [
+          "不要在激烈争吵、被逼问或没有退路时仓促说出全部。",
+          "不要把公开表达当成必须一次完成的任务。",
+          "不要忽视现实风险，例如被没收设备、限制外出或被赶出家门。"
+        ],
+        help: [
+          "如果你担心家人反应会带来人身或居住安全风险，请先找可信成年人制定计划。",
+          "如果已经发生暴力、威胁或强迫行为，请优先联系现实中的安全支持。"
+        ]
+      },
+      bullying: {
+        tag: "校园流言",
+        title: "被开玩笑、排挤或威胁时，先保护证据和安全",
+        understand: "你可能正在经历外号、起哄、群聊传播、孤立、威胁曝光或身体冲突。这些不是你应该独自承受的事。",
+        normalize: "被欺凌不是你的错。别人用身份、外貌、表达方式攻击你，责任在攻击行为本身。",
+        do: [
+          "记录时间、地点、涉及的人、具体发生了什么。",
+          "保留原始截图、聊天记录、群名、头像和时间。",
+          "找一个更稳的成年人一起判断下一步，例如心理老师、班主任、年级组或亲戚。"
+        ],
+        wait: [
+          "不要单独和施害者硬碰硬，尤其在对方人数更多或有暴力风险时。",
+          "不要二次编辑证据，以免影响可信度。",
+          "不要因为羞耻感就完全不告诉任何人。"
+        ],
+        help: [
+          "如果涉及威胁、勒索、偷拍视频、传播隐私、身体伤害，优先找成年人或报警。",
+          "如果情绪已经明显崩溃，可以同时联系心理支持。"
+        ]
+      },
+      alone: {
+        tag: "同伴故事",
+        title: "想确认不是只有你这样，是很真实的需要",
+        understand: "很多人最初不是想要一个标准答案，而是想知道：有没有人也经历过类似的迷茫、害怕、慢慢接纳。",
+        normalize: "同伴故事不能替你做决定，但它可以让你感觉自己不是孤立的，也能看到不同人保护自己的方式。",
+        do: [
+          "先看经过审核的故事，注意别人是如何保护隐私和边界的。",
+          "如果想投稿，先删除可识别信息，只分享你愿意公开的部分。",
+          "把故事当作参考，不当作必须照做的模板。"
+        ],
+        wait: [
+          "不要为了被理解而透露过多具体身份信息。",
+          "不要在开放评论区和陌生人私聊敏感经历。",
+          "不要把别人的经历直接套到自己的家庭或学校环境。"
+        ],
+        help: [
+          "如果看故事后更难受、触发强烈情绪，请先离开页面，找现实中更稳的支持。",
+          "如果你正在被威胁或欺凌，优先使用资源导航和取证模板。"
         ]
       }
     };
 
-    let selectedQuestion = "";
-    let latestFeedback = "";
+    const distressItems = [
+      "做事缺少兴趣或乐趣",
+      "感到低落、沮丧或没有希望",
+      "感到紧张、焦虑或坐立不安",
+      "无法停止或控制担心"
+    ];
+
+    const supportItems = [
+      "我身边至少有一个朋友可以认真听我说话",
+      "我身边至少有一个成年人能相对冷静地帮我想办法",
+      "我知道在学校里可以从哪里开始求助"
+    ];
+
+    const comingOutItems = [
+      "对方平时尊重隐私，不会随便传播别人的事",
+      "对方平时不会用羞辱、威胁或惩罚来回应敏感话题",
+      "如果对方反应不好，我还有其他支持者可以联系",
+      "我不是在被逼问、争吵、冲动或情绪崩溃时想说",
+      "我已经想好哪些问题可以回答，哪些问题暂时不回答",
+      "我选择的时间和地点相对安全，不是在群聊或公开场合",
+      "我目前没有因为说出来而面临居住、经济或人身安全风险",
+      "我能接受表达可能需要分步骤，而不是一次说完全部"
+    ];
 
     const buttons = document.querySelectorAll(".option-button");
     const emptyState = document.getElementById("empty-state");
-    const responseBox = document.getElementById("response-box");
-    const nextStepList = document.getElementById("next-step-list");
-    const statusLine = document.getElementById("status-line");
+    const pathwayBox = document.getElementById("pathway-box");
 
     buttons.forEach(function (button) {
       button.addEventListener("click", function () {
-        showResponse(button.dataset.key);
+        showScenario(button.dataset.key);
       });
     });
 
-    document.getElementById("submit-feedback").addEventListener("click", submitFeedback);
-    document.getElementById("reset-tool").addEventListener("click", resetTool);
-    document.getElementById("copy-feedback").addEventListener("click", copyFeedback);
-    document.getElementById("download-feedback").addEventListener("click", downloadFeedback);
+    renderScales();
+    document.getElementById("calculate-scales").addEventListener("click", calculateScales);
+    document.getElementById("reset-scales").addEventListener("click", resetScales);
+    document.getElementById("generate-story").addEventListener("click", generateStory);
+    document.getElementById("clear-story").addEventListener("click", clearStory);
 
-    const researchToggle = document.getElementById("research-toggle");
-    const researchDetail = document.getElementById("research-detail");
-
-    researchToggle.addEventListener("click", function () {
-      const isOpen = researchDetail.classList.toggle("is-open");
-      researchToggle.setAttribute("aria-expanded", String(isOpen));
-      researchToggle.textContent = isOpen ? "收起研究 / Hide research" : "研究 / The research";
-    });
-
-    function showResponse(key) {
-      selectedQuestion = key;
-      const response = responses[key];
+    function showScenario(key) {
+      const scenario = scenarios[key];
 
       buttons.forEach(function (button) {
         button.setAttribute("aria-pressed", String(button.dataset.key === key));
       });
 
-      document.getElementById("result-title").textContent = response.title;
-      document.getElementById("result-text").textContent = response.text;
-      nextStepList.innerHTML = "";
-      response.next.forEach(function (item) {
-        const li = document.createElement("li");
-        li.textContent = item;
-        nextStepList.appendChild(li);
-      });
+      document.getElementById("scenario-tag").textContent = scenario.tag;
+      document.getElementById("scenario-title").textContent = scenario.title;
+      document.getElementById("scenario-understand").textContent = scenario.understand;
+      document.getElementById("scenario-normalize").textContent = scenario.normalize;
+      renderList("scenario-do", scenario.do);
+      renderList("scenario-wait", scenario.wait);
+      renderList("scenario-help", scenario.help);
 
       emptyState.style.display = "none";
-      responseBox.style.display = "block";
-      document.getElementById("feedback-output").style.display = "none";
-      statusLine.textContent = "已选择：" + response.label;
+      pathwayBox.style.display = "block";
+      document.getElementById("pathway").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    function submitFeedback() {
-      if (!selectedQuestion) {
-        statusLine.textContent = "请先选择一个问题。";
+    function renderList(id, items) {
+      const list = document.getElementById(id);
+      list.innerHTML = "";
+      items.forEach(function (item) {
+        const li = document.createElement("li");
+        li.textContent = item;
+        list.appendChild(li);
+      });
+    }
+
+    function renderScales() {
+      const distress = document.getElementById("distress-scale");
+      distressItems.forEach(function (item, index) {
+        distress.appendChild(makeScaleRow("d" + index, item, [
+          ["0", "完全没有"],
+          ["1", "有几天"],
+          ["2", "一半以上天数"],
+          ["3", "几乎每天"]
+        ]));
+      });
+
+      const support = document.getElementById("support-scale");
+      supportItems.forEach(function (item, index) {
+        support.appendChild(makeScaleRow("s" + index, item, [
+          ["1", "很不同意"],
+          ["2", "不同意"],
+          ["3", "不确定"],
+          ["4", "同意"],
+          ["5", "很同意"]
+        ]));
+      });
+
+      const comingOut = document.getElementById("comingout-scale");
+      comingOutItems.forEach(function (item, index) {
+        comingOut.appendChild(makeScaleRow("c" + index, item, [
+          ["1", "是"],
+          ["0", "不确定"],
+          ["-1", "不是"]
+        ]));
+      });
+    }
+
+    function makeScaleRow(id, text, options) {
+      const row = document.createElement("div");
+      row.className = "check-row";
+
+      const label = document.createElement("label");
+      label.setAttribute("for", id);
+      label.textContent = text;
+      label.style.margin = "0";
+
+      const select = document.createElement("select");
+      select.id = id;
+      select.dataset.scaleInput = "true";
+
+      const empty = document.createElement("option");
+      empty.value = "";
+      empty.textContent = "请选择";
+      select.appendChild(empty);
+
+      options.forEach(function (option) {
+        const item = document.createElement("option");
+        item.value = option[0];
+        item.textContent = option[1];
+        select.appendChild(item);
+      });
+
+      row.appendChild(label);
+      row.appendChild(select);
+      return row;
+    }
+
+    function calculateScales() {
+      const distressValues = getValues("d", distressItems.length);
+      const supportValues = getValues("s", supportItems.length);
+      const comingValues = getValues("c", comingOutItems.length);
+      const result = document.getElementById("scale-result");
+
+      if (!distressValues || !supportValues || !comingValues) {
+        result.className = "notice warning";
+        result.innerHTML = "还有自评题没有选择。请尽量完成所有项目；如果你不想回答某题，也可以先跳过这个自评模块。";
         return;
       }
 
-      const understood = document.getElementById("understood").value;
-      const helpful = document.getElementById("helpful").value;
+      const distressTotal = distressValues.reduce(sum, 0);
+      const anxietySub = distressValues[2] + distressValues[3];
+      const depressionSub = distressValues[0] + distressValues[1];
+      const supportAvg = supportValues.reduce(sum, 0) / supportValues.length;
+      const safetyTotal = comingValues.reduce(sum, 0);
 
-      if (!understood || !helpful) {
-        statusLine.textContent = "请先选择两个 1-5 分评分。";
+      let distressText = "当前困扰较低，适合先做自我整理和资源浏览。";
+      if (distressTotal >= 9) {
+        distressText = "当前困扰偏高。建议不要独自扛着，优先联系可信成年人、学校心理老师或心理援助热线。";
+      } else if (distressTotal >= 6) {
+        distressText = "当前困扰中等偏高。建议把“找一个现实支持者”放在下一步，而不只是继续独自搜索。";
+      } else if (distressTotal >= 3) {
+        distressText = "当前有一些困扰。可以继续观察，并找一个安全对象做低压力沟通。";
+      }
+
+      let supportText = "你感受到的支持较足，可以从最稳的那个人开始讨论下一步。";
+      if (supportAvg < 2.6) {
+        supportText = "你感受到的支持较少。此时不建议急着公开表达，先建立支持网络更重要。";
+      } else if (supportAvg < 3.6) {
+        supportText = "你的支持网络还不太确定。可以先寻找一个更可信的成年人或朋友，而不是一次告诉很多人。";
+      }
+
+      let safetyText = "当前更适合：小范围、可控、分步骤表达。";
+      if (safetyTotal <= 1) {
+        safetyText = "当前更适合：暂缓公开，先保护隐私、稳定情绪、找可信支持。";
+      } else if (safetyTotal <= 4) {
+        safetyText = "当前更适合：先试探环境，不急着完整公开。";
+      } else if (safetyTotal >= 7) {
+        safetyText = "当前更适合：如果你仍然想表达，可以准备边界话术，并选择安全时间地点。";
+      }
+
+      result.className = "notice success";
+      result.innerHTML = [
+        "<strong>自评结果只供参考，不是诊断或出柜建议。</strong>",
+        "情绪困扰总分：" + distressTotal + " / 12；焦虑小计：" + anxietySub + " / 6；低落小计：" + depressionSub + " / 6。<br>" + distressText,
+        "支持地图平均分：" + supportAvg.toFixed(1) + " / 5。<br>" + supportText,
+        "安全表达检查：" + safetyTotal + " 分。<br>" + safetyText,
+        "下一步建议：如果分数提示风险较高，请先使用资源导航；如果只是轻度困惑，可以回到情境路径或阅读同伴故事。"
+      ].map(function (item) {
+        return "<p>" + item + "</p>";
+      }).join("");
+    }
+
+    function getValues(prefix, count) {
+      const values = [];
+      for (let i = 0; i < count; i += 1) {
+        const value = document.getElementById(prefix + i).value;
+        if (value === "") {
+          return null;
+        }
+        values.push(Number(value));
+      }
+      return values;
+    }
+
+    function sum(total, value) {
+      return total + value;
+    }
+
+    function resetScales() {
+      document.querySelectorAll("[data-scale-input='true']").forEach(function (input) {
+        input.value = "";
+      });
+      const result = document.getElementById("scale-result");
+      result.className = "notice success";
+      result.textContent = "完成上面的选项后，点击“生成自评建议”。结果只在你的浏览器里显示，不会自动上传。";
+    }
+
+    function generateStory() {
+      const topic = document.getElementById("story-topic").value;
+      const title = document.getElementById("story-title").value.trim();
+      const body = document.getElementById("story-body").value.trim();
+      const checked = document.getElementById("privacy-check").checked;
+      const status = document.getElementById("story-status");
+
+      if (!title || !body) {
+        status.textContent = "请先填写标题和故事内容。";
         return;
       }
 
-      const more = document.getElementById("more").value.trim().replace(/\s+/g, " ");
-      const feedback = {
-        time: new Date().toISOString(),
-        selectedQuestion: responses[selectedQuestion].label,
-        understood: understood,
-        helpful: helpful,
-        more: more
+      if (!checked) {
+        status.textContent = "请先确认你已经检查并删除可识别信息。";
+        return;
+      }
+
+      const warnings = detectPrivacyRisk(title + " " + body);
+      const story = {
+        status: "pending_review",
+        topic: topic,
+        title: title,
+        body: body,
+        submittedAt: new Date().toISOString(),
+        publicRule: "Only a de-identified, reviewed version should be published."
       };
 
-      latestFeedback = JSON.stringify(feedback, null, 2);
-      localStorage.setItem("anonymous_support_feedback", latestFeedback);
-      document.getElementById("feedback-code").textContent = latestFeedback;
-      document.getElementById("feedback-output").style.display = "block";
-      statusLine.textContent = "匿名反馈码已生成。";
+      localStorage.setItem("anonymous_story_draft", JSON.stringify(story, null, 2));
+      document.getElementById("story-preview").textContent = JSON.stringify(story, null, 2);
+      document.getElementById("story-warning").innerHTML = warnings.length
+        ? "<strong>发布前需要重点检查：</strong><ul>" + warnings.map(function (item) { return "<li>" + item + "</li>"; }).join("") + "</ul>"
+        : "<strong>初步检查没有发现明显隐私关键词。</strong><p>仍然需要人工审核：删除姓名、学校、班级、地点、联系方式和可能让熟人认出的细节。</p>";
+      document.getElementById("story-empty").style.display = "none";
+      document.getElementById("story-output").style.display = "block";
+      status.textContent = "投稿预览已生成，当前只保存在本地浏览器。";
     }
 
-    function copyFeedback() {
-      if (!latestFeedback) {
-        statusLine.textContent = "请先生成匿名反馈码。";
-        return;
+    function detectPrivacyRisk(text) {
+      const warnings = [];
+      if (/\d{6,}/.test(text)) {
+        warnings.push("文本里有连续数字，可能是手机号、QQ、学号或日期。");
       }
-
-      if (!navigator.clipboard) {
-        statusLine.textContent = "当前浏览器不支持一键复制，可以手动选中文本复制。";
-        return;
+      if (/(学校|中学|高中|班|年级|校区|宿舍)/.test(text)) {
+        warnings.push("文本里出现学校/班级/宿舍相关词，需要模糊化。");
       }
-
-      navigator.clipboard.writeText(latestFeedback).then(function () {
-        statusLine.textContent = "已复制匿名反馈码。";
-      }).catch(function () {
-        statusLine.textContent = "复制失败，可以手动选中文本复制。";
-      });
+      if (/(微信|vx|QQ|邮箱|电话|手机号|联系方式)/i.test(text)) {
+        warnings.push("文本里可能出现联系方式，不能公开。");
+      }
+      if (/(自杀|自残|割腕|跳楼|轻生)/.test(text)) {
+        warnings.push("文本里可能包含危机或自伤细节，不能作为普通故事公开；应优先转介支持资源。");
+      }
+      if (/(市|区|县|路|小区|地铁站)/.test(text)) {
+        warnings.push("文本里可能包含具体地点，需要删除或泛化。");
+      }
+      return warnings;
     }
 
-    function downloadFeedback() {
-      if (!latestFeedback) {
-        statusLine.textContent = "请先生成匿名反馈码。";
-        return;
-      }
-
-      const data = JSON.parse(latestFeedback);
-      const csv = [
-        "time,selectedQuestion,understood,helpful,more",
-        [data.time, data.selectedQuestion, data.understood, data.helpful, data.more]
-          .map(function (value) {
-            return '"' + String(value).replace(/"/g, '""') + '"';
-          })
-          .join(",")
-      ].join("\n");
-
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "anonymous-feedback.csv";
-      a.click();
-      URL.revokeObjectURL(url);
-      statusLine.textContent = "CSV 已下载。";
-    }
-
-    function resetTool() {
-      selectedQuestion = "";
-      latestFeedback = "";
-      buttons.forEach(function (button) {
-        button.setAttribute("aria-pressed", "false");
-      });
-      document.getElementById("understood").value = "";
-      document.getElementById("helpful").value = "";
-      document.getElementById("more").value = "";
-      document.getElementById("feedback-output").style.display = "none";
-      responseBox.style.display = "none";
-      emptyState.style.display = "grid";
-      statusLine.textContent = "";
+    function clearStory() {
+      document.getElementById("story-title").value = "";
+      document.getElementById("story-body").value = "";
+      document.getElementById("privacy-check").checked = false;
+      document.getElementById("story-output").style.display = "none";
+      document.getElementById("story-empty").style.display = "grid";
+      document.getElementById("story-status").textContent = "";
+      localStorage.removeItem("anonymous_story_draft");
     }
   </script>
 </body>
