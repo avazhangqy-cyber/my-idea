@@ -392,6 +392,12 @@
       margin-top: 10px;
     }
 
+    .ai-answer {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      margin-top: 14px;
+    }
+
     .tag {
       display: inline-flex;
       width: fit-content;
@@ -521,6 +527,44 @@
               <h3>什么时候需要找人帮忙</h3>
               <ul id="scenario-help"></ul>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ai-helper" aria-labelledby="ai-helper-title">
+      <h2 id="ai-helper-title">AI 安全下一步助手</h2>
+      <p class="muted">你可以写一句现在最想问的问题。AI 只会给一般性的支持和安全提醒，不会判断你的身份，也不会替代心理咨询或危机干预。</p>
+      <div class="grid">
+        <div class="card">
+          <h3>问一个低风险问题</h3>
+          <label for="ai-topic">选择最接近的困惑</label>
+          <select id="ai-topic">
+            <option value="不确定自己喜欢谁">不确定自己喜欢谁</option>
+            <option value="害怕别人知道">害怕别人知道</option>
+            <option value="想告诉朋友">想告诉朋友</option>
+            <option value="想告诉家人">想告诉家人</option>
+            <option value="被开玩笑、排挤或威胁">被开玩笑、排挤或威胁</option>
+            <option value="想确认不是只有我这样">想确认不是只有我这样</option>
+          </select>
+
+          <label for="ai-question">你的问题</label>
+          <textarea id="ai-question" maxlength="800" placeholder="例如：我想和朋友聊这件事，但害怕 TA 告诉别人，我可以先怎么试探？"></textarea>
+
+          <div class="button-row">
+            <button class="action-button" type="button" id="ask-ai">让 AI 给我一个安全下一步</button>
+            <button class="action-button secondary" type="button" id="clear-ai">清空 AI 问题</button>
+          </div>
+          <p class="status-line" id="ai-status" role="status"></p>
+        </div>
+
+        <div class="card white">
+          <h3>AI 回应</h3>
+          <div class="notice warning">
+            请不要输入姓名、学校、班级、联系方式、具体地点或任何能识别你/他人的信息。如果你正在面对暴力、威胁、自伤念头或现实危险，请优先联系现实中的可信成年人或紧急支持。
+          </div>
+          <div class="notice success ai-answer" id="ai-answer" aria-live="polite">
+            AI 回应会显示在这里。
           </div>
         </div>
       </div>
@@ -903,6 +947,8 @@
     renderScales();
     document.getElementById("calculate-scales").addEventListener("click", calculateScales);
     document.getElementById("reset-scales").addEventListener("click", resetScales);
+    document.getElementById("ask-ai").addEventListener("click", askAi);
+    document.getElementById("clear-ai").addEventListener("click", clearAi);
     document.getElementById("generate-story").addEventListener("click", generateStory);
     document.getElementById("clear-story").addEventListener("click", clearStory);
 
@@ -1076,6 +1122,55 @@
       const result = document.getElementById("scale-result");
       result.className = "notice success";
       result.textContent = "完成上面的选项后，点击“生成自评建议”。结果只在你的浏览器里显示，不会自动上传。";
+    }
+
+    async function askAi() {
+      const topic = document.getElementById("ai-topic").value;
+      const question = document.getElementById("ai-question").value.trim();
+      const status = document.getElementById("ai-status");
+      const answer = document.getElementById("ai-answer");
+      const button = document.getElementById("ask-ai");
+
+      if (!question) {
+        status.textContent = "请先写一句你想问的问题。";
+        return;
+      }
+
+      status.textContent = "正在请求 DeepSeek...";
+      answer.textContent = "请稍等，AI 正在整理回应。";
+      button.disabled = true;
+
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            topic: topic,
+            question: question
+          })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "DeepSeek 请求失败。");
+        }
+
+        answer.textContent = data.answer;
+        status.textContent = "AI 回应已生成。";
+      } catch (error) {
+        answer.textContent = "暂时没有拿到 AI 回应。请确认本地或 Vercel 已配置服务器环境变量，然后再试一次。\n\n错误信息：" + error.message;
+        status.textContent = "AI 请求失败。";
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function clearAi() {
+      document.getElementById("ai-question").value = "";
+      document.getElementById("ai-status").textContent = "";
+      document.getElementById("ai-answer").textContent = "AI 回应会显示在这里。";
     }
 
     async function generateStory() {

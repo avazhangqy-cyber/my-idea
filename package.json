@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "dev": "node scripts/local-server.js",
     "build:ppt": "node make-pptx.js"
   },
   "dependencies": {
