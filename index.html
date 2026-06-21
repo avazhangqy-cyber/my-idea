@@ -461,7 +461,7 @@
           <span class="pill">无需登录</span>
           <span class="pill">不做性取向测试</span>
           <span class="pill">不贴标签</span>
-          <span class="pill">本地交互</span>
+          <span class="pill">匿名数据存入 Supabase</span>
           <span class="pill">故事先审核再公开</span>
         </div>
       </div>
@@ -584,7 +584,7 @@
       <div class="grid" style="margin-top: 16px;">
         <div class="card">
           <h3>匿名投稿</h3>
-          <p class="muted">投稿不会自动公开。公开前应由管理员删除或模糊化可识别信息，并拒绝发布联系方式、攻击、引战、自伤细节或危险内容。</p>
+          <p class="muted">投稿会提交到 Supabase 后台，但不会自动公开。公开前应由管理员删除或模糊化可识别信息，并拒绝发布联系方式、攻击、引战、自伤细节或危险内容。</p>
           <label for="story-topic">故事标签</label>
           <select id="story-topic">
             <option value="迷茫中">迷茫中</option>
@@ -614,7 +614,7 @@
         <div class="card white">
           <h3>投稿预览 / 审核提示</h3>
           <div class="empty-state" id="story-empty" style="min-height: 260px;">
-            <p>生成后会在这里看到公开前的预览和隐私风险提醒。这个版本不会把故事上传到服务器。</p>
+            <p>生成后会在这里看到公开前的预览和隐私风险提醒。确认后会把匿名投稿提交到 Supabase，方便后续做用户研究整理。</p>
           </div>
           <div class="story-output" id="story-output">
             <div class="story-preview" id="story-preview"></div>
@@ -720,7 +720,7 @@
           <ul>
             <li>不登录，不要求姓名、学校、手机号、微信、邮箱或精确位置。</li>
             <li>自评结果只在本地浏览器显示，不自动上传。</li>
-            <li>匿名投稿不等于“没人看见”：发布前会由管理员做安全审核。</li>
+            <li>匿名投稿会进入 Supabase 后台，不等于“没人看见”：发布前会由管理员做安全审核。</li>
             <li>公开前会删除或模糊化可识别信息。</li>
           </ul>
         </div>
@@ -737,7 +737,12 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    const SUPABASE_URL = "https://cyzuhqzzebeabrueqfdp.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_h0Zf1xqopABjfv10tNhuhA_jzn17qBy";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
     const scenarios = {
       uncertain: {
         tag: "迷茫中",
@@ -1073,12 +1078,13 @@
       result.textContent = "完成上面的选项后，点击“生成自评建议”。结果只在你的浏览器里显示，不会自动上传。";
     }
 
-    function generateStory() {
+    async function generateStory() {
       const topic = document.getElementById("story-topic").value;
       const title = document.getElementById("story-title").value.trim();
       const body = document.getElementById("story-body").value.trim();
       const checked = document.getElementById("privacy-check").checked;
       const status = document.getElementById("story-status");
+      const submitButton = document.getElementById("generate-story");
 
       if (!title || !body) {
         status.textContent = "请先填写标题和故事内容。";
@@ -1100,14 +1106,33 @@
         publicRule: "Only a de-identified, reviewed version should be published."
       };
 
-      localStorage.setItem("anonymous_story_draft", JSON.stringify(story, null, 2));
       document.getElementById("story-preview").textContent = JSON.stringify(story, null, 2);
       document.getElementById("story-warning").innerHTML = warnings.length
         ? "<strong>发布前需要重点检查：</strong><ul>" + warnings.map(function (item) { return "<li>" + item + "</li>"; }).join("") + "</ul>"
         : "<strong>初步检查没有发现明显隐私关键词。</strong><p>仍然需要人工审核：删除姓名、学校、班级、地点、联系方式和可能让熟人认出的细节。</p>";
       document.getElementById("story-empty").style.display = "none";
       document.getElementById("story-output").style.display = "block";
-      status.textContent = "投稿预览已生成，当前只保存在本地浏览器。";
+      status.textContent = "正在提交到 Supabase...";
+      submitButton.disabled = true;
+
+      const result = await supabaseClient
+        .from("anonymous_stories")
+        .insert({
+          topic: topic,
+          title: title,
+          body: body,
+          privacy_warnings: warnings,
+          status: "pending_review"
+        });
+
+      submitButton.disabled = false;
+
+      if (result.error) {
+        status.textContent = "提交失败，请稍后重试：" + result.error.message;
+        return;
+      }
+
+      status.textContent = "投稿已提交到 Supabase，等待人工审核后才可能公开。";
     }
 
     function detectPrivacyRisk(text) {
@@ -1137,7 +1162,6 @@
       document.getElementById("story-output").style.display = "none";
       document.getElementById("story-empty").style.display = "grid";
       document.getElementById("story-status").textContent = "";
-      localStorage.removeItem("anonymous_story_draft");
     }
   </script>
 </body>
