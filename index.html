@@ -550,6 +550,9 @@
 
           <label for="ai-question">你的问题</label>
           <textarea id="ai-question" maxlength="800" placeholder="例如：我想和朋友聊这件事，但害怕 TA 告诉别人，我可以先怎么试探？"></textarea>
+          <div class="notice gold" id="ai-scale-note">
+            如果你先完成“三分钟自评”，AI 会结合你的情绪困扰、支持地图和表达安全度来给建议。自评结果只用于这次回答，不会自动上传。
+          </div>
 
           <div class="button-row">
             <button class="action-button" type="button" id="ask-ai">让 AI 给我一个安全下一步</button>
@@ -937,6 +940,7 @@
     const buttons = document.querySelectorAll(".option-button");
     const emptyState = document.getElementById("empty-state");
     const pathwayBox = document.getElementById("pathway-box");
+    let latestScaleSummary = null;
 
     buttons.forEach(function (button) {
       button.addEventListener("click", function () {
@@ -945,6 +949,7 @@
     });
 
     renderScales();
+    loadApprovedStories();
     document.getElementById("calculate-scales").addEventListener("click", calculateScales);
     document.getElementById("reset-scales").addEventListener("click", resetScales);
     document.getElementById("ask-ai").addEventListener("click", askAi);
@@ -979,6 +984,35 @@
         const li = document.createElement("li");
         li.textContent = item;
         list.appendChild(li);
+      });
+    }
+
+    async function loadApprovedStories() {
+      const list = document.getElementById("story-list");
+      const result = await supabaseClient.rpc("get_approved_anonymous_stories");
+
+      if (result.error) {
+        return;
+      }
+
+      result.data.forEach(function (story) {
+        const article = document.createElement("article");
+        article.className = "story-card";
+
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = story.topic;
+
+        const heading = document.createElement("h3");
+        heading.textContent = "“" + story.title + "”";
+
+        const body = document.createElement("p");
+        body.textContent = story.body;
+
+        article.appendChild(tag);
+        article.appendChild(heading);
+        article.appendChild(body);
+        list.appendChild(article);
       });
     }
 
@@ -1087,6 +1121,17 @@
         safetyText = "当前更适合：如果你仍然想表达，可以准备边界话术，并选择安全时间地点。";
       }
 
+      latestScaleSummary = {
+        distressTotal: distressTotal,
+        anxietySubscore: anxietySub,
+        depressionSubscore: depressionSub,
+        supportAverage: Number(supportAvg.toFixed(1)),
+        safetyTotal: safetyTotal,
+        distressText: distressText,
+        supportText: supportText,
+        safetyText: safetyText
+      };
+
       result.className = "notice success";
       result.innerHTML = [
         "<strong>自评结果只供参考，不是诊断或出柜建议。</strong>",
@@ -1097,6 +1142,8 @@
       ].map(function (item) {
         return "<p>" + item + "</p>";
       }).join("");
+
+      document.getElementById("ai-scale-note").textContent = "AI 已可以结合你的三分钟自评：情绪困扰 " + distressTotal + " / 12，支持地图 " + supportAvg.toFixed(1) + " / 5，安全表达检查 " + safetyTotal + " 分。";
     }
 
     function getValues(prefix, count) {
@@ -1122,6 +1169,8 @@
       const result = document.getElementById("scale-result");
       result.className = "notice success";
       result.textContent = "完成上面的选项后，点击“生成自评建议”。结果只在你的浏览器里显示，不会自动上传。";
+      latestScaleSummary = null;
+      document.getElementById("ai-scale-note").textContent = "如果你先完成“三分钟自评”，AI 会结合你的情绪困扰、支持地图和表达安全度来给建议。自评结果只用于这次回答，不会自动上传。";
     }
 
     async function askAi() {
@@ -1148,7 +1197,8 @@
           },
           body: JSON.stringify({
             topic: topic,
-            question: question
+            question: question,
+            scaleSummary: latestScaleSummary
           })
         });
         const data = await response.json();
