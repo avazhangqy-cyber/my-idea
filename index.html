@@ -564,7 +564,6 @@
       <div class="flow-progress-inner">
         <div class="flow-meta">
           <span id="flow-step-label">开始</span>
-          <span id="flow-step-count">1 / 6</span>
         </div>
         <div class="flow-track" aria-hidden="true">
           <div class="flow-fill" id="flow-fill"></div>
@@ -1110,7 +1109,6 @@
     const flowPrev = document.getElementById("flow-prev");
     const flowNext = document.getElementById("flow-next");
     const flowStepLabel = document.getElementById("flow-step-label");
-    const flowStepCount = document.getElementById("flow-step-count");
     const flowFill = document.getElementById("flow-fill");
     let latestScaleSummary = null;
     let currentFlowIndex = 0;
@@ -1180,7 +1178,6 @@
       const current = flowScreens[currentFlowIndex];
       const progress = ((currentFlowIndex + 1) / flowScreens.length) * 100;
       flowStepLabel.textContent = current.dataset.stepTitle || "";
-      flowStepCount.textContent = (currentFlowIndex + 1) + " / " + flowScreens.length;
       flowFill.style.width = progress + "%";
       flowPrev.hidden = currentFlowIndex === 0;
       flowNext.textContent = currentFlowIndex === flowScreens.length - 1 ? "回到开始" : "下一步";
