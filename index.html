@@ -288,6 +288,12 @@
       border-color: var(--line);
     }
 
+    .completion-panel {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
     .warning {
       border-color: #e4bbb9;
       background: var(--rose-soft);
@@ -860,29 +866,32 @@
     <section id="site-feedback" aria-labelledby="site-feedback-title" data-flow-screen data-step-title="最后反馈">
       <h2 id="site-feedback-title">谢谢你做到这里</h2>
       <p class="lead">如果你愿意，可以留下几句话，帮我们把这个网站做得更好。</p>
-      <div class="grid">
-        <div class="card">
-          <h3>说说你对这个网站的真实感受</h3>
-          <div class="options" id="feedback-options">
-            <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="我喜欢这个网站" aria-pressed="false">我喜欢这个网站</button>
-            <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="有点看不懂" aria-pressed="false">有点看不懂</button>
-            <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="我发现了问题" aria-pressed="false">我发现了问题</button>
-          </div>
-
-          <label for="feedback-body">再补充一点</label>
-          <textarea id="feedback-body" maxlength="800" placeholder="你觉得这个网站哪里最清楚？哪里还可以改进？有没有让你困惑、卡住、或者觉得有意思的地方？"></textarea>
-
-          <div class="button-row">
-            <button class="action-button" type="button" id="submit-feedback">提交反馈</button>
-            <button class="action-button secondary" type="button" id="clear-feedback">清空反馈</button>
-          </div>
-          <p class="status-line" id="feedback-status" role="status"></p>
+      <div class="card">
+        <h3>说说你对这个网站的真实感受</h3>
+        <div class="options" id="feedback-options">
+          <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="我喜欢这个网站" aria-pressed="false">我喜欢这个网站</button>
+          <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="有点看不懂" aria-pressed="false">有点看不懂</button>
+          <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="我发现了问题" aria-pressed="false">我发现了问题</button>
         </div>
 
-        <div class="card white">
-          <div class="notice success" id="feedback-thanks" aria-live="polite">
-            你已经完成这个体验了。无论你是否留下反馈，谢谢你认真走到这里。
-          </div>
+        <label for="feedback-body">再补充一点</label>
+        <textarea id="feedback-body" maxlength="800" placeholder="你觉得这个网站哪里最清楚？哪里还可以改进？有没有让你困惑、卡住、或者觉得有意思的地方？"></textarea>
+
+        <div class="button-row">
+          <button class="action-button" type="button" id="submit-feedback">提交反馈</button>
+          <button class="action-button secondary" type="button" id="clear-feedback">清空反馈</button>
+        </div>
+        <p class="status-line" id="feedback-status" role="status"></p>
+      </div>
+    </section>
+
+    <section id="completion" aria-labelledby="completion-title" data-flow-screen data-step-title="完成">
+      <div class="completion-panel">
+        <p class="eyebrow">完成</p>
+        <h2 id="completion-title">你已经完成这个体验了</h2>
+        <p class="lead">无论你是否留下反馈，谢谢你认真走到这里。</p>
+        <div class="notice success">
+          可以把这里当作一次很小的整理：你已经看过安全提醒、同伴故事和下一步资源。需要的时候，也可以再回来重新看一遍。
         </div>
       </div>
     </section>
@@ -1150,7 +1159,8 @@
       "先看看别人已经公开的匿名故事；点击“下一步”后，可以选择是否留下自己的故事。",
       "如果想投稿，先生成预览并确认隐私；不想写也可以点击“下一步”查看安全资源。",
       "这里适合收藏或记下现实支持方式；点击“下一步”后，可以留下对网站的反馈。",
-      "选一个最接近的真实感受，再写一点补充，点击“提交反馈”；结束后可以回到开始。"
+      "愿意的话选一个真实感受，再写一点补充；提交后会进入完成页，也可以直接点击“下一步”。",
+      "体验已经结束。需要的话，可以点击“回到开始”重新查看。"
     ];
 
     buttons.forEach(function (button) {
@@ -1573,7 +1583,6 @@
     async function submitSiteFeedback() {
       const body = document.getElementById("feedback-body").value.trim();
       const status = document.getElementById("feedback-status");
-      const thanks = document.getElementById("feedback-thanks");
       const submitButton = document.getElementById("submit-feedback");
 
       if (!selectedFeedbackChoice && !body) {
@@ -1606,18 +1615,27 @@
         return;
       }
 
-      status.textContent = "收到啦，谢谢你的建议。";
-      thanks.textContent = "收到啦，谢谢你的建议。这会真的帮到我们。";
+      status.textContent = "收到啦，谢谢你的建议。这会真的帮到我们。";
+      showCompletionScreen();
     }
 
     function clearSiteFeedback() {
       selectedFeedbackChoice = "";
       document.getElementById("feedback-body").value = "";
       document.getElementById("feedback-status").textContent = "";
-      document.getElementById("feedback-thanks").textContent = "你已经完成这个体验了。无论你是否留下反馈，谢谢你认真走到这里。";
       document.querySelectorAll(".feedback-choice").forEach(function (button) {
         button.setAttribute("aria-pressed", "false");
       });
+    }
+
+    function showCompletionScreen() {
+      const completionIndex = flowScreens.findIndex(function (screen) {
+        return screen.id === "completion";
+      });
+
+      if (completionIndex >= 0) {
+        showFlowScreen(completionIndex);
+      }
     }
   </script>
 </body>
