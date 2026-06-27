@@ -10,21 +10,21 @@
     }
 
     :root {
-      --bg: #f6f4ef;
-      --paper: #fffefa;
-      --paper-2: #f7f4ed;
-      --ink: #202020;
-      --muted: #5d5b55;
-      --line: #d8d0c2;
-      --blue: #255c8a;
-      --blue-soft: #e8f1f8;
-      --green: #2f7454;
-      --green-soft: #e7f3ec;
+      --bg: #eef6f3;
+      --paper: #ffffff;
+      --paper-2: #f5faf8;
+      --ink: #17201d;
+      --muted: #53625d;
+      --line: #c9d8d2;
+      --blue: #245c73;
+      --blue-soft: #e4f2f6;
+      --green: #28634f;
+      --green-soft: #e5f4ec;
       --rose: #94413f;
       --rose-soft: #faeeee;
       --gold: #886324;
       --gold-soft: #f7ecd4;
-      --shadow: rgba(60, 48, 33, 0.08);
+      --shadow: rgba(24, 50, 42, 0.1);
     }
 
     body {
@@ -32,13 +32,16 @@
       min-height: 100vh;
       font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
       color: var(--ink);
-      background: linear-gradient(180deg, #f4efe6 0%, #faf8f2 48%, #f0ece4 100%);
+      background:
+        radial-gradient(circle at 18% 10%, rgba(71, 135, 149, 0.18), transparent 30%),
+        radial-gradient(circle at 82% 12%, rgba(83, 151, 111, 0.18), transparent 28%),
+        linear-gradient(180deg, #eef7f4 0%, #f8fbfa 54%, #e9f1ee 100%);
     }
 
     main {
       width: min(100%, 1120px);
       margin: 0 auto;
-      padding: 26px 18px 56px;
+      padding: 86px 18px 110px;
     }
 
     header,
@@ -49,6 +52,94 @@
       box-shadow: 0 12px 34px var(--shadow);
       margin-bottom: 18px;
       padding: 24px;
+    }
+
+    [data-flow-screen] {
+      display: none;
+      min-height: calc(100vh - 196px);
+      align-content: center;
+    }
+
+    [data-flow-screen].active-screen {
+      display: grid;
+      animation: screenIn 0.24s ease-out;
+    }
+
+    @keyframes screenIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .flow-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(201, 216, 210, 0.85);
+      background: rgba(248, 251, 250, 0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .flow-progress-inner {
+      width: min(100%, 1120px);
+      margin: 0 auto;
+      padding: 14px 18px;
+    }
+
+    .flow-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .flow-track {
+      height: 6px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #dce8e4;
+    }
+
+    .flow-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      transition: width 0.2s ease;
+    }
+
+    .flow-actions {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      border-top: 1px solid rgba(201, 216, 210, 0.85);
+      background: rgba(248, 251, 250, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .flow-actions-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px;
+      width: min(100%, 1120px);
+      margin: 0 auto;
+      padding: 12px 18px;
+    }
+
+    .flow-actions button[hidden] {
+      display: none;
     }
 
     header {
@@ -445,6 +536,10 @@
         padding: 20px;
       }
 
+      main {
+        padding-top: 82px;
+      }
+
       .check-row {
         gap: 6px;
       }
@@ -458,7 +553,19 @@
 </head>
 <body>
   <main>
-    <header>
+    <nav class="flow-progress" aria-label="体验进度">
+      <div class="flow-progress-inner">
+        <div class="flow-meta">
+          <span id="flow-step-label">开始</span>
+          <span id="flow-step-count">1 / 6</span>
+        </div>
+        <div class="flow-track" aria-hidden="true">
+          <div class="flow-fill" id="flow-fill"></div>
+        </div>
+      </div>
+    </nav>
+
+    <header data-flow-screen data-step-title="开始">
       <div>
         <p class="eyebrow">Anonymous Identity Support Space</p>
         <h1>匿名自我认同支持空间</h1>
@@ -480,7 +587,7 @@
       </aside>
     </header>
 
-    <section id="pathway" aria-labelledby="pathway-title">
+    <section id="pathway" aria-labelledby="pathway-title" data-flow-screen data-step-title="选择困惑">
       <h2 id="pathway-title">你现在遇到的是哪一种困惑？</h2>
       <p class="muted">先选一个最接近的情境。页面不会判断你的身份，只会给出理解、风险提醒、下一步和相关故事。</p>
       <div class="tool-layout">
@@ -532,7 +639,7 @@
       </div>
     </section>
 
-    <section id="ai-helper" aria-labelledby="ai-helper-title">
+    <section id="ai-helper" aria-labelledby="ai-helper-title" data-flow-screen data-step-title="AI 帮助">
       <h2 id="ai-helper-title">AI 安全下一步助手</h2>
       <p class="muted">你可以写一句现在最想问的问题。AI 只会给一般性的支持和安全提醒，不会判断你的身份，也不会替代心理咨询或危机干预。</p>
       <div class="grid">
@@ -573,18 +680,18 @@
       </div>
     </section>
 
-    <section id="scales" aria-labelledby="scales-title">
-      <h2 id="scales-title">三分钟自评：状态、支持、表达安全度</h2>
-      <p class="muted">这些自评用于原型研究和自我整理，不用于诊断。正式论文中可以说明：心理状态参考 PHQ-4 / WHO-5，社会支持参考 MSPSS，表达安全度参考 disclosure decision-making 研究。</p>
+    <section id="scales" aria-labelledby="scales-title" data-flow-screen data-step-title="状态检查">
+      <h2 id="scales-title">三分钟状态检查</h2>
+      <p class="muted">不用给自己贴标签。这里只帮你看看：现在更适合表达、试探、暂缓，还是先找一个更稳的支持者。</p>
       <div class="three-grid">
         <div class="card white">
-          <h3>1. 情绪困扰筛查</h3>
-          <p class="muted">参考 PHQ-4 的 0-3 评分方式。过去两周，你被以下状态困扰的频率是？</p>
+          <h3>1. 最近的情绪压力</h3>
+          <p class="muted">过去两周，你被以下状态困扰的频率是？</p>
           <div class="scale-list" id="distress-scale"></div>
         </div>
         <div class="card white">
-          <h3>2. 支持地图</h3>
-          <p class="muted">参考 MSPSS 的“家人、朋友、重要他人/可信成年人”三个支持来源。</p>
+          <h3>2. 你身边的支持</h3>
+          <p class="muted">想一想有没有人能认真听你说话，或和你一起判断下一步。</p>
           <div class="scale-list" id="support-scale"></div>
         </div>
         <div class="card white">
@@ -602,7 +709,7 @@
       </div>
     </section>
 
-    <section id="stories" aria-labelledby="stories-title">
+    <section id="stories" aria-labelledby="stories-title" data-flow-screen data-step-title="同伴故事">
       <h2 id="stories-title">匿名故事墙：看见相似的人</h2>
       <p class="muted">这里不是开放论坛，也不开放评论和私信。第一版适合做成“匿名投稿，去识别化审核后公开”的同伴故事库。</p>
       <div class="grid story-list" id="story-list">
@@ -671,7 +778,7 @@
       </div>
     </section>
 
-    <section id="resources" aria-labelledby="resources-title">
+    <section id="resources" aria-labelledby="resources-title" data-flow-screen data-step-title="安全资源">
       <h2 id="resources-title">下一步资源导航</h2>
       <p class="muted">资源号码可能因地区接入不同而变化，上线前应再核对本地官方信息。网页里写清“适合什么情况”和“可以怎么开口”，比单纯列电话更有用。</p>
       <div class="three-grid resource-list">
@@ -711,7 +818,7 @@
       </div>
     </section>
 
-    <section id="research" aria-labelledby="research-title">
+    <section id="research" aria-labelledby="research-title" hidden>
       <h2 id="research-title">研究问题与量表依据</h2>
       <div class="grid">
         <div class="card">
@@ -759,7 +866,7 @@
       </div>
     </section>
 
-    <section id="privacy" aria-labelledby="privacy-title">
+    <section id="privacy" aria-labelledby="privacy-title" hidden>
       <h2 id="privacy-title">隐私与审核规则</h2>
       <div class="grid">
         <div class="card">
@@ -782,6 +889,13 @@
         </div>
       </div>
     </section>
+
+    <nav class="flow-actions" aria-label="步骤导航">
+      <div class="flow-actions-inner">
+        <button class="action-button secondary" type="button" id="flow-prev">上一步</button>
+        <button class="action-button" type="button" id="flow-next">下一步</button>
+      </div>
+    </nav>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -940,7 +1054,14 @@
     const buttons = document.querySelectorAll(".option-button");
     const emptyState = document.getElementById("empty-state");
     const pathwayBox = document.getElementById("pathway-box");
+    const flowScreens = Array.from(document.querySelectorAll("[data-flow-screen]"));
+    const flowPrev = document.getElementById("flow-prev");
+    const flowNext = document.getElementById("flow-next");
+    const flowStepLabel = document.getElementById("flow-step-label");
+    const flowStepCount = document.getElementById("flow-step-count");
+    const flowFill = document.getElementById("flow-fill");
     let latestScaleSummary = null;
+    let currentFlowIndex = 0;
 
     buttons.forEach(function (button) {
       button.addEventListener("click", function () {
@@ -950,6 +1071,17 @@
 
     renderScales();
     loadApprovedStories();
+    showFlowScreen(0);
+    flowPrev.addEventListener("click", function () {
+      showFlowScreen(currentFlowIndex - 1);
+    });
+    flowNext.addEventListener("click", function () {
+      if (currentFlowIndex === flowScreens.length - 1) {
+        showFlowScreen(0);
+        return;
+      }
+      showFlowScreen(currentFlowIndex + 1);
+    });
     document.getElementById("calculate-scales").addEventListener("click", calculateScales);
     document.getElementById("reset-scales").addEventListener("click", resetScales);
     document.getElementById("ask-ai").addEventListener("click", askAi);
@@ -974,7 +1106,23 @@
 
       emptyState.style.display = "none";
       pathwayBox.style.display = "block";
-      document.getElementById("pathway").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function showFlowScreen(index) {
+      currentFlowIndex = Math.max(0, Math.min(index, flowScreens.length - 1));
+      flowScreens.forEach(function (screen, screenIndex) {
+        screen.classList.toggle("active-screen", screenIndex === currentFlowIndex);
+      });
+
+      const current = flowScreens[currentFlowIndex];
+      const progress = ((currentFlowIndex + 1) / flowScreens.length) * 100;
+      flowStepLabel.textContent = current.dataset.stepTitle || "";
+      flowStepCount.textContent = (currentFlowIndex + 1) + " / " + flowScreens.length;
+      flowFill.style.width = progress + "%";
+      flowPrev.hidden = currentFlowIndex === 0;
+      flowNext.textContent = currentFlowIndex === flowScreens.length - 1 ? "回到开始" : "下一步";
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function renderList(id, items) {
