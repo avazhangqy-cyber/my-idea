@@ -41,7 +41,7 @@
     main {
       width: min(100%, 1120px);
       margin: 0 auto;
-      padding: 86px 18px 110px;
+      padding: 86px 18px 154px;
     }
 
     header,
@@ -140,6 +140,34 @@
 
     .flow-actions button[hidden] {
       display: none;
+    }
+
+    #flow-prev[hidden] + #flow-next {
+      grid-column: 1 / -1;
+    }
+
+    .flow-guidance {
+      width: min(100%, 1120px);
+      margin: 0 auto;
+      padding: 12px 18px 0;
+    }
+
+    .flow-guidance-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper-2);
+      color: var(--muted);
+      padding: 10px 12px;
+    }
+
+    .flow-guidance-card strong {
+      color: var(--ink);
+    }
+
+    .flow-guidance-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
     }
 
     header {
@@ -241,6 +269,12 @@
     .notice {
       margin-top: 14px;
       line-height: 1.7;
+    }
+
+    .route-guide {
+      max-width: 780px;
+      background: var(--green-soft);
+      border-color: var(--line);
     }
 
     .warning {
@@ -526,6 +560,7 @@
 
       main {
         padding-top: 82px;
+        padding-bottom: 178px;
       }
 
       .check-row {
@@ -557,6 +592,9 @@
         <p class="eyebrow">Anonymous Identity Support Space</p>
         <h1>匿名自我认同支持空间</h1>
         <p class="lead">一个面向中国高中生的匿名支持空间：通过情境化指导、简短自评和同伴故事分享，帮助正在探索自我认同的人少一点孤单，并在表达、求助或暂缓公开前做出更安全的下一步选择。</p>
+        <div class="notice route-guide">
+          <strong>接下来怎么走：</strong>先点“下一步”选择困惑，然后可以问 AI、做三分钟状态检查、看同伴故事，最后查看安全资源或留下反馈。
+        </div>
       </div>
       <aside class="header-panel" aria-label="安全边界">
         <h2>安全边界</h2>
@@ -916,6 +954,11 @@
     </section>
 
     <nav class="flow-actions" aria-label="步骤导航">
+      <div class="flow-guidance" aria-live="polite">
+        <div class="flow-guidance-card">
+          <p id="flow-guidance-text"><strong>下一步：</strong>准备好后，点击“下一步”。</p>
+        </div>
+      </div>
       <div class="flow-actions-inner">
         <button class="action-button secondary" type="button" id="flow-prev">上一步</button>
         <button class="action-button" type="button" id="flow-next">下一步</button>
@@ -1084,9 +1127,23 @@
     const flowNext = document.getElementById("flow-next");
     const flowStepLabel = document.getElementById("flow-step-label");
     const flowFill = document.getElementById("flow-fill");
+    const flowGuidanceText = document.getElementById("flow-guidance-text");
     let latestScaleSummary = null;
     let currentFlowIndex = 0;
     let selectedFeedbackChoice = "";
+    const flowGuidance = [
+      "准备好后，点击“下一步”，先选择一个最接近你的困惑。",
+      "先点一个情境，右侧会出现建议；看完后点击“下一步”，可以问 AI 一个更具体的问题。",
+      "写一句低风险问题，点击“让 AI 给我一个安全下一步”；也可以直接点击“下一步”做三分钟状态检查。",
+      "选完最近情绪压力后，点击“下一步”，继续看看你身边的支持。",
+      "选完身边支持后，点击“下一步”，继续判断现在表达是否安全。",
+      "选完安全表达题后，点击页面里的“生成自评建议”，系统会带你进入状态结果。",
+      "看完小结后，可以点击“下一步”去看同伴故事；也可以回到 AI 页面，让 AI 结合结果给建议。",
+      "先看看别人已经公开的匿名故事；点击“下一步”后，可以选择是否留下自己的故事。",
+      "如果想投稿，先生成预览并确认隐私；不想写也可以点击“下一步”查看安全资源。",
+      "这里适合收藏或记下现实支持方式；点击“下一步”后，可以留下对网站的反馈。",
+      "选一个最接近的真实感受，再写一点补充，点击“提交反馈”；结束后可以回到开始。"
+    ];
 
     buttons.forEach(function (button) {
       button.addEventListener("click", function () {
@@ -1155,6 +1212,7 @@
       flowFill.style.width = progress + "%";
       flowPrev.hidden = currentFlowIndex === 0;
       flowNext.textContent = currentFlowIndex === flowScreens.length - 1 ? "回到开始" : "下一步";
+      flowGuidanceText.innerHTML = "<strong>下一步：</strong>" + (flowGuidance[currentFlowIndex] || "看完本页后，点击下方按钮继续。");
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
