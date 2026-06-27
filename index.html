@@ -271,6 +271,14 @@
       line-height: 1.7;
     }
 
+    .selection-summary {
+      margin: 0 0 16px;
+    }
+
+    .selection-summary p {
+      margin: 6px 0 0;
+    }
+
     .route-guide {
       max-width: 780px;
       background: var(--green-soft);
@@ -659,19 +667,15 @@
 
     <section id="ai-helper" aria-labelledby="ai-helper-title" data-flow-screen data-step-title="AI 帮助">
       <h2 id="ai-helper-title">AI 安全下一步助手</h2>
-      <p class="muted">你可以写下现在最想整理的困惑。AI 只会给一般性的支持和安全提醒，不会判断你的身份，也不会替代心理咨询或危机干预。</p>
+      <p class="muted">你可以把上一页选到的大方向说得更具体一点。AI 只会给一般性的支持和安全提醒，不会判断你的身份，也不会替代心理咨询或危机干预。</p>
       <div class="grid">
         <div class="card">
-          <h3>写下你的困惑</h3>
-          <label for="ai-topic">选择最接近的困惑</label>
-          <select id="ai-topic">
-            <option value="不确定自己喜欢谁">不确定自己喜欢谁</option>
-            <option value="害怕别人知道">害怕别人知道</option>
-            <option value="想告诉朋友">想告诉朋友</option>
-            <option value="想告诉家人">想告诉家人</option>
-            <option value="被开玩笑、排挤或威胁">被开玩笑、排挤或威胁</option>
-            <option value="想确认不是只有我这样">想确认不是只有我这样</option>
-          </select>
+          <h3>把刚才的困惑说得更具体一点</h3>
+          <div class="notice selection-summary">
+            <strong>上一步选择：</strong><span id="ai-topic-label">还没有选择</span>
+            <p>如果这个不准确，可以点“上一步”换一个；然后在下面具体展开说说。</p>
+          </div>
+          <input id="ai-topic" type="hidden" value="还没有选择具体困惑">
 
           <label for="ai-question">你的困惑</label>
           <textarea id="ai-question" maxlength="800" placeholder="例如：我想和朋友聊这件事，但害怕 TA 告诉别人，我可以先怎么试探？"></textarea>
@@ -681,7 +685,7 @@
 
           <div class="button-row">
             <button class="action-button" type="button" id="ask-ai">让 AI 给我一个安全下一步</button>
-            <button class="action-button secondary" type="button" id="clear-ai">清空 AI 问题</button>
+            <button class="action-button secondary" type="button" id="clear-ai">清空内容</button>
           </div>
           <p class="status-line" id="ai-status" role="status"></p>
         </div>
@@ -1119,9 +1123,11 @@
       "我能接受表达可能需要分步骤，而不是一次说完全部"
     ];
 
-    const buttons = document.querySelectorAll(".option-button");
+    const buttons = document.querySelectorAll("#scenario-options .option-button");
     const emptyState = document.getElementById("empty-state");
     const pathwayBox = document.getElementById("pathway-box");
+    const aiTopic = document.getElementById("ai-topic");
+    const aiTopicLabel = document.getElementById("ai-topic-label");
     const flowScreens = Array.from(document.querySelectorAll("[data-flow-screen]"));
     const flowPrev = document.getElementById("flow-prev");
     const flowNext = document.getElementById("flow-next");
@@ -1134,7 +1140,7 @@
     const flowGuidance = [
       "准备好后，点击“下一步”，先选择一个最接近你的困惑。",
       "先点一个情境，右侧会出现建议；看完后点击“下一步”，可以问 AI 一个更具体的问题。",
-      "写下你现在最想整理的困惑，点击“让 AI 给我一个安全下一步”；也可以直接点击“下一步”做三分钟状态检查。",
+      "把上一步的大方向具体展开一下，点击“让 AI 给我一个安全下一步”；也可以直接点击“下一步”做三分钟状态检查。",
       "选完最近情绪压力后，点击“下一步”，继续看看你身边的支持。",
       "选完身边支持后，点击“下一步”，继续判断现在表达是否安全。",
       "选完安全表达题后，点击页面里的“生成自评建议”，系统会带你进入状态结果。",
@@ -1189,6 +1195,8 @@
       });
 
       document.getElementById("scenario-tag").textContent = scenario.tag;
+      aiTopic.value = buttonTextForScenario(key);
+      aiTopicLabel.textContent = buttonTextForScenario(key);
       document.getElementById("scenario-title").textContent = scenario.title;
       document.getElementById("scenario-understand").textContent = scenario.understand;
       document.getElementById("scenario-normalize").textContent = scenario.normalize;
@@ -1198,6 +1206,11 @@
 
       emptyState.style.display = "none";
       pathwayBox.style.display = "block";
+    }
+
+    function buttonTextForScenario(key) {
+      const button = document.querySelector("#scenario-options [data-key='" + key + "']");
+      return button ? button.textContent : "还没有选择具体困惑";
     }
 
     function showFlowScreen(index) {
@@ -1427,7 +1440,7 @@
       const button = document.getElementById("ask-ai");
 
       if (!question) {
-        status.textContent = "请先写一句你想问的问题。";
+        status.textContent = "请先写一句你的困惑。";
         return;
       }
 
