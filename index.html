@@ -282,6 +282,26 @@
       font-weight: 800;
     }
 
+    .confusion-hints {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 18px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .confusion-hints li {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--paper-2);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.35;
+      padding: 7px 10px;
+    }
+
     .route-guide {
       max-width: 780px;
       background: var(--green-soft);
@@ -624,7 +644,17 @@
 
     <section id="pathway" aria-labelledby="pathway-title" data-flow-screen data-step-title="选择困惑">
       <h2 id="pathway-title">你现在遇到的是哪一种困惑？</h2>
-      <p class="muted">先选一个最接近的情境。页面不会判断你的身份，只会给出理解、风险提醒、下一步和相关故事。</p>
+      <p class="muted">可以先想想：困惑更接近“我喜欢谁”“要不要给自己一个标签”“别人会不会知道”“能不能告诉朋友或家人”“在学校是否安全”，还是“这些感觉让我很累”。</p>
+      <ul class="confusion-hints" aria-label="困惑方向示例">
+        <li>吸引和喜欢</li>
+        <li>身份标签</li>
+        <li>隐私暴露</li>
+        <li>朋友沟通</li>
+        <li>家庭表达</li>
+        <li>校园安全</li>
+        <li>情绪压力</li>
+      </ul>
+      <p class="muted">下面先选一个最接近的情境。页面不会判断你的身份，只会给出理解、风险提醒、下一步和相关故事。</p>
       <div class="tool-layout">
         <div class="card">
           <h3>Scenario Pathway</h3>
