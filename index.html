@@ -10,21 +10,21 @@
     }
 
     :root {
-      --bg: #fde3ee;
-      --paper: #fffafa;
-      --paper-2: #fff3f7;
-      --ink: #261d22;
-      --muted: #675760;
-      --line: #ead0da;
-      --blue: #8a4f66;
-      --blue-soft: #fae6ef;
-      --green: #7b5d68;
-      --green-soft: #f8e8ef;
+      --bg: #fde7ed;
+      --paper: #fffdfb;
+      --paper-2: #fff6f7;
+      --ink: #2d2427;
+      --muted: #6b5b60;
+      --line: #efd5dc;
+      --blue: #8d5d6b;
+      --blue-soft: #fbe9ee;
+      --green: #7a6067;
+      --green-soft: #faedf1;
       --rose: #94413f;
-      --rose-soft: #fae7eb;
+      --rose-soft: #fbe8ec;
       --gold: #8a6334;
       --gold-soft: #f8ecd8;
-      --shadow: rgba(120, 67, 87, 0.11);
+      --shadow: rgba(123, 76, 91, 0.1);
     }
 
     body {
@@ -33,9 +33,9 @@
       font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(circle at 18% 10%, rgba(255, 214, 229, 0.85), transparent 32%),
-        radial-gradient(circle at 82% 12%, rgba(255, 237, 244, 0.82), transparent 30%),
-        linear-gradient(180deg, #fde0eb 0%, #fff1f6 52%, #fbd8e5 100%);
+        radial-gradient(circle at 18% 10%, rgba(255, 226, 233, 0.9), transparent 34%),
+        radial-gradient(circle at 82% 12%, rgba(255, 244, 238, 0.82), transparent 32%),
+        linear-gradient(180deg, #fbe1e8 0%, #fff4f3 52%, #f9dce5 100%);
     }
 
     main {
@@ -82,8 +82,8 @@
       left: 0;
       right: 0;
       z-index: 10;
-      border-bottom: 1px solid rgba(234, 208, 218, 0.9);
-      background: rgba(255, 248, 250, 0.93);
+      border-bottom: 1px solid rgba(239, 213, 220, 0.9);
+      background: rgba(255, 251, 250, 0.94);
       backdrop-filter: blur(14px);
     }
 
@@ -107,7 +107,7 @@
       height: 6px;
       overflow: hidden;
       border-radius: 999px;
-      background: #f0d8e2;
+      background: #f3dbe2;
     }
 
     .flow-fill {
@@ -124,8 +124,8 @@
       right: 0;
       bottom: 0;
       z-index: 10;
-      border-top: 1px solid rgba(234, 208, 218, 0.9);
-      background: rgba(255, 248, 250, 0.95);
+      border-top: 1px solid rgba(239, 213, 220, 0.9);
+      background: rgba(255, 251, 250, 0.96);
       backdrop-filter: blur(14px);
     }
 
@@ -256,25 +256,6 @@
     .gold {
       border-color: #e0cca2;
       background: var(--gold-soft);
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 16px;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      min-height: 32px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: #ffffff;
-      color: var(--muted);
-      padding: 6px 11px;
-      font-size: 14px;
     }
 
     .grid {
@@ -576,13 +557,6 @@
         <p class="eyebrow">Anonymous Identity Support Space</p>
         <h1>匿名自我认同支持空间</h1>
         <p class="lead">一个面向中国高中生的匿名支持空间：通过情境化指导、简短自评和同伴故事分享，帮助正在探索自我认同的人少一点孤单，并在表达、求助或暂缓公开前做出更安全的下一步选择。</p>
-        <div class="pill-row" aria-label="项目特点">
-          <span class="pill">无需登录</span>
-          <span class="pill">不做性取向测试</span>
-          <span class="pill">不贴标签</span>
-          <span class="pill">匿名数据存入 Supabase</span>
-          <span class="pill">故事先审核再公开</span>
-        </div>
       </div>
       <aside class="header-panel" aria-label="安全边界">
         <h2>安全边界</h2>
