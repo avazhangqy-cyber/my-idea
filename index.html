@@ -170,6 +170,10 @@
       line-height: 1.55;
     }
 
+    .flow-guidance-card p + p {
+      margin-top: 4px;
+    }
+
     header {
       display: grid;
       grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
@@ -306,6 +310,45 @@
       max-width: 780px;
       background: var(--green-soft);
       border-color: var(--line);
+    }
+
+    .flow-overview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow-overview li {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.58);
+      padding: 10px;
+      line-height: 1.55;
+    }
+
+    .flow-overview strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    .completion-summary {
+      display: grid;
+      gap: 10px;
+      margin: 16px 0 0;
+      padding: 0;
+      list-style: none;
+      text-align: left;
+    }
+
+    .completion-summary li {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 11px 12px;
     }
 
     .completion-panel {
@@ -585,6 +628,7 @@
       .tool-layout,
       .grid,
       .three-grid,
+      .flow-overview,
       .button-row,
       .check-row {
         grid-template-columns: 1fr;
@@ -631,6 +675,11 @@
         <p class="lead">一个面向中国高中生的匿名支持空间：通过情境化指导、简短自评和同伴故事分享，帮助正在探索自我认同的人少一点孤单，并在表达、求助或暂缓公开前做出更安全的下一步选择。</p>
         <div class="notice route-guide">
           <strong>接下来怎么走：</strong>先点“下一步”选择困惑，然后可以问 AI、做三分钟状态检查、看同伴故事，最后查看安全资源或留下反馈。
+          <ol class="flow-overview" aria-label="体验流程摘要">
+            <li><strong>1. 定位困惑</strong>先选一个最接近的处境，不需要马上确定身份。</li>
+            <li><strong>2. 整理状态</strong>用 AI 和三分钟自评，把情绪、支持和表达安全分开看。</li>
+            <li><strong>3. 找到下一步</strong>参考同伴故事和资源，选一个更安全、可执行的小行动。</li>
+          </ol>
         </div>
       </div>
       <aside class="header-panel" aria-label="安全边界">
@@ -921,7 +970,12 @@
         <h2 id="completion-title">你已经完成这个体验了</h2>
         <p class="lead">无论你是否留下反馈，谢谢你认真走到这里。</p>
         <div class="notice success">
-          可以把这里当作一次很小的整理：你已经看过安全提醒、同伴故事和下一步资源。需要的时候，也可以再回来重新看一遍。
+          可以把这里当作一次很小的整理。需要的时候，也可以再回来重新看一遍。
+          <ul class="completion-summary" aria-label="完成小结">
+            <li><strong>你已经定位过一个困惑方向：</strong>它可以只是暂时最接近，不需要成为最终答案。</li>
+            <li><strong>你已经看过状态和安全提醒：</strong>下一步可以先保护隐私、找现实支持，或暂时不公开。</li>
+            <li><strong>你已经知道还有哪些入口：</strong>AI 帮助、同伴故事、匿名投稿和安全资源都可以按需要重新查看。</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -1001,7 +1055,8 @@
     <nav class="flow-actions" aria-label="步骤导航">
       <div class="flow-guidance" aria-live="polite">
         <div class="flow-guidance-card">
-          <p id="flow-guidance-text"><strong>下一步：</strong>准备好后，点击“下一步”。</p>
+          <p><strong>本页目标：</strong><span id="flow-purpose-text">先了解这个空间能做什么。</span></p>
+          <p><strong>下一步：</strong><span id="flow-guidance-text">准备好后，点击“下一步”。</span></p>
         </div>
       </div>
       <div class="flow-actions-inner">
@@ -1174,10 +1229,25 @@
     const flowNext = document.getElementById("flow-next");
     const flowStepLabel = document.getElementById("flow-step-label");
     const flowFill = document.getElementById("flow-fill");
+    const flowPurposeText = document.getElementById("flow-purpose-text");
     const flowGuidanceText = document.getElementById("flow-guidance-text");
     let latestScaleSummary = null;
     let currentFlowIndex = 0;
     let selectedFeedbackChoice = "";
+    const flowPurposes = [
+      "先知道这个空间能帮你整理什么，也确认它不能替代现实求助。",
+      "把模糊的烦恼先放进一个比较接近的方向，降低继续说下去的难度。",
+      "把刚才选到的大方向说具体一点，得到一个更稳、更小的下一步。",
+      "只看最近情绪压力的强弱，不需要解释原因，也不用给自己下结论。",
+      "把身边可能的支持者整理出来，看看有没有可以先靠近一点的人。",
+      "把表达风险拆开看，判断现在更适合表达、试探、暂缓还是先找支持。",
+      "把情绪、支持和表达安全合在一起看，形成一个临时状态小结。",
+      "通过匿名故事看到不同人的保护方式，确认自己不是孤立的。",
+      "如果愿意分享，只留下去识别化、可审核的安全版本。",
+      "把现实中可以求助的入口整理出来，方便需要时快速使用。",
+      "留下使用感受，帮助这个支持空间继续变得更清楚、更安全。",
+      "回顾已经看过的内容，把下一步缩小到一个可执行的小行动。"
+    ];
     const flowGuidance = [
       "准备好后，点击“下一步”，先选择一个最接近你的困惑。",
       "先点一个情境，右侧会出现建议；看完后点击“下一步”，可以问 AI 一个更具体的问题。",
@@ -1267,7 +1337,8 @@
       flowFill.style.width = progress + "%";
       flowPrev.hidden = currentFlowIndex === 0;
       flowNext.textContent = currentFlowIndex === flowScreens.length - 1 ? "回到开始" : "下一步";
-      flowGuidanceText.innerHTML = "<strong>下一步：</strong>" + (flowGuidance[currentFlowIndex] || "看完本页后，点击下方按钮继续。");
+      flowPurposeText.textContent = flowPurposes[currentFlowIndex] || "先看清这一页能帮你整理什么。";
+      flowGuidanceText.textContent = flowGuidance[currentFlowIndex] || "看完本页后，点击下方按钮继续。";
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
