@@ -680,32 +680,43 @@
       </div>
     </section>
 
-    <section id="scales" aria-labelledby="scales-title" data-flow-screen data-step-title="状态检查">
+    <section id="scales" aria-labelledby="scales-title" data-flow-screen data-step-title="情绪压力">
       <h2 id="scales-title">三分钟状态检查</h2>
-      <p class="muted">不用给自己贴标签。这里只帮你看看：现在更适合表达、试探、暂缓，还是先找一个更稳的支持者。</p>
-      <div class="three-grid">
-        <div class="card white">
-          <h3>1. 最近的情绪压力</h3>
-          <p class="muted">过去两周，你被以下状态困扰的频率是？</p>
-          <div class="scale-list" id="distress-scale"></div>
-        </div>
-        <div class="card white">
-          <h3>2. 你身边的支持</h3>
-          <p class="muted">想一想有没有人能认真听你说话，或和你一起判断下一步。</p>
-          <div class="scale-list" id="support-scale"></div>
-        </div>
-        <div class="card white">
-          <h3>3. 安全表达检查</h3>
-          <p class="muted">没有任何量表能决定你“该不该出柜”。这个检查表只帮你判断：现在更适合表达、试探、暂缓，还是先找支持。</p>
-          <div class="scale-list" id="comingout-scale"></div>
-        </div>
+      <p class="muted">第一步，先看看最近的情绪压力。不用解释原因，只需要按当下感觉选择。</p>
+      <div class="card white">
+        <h3>1. 最近的情绪压力</h3>
+        <p class="muted">过去两周，你被以下状态困扰的频率是？</p>
+        <div class="scale-list" id="distress-scale"></div>
+      </div>
+    </section>
+
+    <section id="support-check" aria-labelledby="support-check-title" data-flow-screen data-step-title="身边支持">
+      <h2 id="support-check-title">你身边有没有可以靠近一点的人？</h2>
+      <p class="muted">第二步，想一想有没有人能认真听你说话，或和你一起判断下一步。</p>
+      <div class="card white">
+        <h3>2. 你身边的支持</h3>
+        <div class="scale-list" id="support-scale"></div>
+      </div>
+    </section>
+
+    <section id="expression-check" aria-labelledby="expression-check-title" data-flow-screen data-step-title="表达安全">
+      <h2 id="expression-check-title">现在适合说出来吗？</h2>
+      <p class="muted">第三步，不判断你“该不该出柜”。这里只帮你判断：现在更适合表达、试探、暂缓，还是先找支持。</p>
+      <div class="card white">
+        <h3>3. 安全表达检查</h3>
+        <div class="scale-list" id="comingout-scale"></div>
       </div>
       <div class="button-row">
         <button class="action-button" type="button" id="calculate-scales">生成自评建议</button>
         <button class="action-button secondary" type="button" id="reset-scales">清空自评</button>
       </div>
+    </section>
+
+    <section id="scale-summary" aria-labelledby="scale-summary-title" data-flow-screen data-step-title="状态结果">
+      <h2 id="scale-summary-title">你的状态小结</h2>
+      <p class="muted">这里的结果只供参考，不是诊断，也不是替你做决定。你可以带着这个结果去问 AI，得到更贴近当下状态的下一步建议。</p>
       <div class="notice success" id="scale-result" aria-live="polite">
-        完成上面的选项后，点击“生成自评建议”。结果只在你的浏览器里显示，不会自动上传。
+        完成前面三页后，点击“生成自评建议”。结果只在你的浏览器里显示，不会自动上传。
       </div>
     </section>
 
@@ -734,7 +745,11 @@
           <p>被人在群里开玩笑后，我先保存了截图和时间，没有单独去吵。后来找了一个比较稳的老师帮我一起判断下一步。</p>
         </article>
       </div>
+    </section>
 
+    <section id="story-submit" aria-labelledby="story-submit-title" data-flow-screen data-step-title="匿名投稿">
+      <h2 id="story-submit-title">也可以留下一个匿名故事</h2>
+      <p class="muted">投稿不会自动公开。公开前会先审核、去识别化，只显示安全版本。</p>
       <div class="grid" style="margin-top: 16px;">
         <div class="card">
           <h3>匿名投稿</h3>
@@ -1292,6 +1307,12 @@
       }).join("");
 
       document.getElementById("ai-scale-note").textContent = "AI 已可以结合你的三分钟自评：情绪困扰 " + distressTotal + " / 12，支持地图 " + supportAvg.toFixed(1) + " / 5，安全表达检查 " + safetyTotal + " 分。";
+      const summaryIndex = flowScreens.findIndex(function (screen) {
+        return screen.id === "scale-summary";
+      });
+      if (summaryIndex >= 0) {
+        showFlowScreen(summaryIndex);
+      }
     }
 
     function getValues(prefix, count) {
