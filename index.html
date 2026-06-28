@@ -1839,7 +1839,7 @@
         const result = await supabaseClient
           .from("anonymous_stories")
           .insert({
-            topic: "研究问卷-" + label,
+            topic: "研究问卷",
             title: label + "答案",
             body: JSON.stringify(payload, null, 2),
             privacy_warnings: [],
