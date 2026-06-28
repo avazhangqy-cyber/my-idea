@@ -38,6 +38,14 @@
         linear-gradient(180deg, #fbe1e8 0%, #fff4f3 52%, #f9dce5 100%);
     }
 
+    body.consent-pending main {
+      display: none;
+    }
+
+    body.consent-accepted #consent-screen {
+      display: none;
+    }
+
     main {
       width: min(100%, 1120px);
       margin: 0 auto;
@@ -52,6 +60,43 @@
       box-shadow: 0 12px 34px var(--shadow);
       margin-bottom: 18px;
       padding: 24px;
+    }
+
+    .consent-screen {
+      display: grid;
+      min-height: 100vh;
+      align-items: center;
+      width: min(100%, 880px);
+      margin: 0 auto;
+      padding: 26px 18px;
+    }
+
+    .consent-panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 34px var(--shadow);
+      padding: 28px;
+    }
+
+    .consent-list {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .consent-list li {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper-2);
+      line-height: 1.65;
+      padding: 13px 14px;
+    }
+
+    .consent-list strong {
+      color: var(--blue);
     }
 
     [data-flow-screen] {
@@ -351,6 +396,47 @@
       padding: 11px 12px;
     }
 
+    .survey-note {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin: 14px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .survey-note li {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.62);
+      padding: 9px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .survey-note strong {
+      display: block;
+      color: var(--blue);
+      font-size: 22px;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .survey-result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .survey-result-grid p {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.64);
+      margin: 0;
+      padding: 10px;
+    }
+
     .completion-panel {
       max-width: 760px;
       margin: 0 auto;
@@ -629,6 +715,8 @@
       .grid,
       .three-grid,
       .flow-overview,
+      .survey-note,
+      .survey-result-grid,
       .button-row,
       .check-row {
         grid-template-columns: 1fr;
@@ -655,7 +743,29 @@
     }
   </style>
 </head>
-<body>
+<body class="consent-pending">
+  <section class="consent-screen" id="consent-screen" aria-labelledby="consent-title">
+    <div class="consent-panel">
+      <p class="eyebrow">开始之前</p>
+      <h1 id="consent-title">知情同意</h1>
+      <p class="lead">这是一个课堂研究用的小网页。继续之前，请先确认你知道下面这些事。</p>
+      <ul class="consent-list">
+        <li><strong>匿名：</strong>我们不会要求你填写姓名、学校、班级、手机号、微信、邮箱等能认出你是谁的信息。</li>
+        <li><strong>自愿：</strong>参不参加完全由你决定。你可以选择继续，也可以选择不参加。</li>
+        <li><strong>随时可退出：</strong>如果中途不想填了，直接关掉网页离开就可以，不需要解释。</li>
+        <li><strong>数据用途：</strong>你的回答只用于这个课堂研究，不会拿去做别的用途。</li>
+      </ul>
+      <div class="notice warning">
+        请不要在任何输入框里写下真实姓名、具体学校、联系方式或其他能识别你/他人的信息。
+      </div>
+      <div class="button-row">
+        <button class="action-button" type="button" id="accept-consent">我同意，开始体验</button>
+        <button class="action-button secondary" type="button" id="decline-consent">我不同意</button>
+      </div>
+      <p class="status-line" id="consent-status" role="status"></p>
+    </div>
+  </section>
+
   <main>
     <nav class="flow-progress" aria-label="体验进度">
       <div class="flow-progress-inner">
@@ -690,6 +800,30 @@
         </div>
       </aside>
     </header>
+
+    <section id="pre-survey" aria-labelledby="pre-survey-title" data-flow-screen data-step-title="开始前问卷">
+      <h2 id="pre-survey-title">开始前小问卷</h2>
+      <p class="lead">先用 5 个问题记录你现在的感觉。后面会再问一模一样的问题，这样才能比较网页体验前后的变化。</p>
+      <div class="notice">
+        <strong>打分说明</strong>
+        <ul class="survey-note" aria-label="1 到 5 分说明">
+          <li><strong>1</strong>非常不同意</li>
+          <li><strong>2</strong>不太同意</li>
+          <li><strong>3</strong>不确定</li>
+          <li><strong>4</strong>比较同意</li>
+          <li><strong>5</strong>非常同意</li>
+        </ul>
+      </div>
+      <div class="card white">
+        <h3>前测题目</h3>
+        <div class="scale-list" id="pre-survey-list"></div>
+        <div class="button-row">
+          <button class="action-button" type="button" id="submit-pre-survey">提交前测并继续</button>
+          <button class="action-button secondary" type="button" id="clear-pre-survey">清空前测</button>
+        </div>
+      </div>
+      <p class="status-line" id="pre-survey-status" role="status"></p>
+    </section>
 
     <section id="pathway" aria-labelledby="pathway-title" data-flow-screen data-step-title="选择困惑">
       <h2 id="pathway-title">你现在遇到的是哪一种困惑？</h2>
@@ -942,6 +1076,38 @@
       </div>
     </section>
 
+    <section id="post-survey" aria-labelledby="post-survey-title" data-flow-screen data-step-title="结束前问卷">
+      <h2 id="post-survey-title">结束前小问卷</h2>
+      <p class="lead">这里的 5 个问题和开始前完全相同。填完后，网页会自动算出每题变化和总变化。</p>
+      <div class="notice">
+        <strong>打分说明</strong>
+        <ul class="survey-note" aria-label="1 到 5 分说明">
+          <li><strong>1</strong>非常不同意</li>
+          <li><strong>2</strong>不太同意</li>
+          <li><strong>3</strong>不确定</li>
+          <li><strong>4</strong>比较同意</li>
+          <li><strong>5</strong>非常同意</li>
+        </ul>
+      </div>
+      <div class="grid" style="margin-top: 16px;">
+        <div class="card white">
+          <h3>后测题目</h3>
+          <div class="scale-list" id="post-survey-list"></div>
+        </div>
+        <div class="card">
+          <h3>变化结果</h3>
+          <div class="notice success" id="survey-change-result" aria-live="polite">
+            完成后测后，点击“计算变化”，这里会显示前测、后测和变化值。
+          </div>
+          <div class="button-row">
+            <button class="action-button" type="button" id="calculate-survey-change">计算变化</button>
+            <button class="action-button secondary" type="button" id="submit-post-survey" disabled>提交后测</button>
+          </div>
+          <p class="status-line" id="survey-submit-status" role="status"></p>
+        </div>
+      </div>
+    </section>
+
     <section id="site-feedback" aria-labelledby="site-feedback-title" data-flow-screen data-step-title="最后反馈">
       <h2 id="site-feedback-title">谢谢你做到这里</h2>
       <p class="lead">如果你愿意，可以留下几句话，帮我们把这个网站做得更好。</p>
@@ -972,6 +1138,7 @@
         <div class="notice success">
           可以把这里当作一次很小的整理。需要的时候，也可以再回来重新看一遍。
           <ul class="completion-summary" aria-label="完成小结">
+            <li><strong>你已经完成前后小问卷：</strong>它们使用完全相同的题目，可以用后测减前测来观察变化。</li>
             <li><strong>你已经定位过一个困惑方向：</strong>它可以只是暂时最接近，不需要成为最终答案。</li>
             <li><strong>你已经看过状态和安全提醒：</strong>下一步可以先保护隐私、找现实支持，或暂时不公开。</li>
             <li><strong>你已经知道还有哪些入口：</strong>AI 帮助、同伴故事、匿名投稿和安全资源都可以按需要重新查看。</li>
@@ -1071,6 +1238,7 @@
     const SUPABASE_URL = "https://cyzuhqzzebeabrueqfdp.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_h0Zf1xqopABjfv10tNhuhA_jzn17qBy";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const CONSENT_STORAGE_KEY = "identitySupportConsentAccepted";
 
     const scenarios = {
       uncertain: {
@@ -1219,6 +1387,14 @@
       "我能接受表达可能需要分步骤，而不是一次说完全部"
     ];
 
+    const surveyItems = [
+      "我能察觉到自己在性取向或自我认同上的困惑/感受正在发生什么。",
+      "当我遇到相关情境时，我能判断它更接近自我探索、隐私风险、表达安全、情绪压力或求助需求中的哪一类。",
+      "我觉得性取向或自我认同探索，和自己的生活、安全选择有关。",
+      "我能说出至少一个让这类困惑变得更难处理的原因，例如流言、隐私暴露、缺少支持或家庭压力。",
+      "遇到相关处境时，我会更愿意先停下来评估安全和支持，而不是直接忽略或冲动行动。"
+    ];
+
     const buttons = document.querySelectorAll("#scenario-options .option-button");
     const emptyState = document.getElementById("empty-state");
     const pathwayBox = document.getElementById("pathway-box");
@@ -1232,10 +1408,20 @@
     const flowPurposeText = document.getElementById("flow-purpose-text");
     const flowGuidanceText = document.getElementById("flow-guidance-text");
     let latestScaleSummary = null;
+    let latestSurveyChange = null;
+    let submittedSurveyStages = {
+      pre: false,
+      post: false
+    };
+    let submittingSurveyStages = {
+      pre: false,
+      post: false
+    };
     let currentFlowIndex = 0;
     let selectedFeedbackChoice = "";
     const flowPurposes = [
       "先知道这个空间能帮你整理什么，也确认它不能替代现实求助。",
+      "记录体验前的初始状态，之后用同一组题目比较变化。",
       "把模糊的烦恼先放进一个比较接近的方向，降低继续说下去的难度。",
       "把刚才选到的大方向说具体一点，得到一个更稳、更小的下一步。",
       "只看最近情绪压力的强弱，不需要解释原因，也不用给自己下结论。",
@@ -1245,11 +1431,13 @@
       "通过匿名故事看到不同人的保护方式，确认自己不是孤立的。",
       "如果愿意分享，只留下去识别化、可审核的安全版本。",
       "把现实中可以求助的入口整理出来，方便需要时快速使用。",
+      "用和开始前完全相同的题目做后测，并自动算出变化。",
       "留下使用感受，帮助这个支持空间继续变得更清楚、更安全。",
       "回顾已经看过的内容，把下一步缩小到一个可执行的小行动。"
     ];
     const flowGuidance = [
-      "准备好后，点击“下一步”，先选择一个最接近你的困惑。",
+      "准备好后，点击“下一步”，先完成开始前小问卷。",
+      "请完成 5 个 1–5 分问题；填完后点击“下一步”，系统会先提交前测再进入正式体验。",
       "先点一个情境，右侧会出现建议；看完后点击“下一步”，可以问 AI 一个更具体的问题。",
       "把上一步的大方向具体展开一下，点击“让 AI 给我一个安全下一步”；也可以直接点击“下一步”做三分钟状态检查。",
       "选完最近情绪压力后，点击“下一步”，继续看看你身边的支持。",
@@ -1258,7 +1446,8 @@
       "看完小结后，可以点击“下一步”去看同伴故事；也可以回到 AI 页面，让 AI 结合结果给建议。",
       "先看看别人已经公开的匿名故事；点击“下一步”后，可以选择是否留下自己的故事。",
       "如果想投稿，先生成预览并确认隐私；不想写也可以点击“下一步”查看安全资源。",
-      "这里适合收藏或记下现实支持方式；点击“下一步”后，可以留下对网站的反馈。",
+      "这里适合收藏或记下现实支持方式；点击“下一步”后，完成结束前小问卷。",
+      "请完成同样的 5 个问题，再点击“计算变化”；点击“下一步”时系统会先提交后测。",
       "愿意的话选一个真实感受，再写一点补充；提交后会进入完成页，也可以直接点击“下一步”。",
       "体验已经结束。需要的话，可以点击“回到开始”重新查看。"
     ];
@@ -1269,13 +1458,35 @@
       });
     });
 
+    initializeConsent();
+    renderSurvey("pre");
+    renderSurvey("post");
     renderScales();
     loadApprovedStories();
     showFlowScreen(0);
     flowPrev.addEventListener("click", function () {
       showFlowScreen(currentFlowIndex - 1);
     });
-    flowNext.addEventListener("click", function () {
+    flowNext.addEventListener("click", async function () {
+      const currentScreen = flowScreens[currentFlowIndex];
+      if (currentScreen.id === "pre-survey") {
+        const submitted = await ensureSurveySubmitted("pre");
+        if (!submitted) {
+          return;
+        }
+      }
+      if (currentScreen.id === "post-survey") {
+        if (!latestSurveyChange) {
+          if (!validateSurvey("post")) {
+            return;
+          }
+          calculateSurveyChange();
+        }
+        const submitted = await ensureSurveySubmitted("post");
+        if (!submitted) {
+          return;
+        }
+      }
       if (currentFlowIndex === flowScreens.length - 1) {
         showFlowScreen(0);
         return;
@@ -1288,6 +1499,16 @@
     document.getElementById("clear-ai").addEventListener("click", clearAi);
     document.getElementById("generate-story").addEventListener("click", generateStory);
     document.getElementById("clear-story").addEventListener("click", clearStory);
+    document.getElementById("submit-pre-survey").addEventListener("click", async function () {
+      await submitSurveyStage("pre", { advanceAfterSubmit: true });
+    });
+    document.getElementById("clear-pre-survey").addEventListener("click", function () {
+      clearSurveyStage("pre");
+    });
+    document.getElementById("calculate-survey-change").addEventListener("click", calculateSurveyChange);
+    document.getElementById("submit-post-survey").addEventListener("click", function () {
+      submitSurveyStage("post");
+    });
     document.getElementById("submit-feedback").addEventListener("click", submitSiteFeedback);
     document.getElementById("clear-feedback").addEventListener("click", clearSiteFeedback);
     document.querySelectorAll(".feedback-choice").forEach(function (button) {
@@ -1298,6 +1519,32 @@
         });
       });
     });
+
+    function initializeConsent() {
+      const accepted = localStorage.getItem(CONSENT_STORAGE_KEY) === "true";
+      const acceptButton = document.getElementById("accept-consent");
+      const declineButton = document.getElementById("decline-consent");
+      const status = document.getElementById("consent-status");
+
+      if (accepted) {
+        showMainContent();
+      }
+
+      acceptButton.addEventListener("click", function () {
+        localStorage.setItem(CONSENT_STORAGE_KEY, "true");
+        showMainContent();
+      });
+
+      declineButton.addEventListener("click", function () {
+        status.textContent = "没关系，你可以直接关闭这个网页离开。正式内容不会显示。";
+      });
+    }
+
+    function showMainContent() {
+      document.body.classList.remove("consent-pending");
+      document.body.classList.add("consent-accepted");
+      document.getElementById("flow-next").focus();
+    }
 
     function showScenario(key) {
       const scenario = scenarios[key];
@@ -1380,6 +1627,308 @@
         article.appendChild(body);
         list.appendChild(article);
       });
+    }
+
+    function renderSurvey(stage) {
+      const list = document.getElementById(stage + "-survey-list");
+      list.innerHTML = "";
+      surveyItems.forEach(function (item, index) {
+        list.appendChild(makeSurveyRow(stage, index, item));
+      });
+    }
+
+    function makeSurveyRow(stage, index, text) {
+      const id = stage + "-survey-q" + index;
+      const row = document.createElement("div");
+      row.className = "check-row";
+
+      const label = document.createElement("label");
+      label.setAttribute("for", id);
+      label.textContent = String(index + 1) + ". " + text;
+      label.style.margin = "0";
+
+      const select = document.createElement("select");
+      select.id = id;
+      select.dataset.surveyStage = stage;
+
+      const empty = document.createElement("option");
+      empty.value = "";
+      empty.textContent = "请选择";
+      select.appendChild(empty);
+
+      [
+        ["1", "1 非常不同意"],
+        ["2", "2 不太同意"],
+        ["3", "3 不确定"],
+        ["4", "4 比较同意"],
+        ["5", "5 非常同意"]
+      ].forEach(function (option) {
+        const item = document.createElement("option");
+        item.value = option[0];
+        item.textContent = option[1];
+        select.appendChild(item);
+      });
+
+      select.addEventListener("change", function () {
+        submittedSurveyStages[stage] = false;
+        latestSurveyChange = null;
+        if (stage === "pre") {
+          document.getElementById("pre-survey-status").textContent = "";
+          document.getElementById("submit-pre-survey").disabled = false;
+          submittedSurveyStages.post = false;
+          resetSurveyChangeResult();
+        } else {
+          document.getElementById("survey-submit-status").textContent = "";
+          document.getElementById("submit-post-survey").disabled = true;
+          resetSurveyChangeResult();
+        }
+      });
+
+      row.appendChild(label);
+      row.appendChild(select);
+      return row;
+    }
+
+    function validateSurvey(stage) {
+      const values = getSurveyValues(stage);
+      const status = stage === "pre"
+        ? document.getElementById("pre-survey-status")
+        : document.getElementById("survey-submit-status");
+
+      if (!values) {
+        status.textContent = stage === "pre"
+          ? "请先完成 5 个开始前问题，这样后面才能比较变化。"
+          : "请先完成 5 个结束前问题，才能计算变化。";
+        return false;
+      }
+
+      if (stage === "pre") {
+        status.textContent = "前测答案已填完整。点击“提交前测并继续”或底部“下一步”即可提交到 Supabase。";
+      }
+      return true;
+    }
+
+    function getSurveyValues(stage) {
+      const values = [];
+      for (let i = 0; i < surveyItems.length; i += 1) {
+        const value = document.getElementById(stage + "-survey-q" + i).value;
+        if (value === "") {
+          return null;
+        }
+        values.push(Number(value));
+      }
+      return values;
+    }
+
+    function calculateSurveyChange() {
+      const preValues = getSurveyValues("pre");
+      const postValues = getSurveyValues("post");
+      const result = document.getElementById("survey-change-result");
+      const status = document.getElementById("survey-submit-status");
+
+      if (!preValues) {
+        result.className = "notice warning";
+        result.textContent = "开始前小问卷还没有填完。请回到“开始前问卷”补齐 5 题。";
+        return;
+      }
+
+      if (!postValues) {
+        result.className = "notice warning";
+        result.textContent = "结束前小问卷还没有填完。请先完成这 5 题。";
+        return;
+      }
+
+      const changes = postValues.map(function (value, index) {
+        return value - preValues[index];
+      });
+      const totalPre = preValues.reduce(sum, 0);
+      const totalPost = postValues.reduce(sum, 0);
+      const totalChange = totalPost - totalPre;
+      const averageChange = totalChange / surveyItems.length;
+
+      latestSurveyChange = {
+        sessionId: getSurveySessionId(),
+        topic: "匿名自我认同支持空间前后测",
+        scale: "1=非常不同意, 5=非常同意",
+        items: surveyItems,
+        pre: preValues,
+        post: postValues,
+        changes: changes,
+        totalPre: totalPre,
+        totalPost: totalPost,
+        totalChange: totalChange,
+        averageChange: Number(averageChange.toFixed(2)),
+        calculatedAt: new Date().toISOString()
+      };
+
+      const changeText = totalChange > 0
+        ? "整体分数上升，说明体验后相关觉察或安全判断更强。"
+        : totalChange < 0
+          ? "整体分数下降，可能说明体验后用户更谨慎，或题目理解发生了变化。"
+          : "整体分数没有变化，可以再看单题变化。";
+
+      result.className = "notice success";
+      result.innerHTML = [
+        "<p><strong>总分变化：</strong>前测 " + totalPre + " / 25，后测 " + totalPost + " / 25，变化 " + formatChange(totalChange) + "。</p>",
+        "<p><strong>平均变化：</strong>每题平均 " + formatChange(averageChange.toFixed(2)) + " 分。</p>",
+        "<p><strong>怎么读：</strong>" + changeText + "</p>",
+        "<div class=\"survey-result-grid\">" + changes.map(function (change, index) {
+          return "<p><strong>第 " + (index + 1) + " 题</strong><br>前测 " + preValues[index] + "，后测 " + postValues[index] + "，变化 " + formatChange(change) + "</p>";
+        }).join("") + "</div>"
+      ].join("");
+
+      status.textContent = "变化已算好。点击“提交后测”或底部“下一步”，系统会把后测答案写入 Supabase。";
+      document.getElementById("submit-post-survey").disabled = false;
+    }
+
+    function formatChange(value) {
+      const number = Number(value);
+      return number > 0 ? "+" + value : String(value);
+    }
+
+    function getSurveySessionId() {
+      const key = "identitySupportSurveySessionId";
+      let id = sessionStorage.getItem(key);
+      if (!id) {
+        id = window.crypto && window.crypto.randomUUID
+          ? window.crypto.randomUUID()
+          : "survey-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+        sessionStorage.setItem(key, id);
+      }
+      return id;
+    }
+
+    async function ensureSurveySubmitted(stage) {
+      if (submittedSurveyStages[stage]) {
+        return true;
+      }
+      return submitSurveyStage(stage);
+    }
+
+    async function submitSurveyStage(stage, options) {
+      const settings = options || {};
+      const label = surveyStageLabel(stage);
+      const values = getSurveyValues(stage);
+      const status = surveyStatusElement(stage);
+      const submitButton = stage === "pre"
+        ? document.getElementById("submit-pre-survey")
+        : document.getElementById("submit-post-survey");
+
+      if (submittingSurveyStages[stage]) {
+        return false;
+      }
+
+      if (!values) {
+        validateSurvey(stage);
+        return false;
+      }
+
+      if (stage === "post" && !latestSurveyChange) {
+        calculateSurveyChange();
+        if (!latestSurveyChange) {
+          return false;
+        }
+      }
+
+      status.textContent = "正在提交" + label + "到 Supabase...";
+      submittingSurveyStages[stage] = true;
+      submitButton.disabled = true;
+
+      try {
+        const payload = buildSurveyPayload(stage, values);
+        const result = await supabaseClient
+          .from("anonymous_stories")
+          .insert({
+            topic: "研究问卷-" + label,
+            title: label + "答案",
+            body: JSON.stringify(payload, null, 2),
+            privacy_warnings: [],
+            status: "pending_review"
+          });
+
+        if (result.error) {
+          throw result.error;
+        }
+
+        submittedSurveyStages[stage] = true;
+        submittingSurveyStages[stage] = false;
+        status.textContent = label + "已提交到 Supabase。";
+
+        if (settings.advanceAfterSubmit) {
+          showFlowScreen(currentFlowIndex + 1);
+        }
+        return true;
+      } catch (error) {
+        submittingSurveyStages[stage] = false;
+        status.textContent = label + "提交失败，请稍后再试：" + error.message;
+        submitButton.disabled = false;
+        return false;
+      }
+    }
+
+    function buildSurveyPayload(stage, values) {
+      const label = surveyStageLabel(stage);
+      const total = values.reduce(sum, 0);
+      const payload = {
+        session_id: getSurveySessionId(),
+        survey_stage: stage,
+        survey_stage_label: label,
+        submitted_at: new Date().toISOString(),
+        table_used: "anonymous_stories",
+        scale: "1=非常不同意, 2=不太同意, 3=不确定, 4=比较同意, 5=非常同意",
+        total_score: total,
+        answers: values,
+        items: surveyItems.map(function (item, index) {
+          return {
+            question_number: index + 1,
+            question: item,
+            answer: values[index]
+          };
+        })
+      };
+
+      if (stage === "post" && latestSurveyChange) {
+        payload.pre_answers = latestSurveyChange.pre;
+        payload.post_answers = latestSurveyChange.post;
+        payload.item_changes = latestSurveyChange.changes;
+        payload.pre_total_score = latestSurveyChange.totalPre;
+        payload.post_total_score = latestSurveyChange.totalPost;
+        payload.total_change = latestSurveyChange.totalChange;
+        payload.average_change = latestSurveyChange.averageChange;
+      }
+
+      return payload;
+    }
+
+    function surveyStageLabel(stage) {
+      return stage === "pre" ? "前测" : "后测";
+    }
+
+    function surveyStatusElement(stage) {
+      return stage === "pre"
+        ? document.getElementById("pre-survey-status")
+        : document.getElementById("survey-submit-status");
+    }
+
+    function clearSurveyStage(stage) {
+      document.querySelectorAll("[data-survey-stage='" + stage + "']").forEach(function (input) {
+        input.value = "";
+      });
+      submittedSurveyStages[stage] = false;
+      if (stage === "pre") {
+        submittedSurveyStages.post = false;
+        latestSurveyChange = null;
+        document.getElementById("pre-survey-status").textContent = "";
+        document.getElementById("submit-pre-survey").disabled = false;
+        document.getElementById("submit-post-survey").disabled = true;
+        resetSurveyChangeResult();
+      }
+    }
+
+    function resetSurveyChangeResult() {
+      const result = document.getElementById("survey-change-result");
+      result.className = "notice success";
+      result.textContent = "完成后测后，点击“计算变化”，这里会显示前测、后测和变化值。";
     }
 
     function renderScales() {
