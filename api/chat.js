@@ -58,7 +58,7 @@ module.exports = async function handler(req, res) {
   const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) {
     sendJson(res, 500, {
-      error: "The AI server is missing its API environment variable."
+      error: "本地 AI 服务还没有配置 DEEPSEEK_API_KEY。请在线上部署环境配置密钥，或在本地启动服务前设置这个环境变量。"
     });
     return;
   }

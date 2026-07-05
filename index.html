@@ -2324,7 +2324,7 @@
         unlockFlowIndex(currentFlowIndex + 1);
         status.textContent = "匿名日记已生成。读完后可以继续。";
       } catch (error) {
-        answer.textContent = "暂时没有生成匿名日记。可能是网络刚才没有连上生成服务，请刷新后再试一次。";
+        answer.textContent = "暂时没有生成匿名日记。原因：" + (error.message || "生成服务暂时不可用。");
         status.textContent = "暂时没有生成成功。";
       } finally {
         button.disabled = false;
