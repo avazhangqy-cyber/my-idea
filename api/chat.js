@@ -13,7 +13,7 @@ async function readJsonBody(req) {
     let body = "";
     req.on("data", function (chunk) {
       body += chunk;
-      if (body.length > 12000) {
+      if (body.length > 50000) {
         reject(new Error("Request body is too large."));
         req.destroy();
       }
@@ -30,13 +30,21 @@ async function readJsonBody(req) {
 }
 
 function sendJson(res, statusCode, data) {
+  setCorsHeaders(res);
   res.statusCode = statusCode;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.end(JSON.stringify(data));
 }
 
+function setCorsHeaders(res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
 module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") {
+    setCorsHeaders(res);
     res.statusCode = 204;
     res.end();
     return;
@@ -64,7 +72,7 @@ module.exports = async function handler(req, res) {
   }
 
   const topic = String(body.topic || "").slice(0, 60);
-  const question = String(body.question || "").trim().slice(0, 800);
+  const question = String(body.question || "").trim();
   const scaleSummary = body.scaleSummary && typeof body.scaleSummary === "object"
     ? body.scaleSummary
     : null;
@@ -74,7 +82,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  let scaleContext = "用户没有提供三分钟自评结果。";
+  let scaleContext = "用户没有提供额外自评结果。";
   if (scaleSummary) {
     const distressTotal = Number(scaleSummary.distressTotal);
     const anxietySubscore = Number(scaleSummary.anxietySubscore);
@@ -83,7 +91,7 @@ module.exports = async function handler(req, res) {
     const safetyTotal = Number(scaleSummary.safetyTotal);
 
     scaleContext = [
-      "用户完成了三分钟自评。以下分数只供支持建议参考，不是诊断：",
+      "用户完成了额外自评。以下分数只供匿名日记的语气参考，不是诊断：",
       Number.isFinite(distressTotal) ? "情绪困扰总分 " + distressTotal + " / 12。" : "",
       Number.isFinite(anxietySubscore) ? "焦虑小计 " + anxietySubscore + " / 6。" : "",
       Number.isFinite(depressionSubscore) ? "低落小计 " + depressionSubscore + " / 6。" : "",
@@ -108,29 +116,37 @@ module.exports = async function handler(req, res) {
           {
             role: "system",
             content: [
-              "You are a supportive safety-planning helper for a high school web prototype.",
+              "You help a high school web prototype turn a user's concern into an anonymous reflective diary.",
               "Reply in Simplified Chinese.",
+              "The output must clearly say the diary is AI-organized, anonymous, not a real case from a database, not search results, and not therapy.",
               "Do not diagnose, label, or predict the user's identity.",
               "Do not ask for real names, school, address, contact details, or other identifying information.",
               "Do not provide sexual content. Keep guidance age-appropriate, calm, and practical.",
-              "If self-assessment scores are provided, use them only to tailor support. Do not diagnose. Do not say the scores prove anything about identity or mental health.",
+              "Do not pretend the diary came from a real peer, an anonymous database, or a search.",
+              "Avoid exact locations, school names, contact details, and identifying details.",
+              "Rewrite the user's concern as a de-identified diary entry that helps them feel seen while creating some distance from the situation.",
+              "Use first person only if it feels natural, but avoid claiming facts the user did not provide.",
+              "After the diary, add a brief objective reflection that names what may be happening emotionally and socially without diagnosing.",
+              "Then give one small safe next step. The next step should protect privacy and avoid pushing risky disclosure.",
+              "If self-assessment scores are provided, use them only to choose a calmer or more cautious tone. Do not diagnose. Do not say the scores prove anything about identity or mental health.",
               "When distress is high, support is low, or expression safety is low, prioritize privacy, trusted adults, school counselors, hotlines, and delaying risky disclosure.",
               "If the user mentions violence, threats, coercion, self-harm, or emergency risk, tell them to contact a trusted adult, school counselor, local hotline, or emergency services.",
-              "Keep the answer short: empathy, one safety reminder, and 2-4 concrete next steps."
+              "Structure the answer with four headings: 透明说明, 匿名日记, 换个角度看, 可以先做的一小步.",
+              "Keep the anonymous diary around 300-500 Chinese characters. Keep the whole answer warm, non-authoritative, non-clinical, and suitable for a minor."
             ].join(" ")
           },
           {
             role: "user",
             content: [
-              "用户选择的困惑场景：" + (topic || "未选择"),
+              "日记方向：" + (topic || "未选择"),
               scaleContext,
-              "用户问题：" + question
+              "用户的一句话困惑：" + question
             ].join("\n\n")
           }
         ],
         thinking: { type: "disabled" },
-        max_tokens: 450,
-        temperature: 0.3,
+        max_tokens: 700,
+        temperature: 0.6,
         stream: false
       })
     });

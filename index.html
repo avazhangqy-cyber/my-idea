@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>匿名自我认同支持空间</title>
+  <title>匿名日记本</title>
   <style>
     * {
       box-sizing: border-box;
@@ -49,7 +49,7 @@
     main {
       width: min(100%, 1120px);
       margin: 0 auto;
-      padding: 86px 18px 154px;
+      padding: 136px 18px 154px;
     }
 
     header,
@@ -163,6 +163,44 @@
       transition: width 0.2s ease;
     }
 
+    .flow-tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .flow-tab {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.25;
+      padding: 8px 9px;
+      text-align: center;
+    }
+
+    .flow-tab:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .flow-tab[aria-current="step"] {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #ffffff;
+    }
+
+    .flow-tab[aria-disabled="true"] {
+      background: #f4edf0;
+      color: #b09da4;
+      cursor: not-allowed;
+    }
+
     .flow-actions {
       position: fixed;
       left: 0;
@@ -189,34 +227,6 @@
 
     #flow-prev[hidden] + #flow-next {
       grid-column: 1 / -1;
-    }
-
-    .flow-guidance {
-      width: min(100%, 1120px);
-      margin: 0 auto;
-      padding: 12px 18px 0;
-    }
-
-    .flow-guidance-card {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--paper-2);
-      color: var(--muted);
-      padding: 10px 12px;
-    }
-
-    .flow-guidance-card strong {
-      color: var(--ink);
-    }
-
-    .flow-guidance-card p {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.55;
-    }
-
-    .flow-guidance-card p + p {
-      margin-top: 4px;
     }
 
     header {
@@ -435,6 +445,64 @@
       background: rgba(255, 255, 255, 0.64);
       margin: 0;
       padding: 10px;
+    }
+
+    .story-prompts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .story-prompts .option-button {
+      min-height: 54px;
+      background: #ffffff;
+      color: var(--ink);
+    }
+
+    .story-prompts .option-button:hover {
+      background: #f3eee6;
+    }
+
+    .story-mode {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .story-mode span {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.62);
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.45;
+      padding: 9px;
+      text-align: center;
+    }
+
+    .diary-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .diary-entry {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 14px;
+      white-space: pre-wrap;
+    }
+
+    .diary-entry time {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      white-space: normal;
     }
 
     .completion-panel {
@@ -728,8 +796,14 @@
       }
 
       main {
-        padding-top: 82px;
+        padding-top: 176px;
         padding-bottom: 178px;
+      }
+
+      .flow-tabs,
+      .story-prompts,
+      .story-mode {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .check-row {
@@ -775,35 +849,28 @@
         <div class="flow-track" aria-hidden="true">
           <div class="flow-fill" id="flow-fill"></div>
         </div>
+        <div class="flow-tabs" id="flow-tabs" aria-label="可返回的步骤标签"></div>
       </div>
     </nav>
 
     <header data-flow-screen data-step-title="开始">
       <div>
-        <p class="eyebrow">Anonymous Identity Support Space</p>
-        <h1>匿名自我认同支持空间</h1>
-        <p class="lead">一个面向中国高中生的匿名支持空间：通过情境化指导、简短自评和同伴故事分享，帮助正在探索自我认同的人少一点孤单，并在表达、求助或暂缓公开前做出更安全的下一步选择。</p>
-        <div class="notice route-guide">
-          <strong>接下来怎么走：</strong>先点“下一步”选择困惑，然后可以问 AI、做三分钟状态检查、看同伴故事，最后查看安全资源或留下反馈。
-          <ol class="flow-overview" aria-label="体验流程摘要">
-            <li><strong>1. 定位困惑</strong>先选一个最接近的处境，不需要马上确定身份。</li>
-            <li><strong>2. 整理状态</strong>用 AI 和三分钟自评，把情绪、支持和表达安全分开看。</li>
-            <li><strong>3. 找到下一步</strong>参考同伴故事和资源，选一个更安全、可执行的小行动。</li>
-          </ol>
-        </div>
+        <p class="eyebrow">Anonymous Reflective Diary</p>
+        <h1>匿名日记本</h1>
+        <p class="lead">写下一段困惑，让 AI 帮你整理成一篇匿名日记。你可以像读别人的故事一样，重新看见自己的处境。</p>
       </div>
       <aside class="header-panel" aria-label="安全边界">
         <h2>安全边界</h2>
-        <p>这个网页不是心理咨询、诊断工具或危机干预服务。它只能帮你整理处境、评估风险、找到更稳的下一步。</p>
+        <p>这个网页不会判断你的身份，也不会搜索或展示真人个案。日记由 AI 根据你的输入整理生成，只作为陪伴式阅读材料和课堂研究刺激材料。</p>
         <div class="notice warning">
           如果你正在面对暴力、威胁、被迫曝光、自伤念头或强烈情绪危机，请优先联系可信成年人、学校心理老师、当地心理援助热线，或在紧急情况下联系 110 / 120。
         </div>
       </aside>
     </header>
 
-    <section id="pre-survey" aria-labelledby="pre-survey-title" data-flow-screen data-step-title="开始前问卷">
-      <h2 id="pre-survey-title">开始前小问卷</h2>
-      <p class="lead">先用 5 个问题记录你现在的感觉。后面会再问一模一样的问题，这样才能比较网页体验前后的变化。</p>
+    <section id="pre-survey" aria-labelledby="pre-survey-title" data-flow-screen data-step-title="第一站">
+      <h2 id="pre-survey-title">此刻的感受</h2>
+      <p class="lead">请按你现在的真实感觉选择。没有标准答案，也不需要解释原因。</p>
       <div class="notice">
         <strong>打分说明</strong>
         <ul class="survey-note" aria-label="1 到 5 分说明">
@@ -815,17 +882,17 @@
         </ul>
       </div>
       <div class="card white">
-        <h3>前测题目</h3>
+        <h3>5 个小问题</h3>
         <div class="scale-list" id="pre-survey-list"></div>
         <div class="button-row">
-          <button class="action-button" type="button" id="submit-pre-survey">提交前测并继续</button>
-          <button class="action-button secondary" type="button" id="clear-pre-survey">清空前测</button>
+          <button class="action-button" type="button" id="submit-pre-survey">继续</button>
+          <button class="action-button secondary" type="button" id="clear-pre-survey">重新选择</button>
         </div>
       </div>
       <p class="status-line" id="pre-survey-status" role="status"></p>
     </section>
 
-    <section id="pathway" aria-labelledby="pathway-title" data-flow-screen data-step-title="选择困惑">
+    <section id="pathway" aria-labelledby="pathway-title" hidden>
       <h2 id="pathway-title">你现在遇到的是哪一种困惑？</h2>
       <p class="muted">可以先想想：困惑更接近“我喜欢谁”“要不要给自己一个标签”“别人会不会知道”“能不能告诉朋友或家人”“在学校是否安全”，还是“这些感觉让我很累”。</p>
       <ul class="confusion-hints" aria-label="困惑方向示例">
@@ -837,7 +904,7 @@
         <li>校园安全</li>
         <li>情绪压力</li>
       </ul>
-      <p class="muted">下面先选一个最接近的情境。页面不会判断你的身份，只会给出理解、风险提醒、下一步和相关故事。</p>
+      <p class="muted">下面先选一个最接近的情境。页面不会判断你的身份，只会给出理解、风险提醒、下一步和相关整理方向。</p>
       <div class="tool-layout">
         <div class="card">
           <h3>Scenario Pathway</h3>
@@ -887,43 +954,55 @@
       </div>
     </section>
 
-    <section id="ai-helper" aria-labelledby="ai-helper-title" data-flow-screen data-step-title="AI 帮助">
-      <h2 id="ai-helper-title">AI 安全下一步助手</h2>
-      <p class="muted">你可以把上一页选到的大方向说得更具体一点。AI 只会给一般性的支持和安全提醒，不会判断你的身份，也不会替代心理咨询或危机干预。</p>
+    <section id="ai-helper" aria-labelledby="ai-helper-title" data-flow-screen data-step-title="匿名日记">
+      <h2 id="ai-helper-title">整理成一篇匿名日记</h2>
+      <p class="muted">写下一句最近让你困扰的问题。AI 会把它整理成一篇匿名、去识别化的反思日记；它不是搜索到的真人经历，也不是心理咨询。</p>
       <div class="grid">
         <div class="card">
-          <h3>把刚才的困惑说得更具体一点</h3>
-          <div class="notice selection-summary">
-            <strong>上一步选择：</strong><span id="ai-topic-label">还没有选择</span>
+          <h3>先选一个接近的方向，也可以直接自己写</h3>
+          <div class="story-prompts" id="story-prompts" aria-label="困惑方向">
+            <button class="option-button story-prompt" type="button" data-topic="自我探索">不确定自己喜欢谁</button>
+            <button class="option-button story-prompt" type="button" data-topic="孤独感">感觉只有我这样</button>
+            <button class="option-button story-prompt" type="button" data-topic="隐私安全">害怕别人知道</button>
+            <button class="option-button story-prompt" type="button" data-topic="表达和支持">想找人聊但害怕</button>
           </div>
-          <input id="ai-topic" type="hidden" value="还没有选择具体困惑">
+          <div class="notice selection-summary">
+            <strong>日记方向：</strong><span id="ai-topic-label">还没有选择</span>
+          </div>
+          <input id="ai-topic" type="hidden" value="未选择日记方向">
 
-          <label for="ai-question">你的困惑</label>
-          <textarea id="ai-question" maxlength="800" placeholder="例如：我想和朋友聊这件事，但害怕 TA 告诉别人，我可以先怎么试探？"></textarea>
+          <label for="ai-question">最近让我困扰的是</label>
+          <textarea id="ai-question" placeholder="请写下你的困惑。不要写姓名、学校、班级、联系方式、具体地点，或任何能识别你/他人的信息。"></textarea>
           <div class="notice gold" id="ai-scale-note">
-            如果你先完成“三分钟自评”，AI 会结合你的情绪困扰、支持地图和表达安全度来给建议。自评结果只用于这次回答，不会自动上传。
+            我会根据你的问题整理一篇匿名日记。它不是心理治疗，也不代表真实个案；它只是一个安全、非评判的阅读材料，帮你从稍微远一点的角度看见这件事。
           </div>
 
           <div class="button-row">
-            <button class="action-button" type="button" id="ask-ai">让 AI 给我一个安全下一步</button>
+            <button class="action-button" type="button" id="ask-ai">生成匿名日记</button>
             <button class="action-button secondary" type="button" id="clear-ai">清空内容</button>
           </div>
           <p class="status-line" id="ai-status" role="status"></p>
         </div>
 
         <div class="card white">
-          <h3>AI 回应</h3>
+          <h3>生成的匿名日记</h3>
           <div class="notice warning">
-            请不要输入姓名、学校、班级、联系方式、具体地点或任何能识别你/他人的信息。如果你正在面对暴力、威胁、自伤念头或现实危险，请优先联系现实中的可信成年人或紧急支持。
+            透明说明：下面如果出现日记，它是 AI 根据你的输入整理生成的匿名文本，不是真人投稿、搜索结果或诊断建议。
+          </div>
+          <div class="story-mode" aria-label="日记原则">
+            <span>去识别</span>
+            <span>整理</span>
+            <span>匿名</span>
+            <span>非诊断</span>
           </div>
           <div class="notice success ai-answer" id="ai-answer" aria-live="polite">
-            AI 回应会显示在这里。
+            生成后的匿名日记会显示在这里。读完后，请继续下一步。
           </div>
         </div>
       </div>
     </section>
 
-    <section id="scales" aria-labelledby="scales-title" data-flow-screen data-step-title="情绪压力">
+    <section id="scales" aria-labelledby="scales-title" hidden>
       <h2 id="scales-title">三分钟状态检查</h2>
       <p class="muted">第一步，先看看最近的情绪压力。不用解释原因，只需要按当下感觉选择。</p>
       <div class="card white">
@@ -933,7 +1012,7 @@
       </div>
     </section>
 
-    <section id="support-check" aria-labelledby="support-check-title" data-flow-screen data-step-title="身边支持">
+    <section id="support-check" aria-labelledby="support-check-title" hidden>
       <h2 id="support-check-title">你身边有没有可以靠近一点的人？</h2>
       <p class="muted">第二步，想一想有没有人能认真听你说话，或和你一起判断下一步。</p>
       <div class="card white">
@@ -942,7 +1021,7 @@
       </div>
     </section>
 
-    <section id="expression-check" aria-labelledby="expression-check-title" data-flow-screen data-step-title="表达安全">
+    <section id="expression-check" aria-labelledby="expression-check-title" hidden>
       <h2 id="expression-check-title">现在适合说出来吗？</h2>
       <p class="muted">第三步，不判断你“该不该出柜”。这里只帮你判断：现在更适合表达、试探、暂缓，还是先找支持。</p>
       <div class="card white">
@@ -955,7 +1034,7 @@
       </div>
     </section>
 
-    <section id="scale-summary" aria-labelledby="scale-summary-title" data-flow-screen data-step-title="状态结果">
+    <section id="scale-summary" aria-labelledby="scale-summary-title" hidden>
       <h2 id="scale-summary-title">你的状态小结</h2>
       <p class="muted">这里的结果只供参考，不是诊断，也不是替你做决定。你可以带着这个结果去问 AI，得到更贴近当下状态的下一步建议。</p>
       <div class="notice success" id="scale-result" aria-live="polite">
@@ -963,7 +1042,7 @@
       </div>
     </section>
 
-    <section id="stories" aria-labelledby="stories-title" data-flow-screen data-step-title="同伴故事">
+    <section id="stories" aria-labelledby="stories-title" hidden>
       <h2 id="stories-title">匿名故事墙：看见相似的人</h2>
       <p class="muted">这里不是开放论坛，也不开放评论和私信。第一版适合做成“匿名投稿，去识别化审核后公开”的同伴故事库。</p>
       <div class="grid story-list" id="story-list">
@@ -990,7 +1069,7 @@
       </div>
     </section>
 
-    <section id="story-submit" aria-labelledby="story-submit-title" data-flow-screen data-step-title="匿名投稿">
+    <section id="story-submit" aria-labelledby="story-submit-title" hidden>
       <h2 id="story-submit-title">也可以留下一个匿名故事</h2>
       <p class="muted">投稿不会自动公开。公开前会先审核、去识别化，只显示安全版本。</p>
       <div class="grid" style="margin-top: 16px;">
@@ -1036,7 +1115,7 @@
       </div>
     </section>
 
-    <section id="resources" aria-labelledby="resources-title" data-flow-screen data-step-title="安全资源">
+    <section id="resources" aria-labelledby="resources-title" hidden>
       <h2 id="resources-title">下一步资源导航</h2>
       <p class="muted">资源号码可能因地区接入不同而变化，上线前应再核对本地官方信息。网页里写清“适合什么情况”和“可以怎么开口”，比单纯列电话更有用。</p>
       <div class="three-grid resource-list">
@@ -1076,9 +1155,9 @@
       </div>
     </section>
 
-    <section id="post-survey" aria-labelledby="post-survey-title" data-flow-screen data-step-title="结束前问卷">
-      <h2 id="post-survey-title">结束前小问卷</h2>
-      <p class="lead">这里的 5 个问题和开始前完全相同。填完后，网页会自动算出每题变化和总变化。</p>
+    <section id="post-survey" aria-labelledby="post-survey-title" data-flow-screen data-step-title="第二站">
+      <h2 id="post-survey-title">再记录一次</h2>
+      <p class="lead">请继续按你此刻的真实感觉选择。没有标准答案。</p>
       <div class="notice">
         <strong>打分说明</strong>
         <ul class="survey-note" aria-label="1 到 5 分说明">
@@ -1091,36 +1170,69 @@
       </div>
       <div class="grid" style="margin-top: 16px;">
         <div class="card white">
-          <h3>后测题目</h3>
+          <h3>5 个小问题</h3>
           <div class="scale-list" id="post-survey-list"></div>
         </div>
         <div class="card">
-          <h3>变化结果</h3>
+          <h3>完成这一部分</h3>
           <div class="notice success" id="survey-change-result" aria-live="polite">
-            完成后测后，点击“计算变化”，这里会显示前测、后测和变化值。
+            完成所有选择后，点击继续。
           </div>
           <div class="button-row">
-            <button class="action-button" type="button" id="calculate-survey-change">计算变化</button>
-            <button class="action-button secondary" type="button" id="submit-post-survey" disabled>提交后测</button>
+            <button class="action-button" type="button" id="calculate-survey-change">检查是否完成</button>
+            <button class="action-button secondary" type="button" id="submit-post-survey" disabled>继续</button>
           </div>
           <p class="status-line" id="survey-submit-status" role="status"></p>
         </div>
       </div>
     </section>
 
-    <section id="site-feedback" aria-labelledby="site-feedback-title" data-flow-screen data-step-title="最后反馈">
+    <section id="diary-book" aria-labelledby="diary-book-title" data-flow-screen data-step-title="日记本">
+      <h2 id="diary-book-title">我的匿名日记本</h2>
+      <p class="lead">如果你愿意，可以把这次 AI 整理出的匿名日记保存在这个浏览器里。之后再打开同一个设备和浏览器时，可以回来看看当时的心路。</p>
+      <div class="grid">
+        <div class="card">
+          <h3>保存这次日记</h3>
+          <div class="notice gold">
+            日记只会保存在当前设备、当前浏览器的本地存储里，不会写进链接，也不会公开给其他打开这个网站的人。请仍然避免保存姓名、学校、联系方式或能认出具体人的细节；如果使用公共或共用设备，离开前请清空本地日记本。
+          </div>
+          <label class="inline-check">
+            <input id="diary-research-consent" type="checkbox">
+            <span>我愿意把这篇 AI 整理出的匿名日记提交给研究者分析。我确认里面没有姓名、学校、联系方式或具体地点等可识别信息。</span>
+          </label>
+          <div class="button-row">
+            <button class="action-button" type="button" id="save-diary">保存到我的日记本</button>
+            <button class="action-button secondary" type="button" id="submit-diary-research">匿名提交给研究者</button>
+            <button class="action-button secondary" type="button" id="clear-diary-book">清空本地日记本</button>
+          </div>
+          <p class="status-line" id="diary-book-status" role="status"></p>
+        </div>
+        <div class="card white">
+          <h3>已经保存的日记</h3>
+          <div class="empty-state" id="diary-empty" style="min-height: 220px;">
+            <p>这里还没有保存的日记。生成一篇匿名日记后，可以选择把它留下来。</p>
+          </div>
+          <div class="diary-list" id="diary-list" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="site-feedback" aria-labelledby="site-feedback-title" data-flow-screen data-step-title="想法">
       <h2 id="site-feedback-title">谢谢你做到这里</h2>
-      <p class="lead">如果你愿意，可以留下几句话，帮我们把这个网站做得更好。</p>
+      <p class="lead">如果你愿意，可以留下几句话，帮助我们理解 AI 匿名日记为什么有用或没用。</p>
       <div class="card">
-        <h3>说说你对这个网站的真实感受</h3>
+        <h3>读完匿名日记后的开放反馈</h3>
         <div class="options" id="feedback-options">
-          <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="我喜欢这个网站" aria-pressed="false">我喜欢这个网站</button>
-          <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="有点看不懂" aria-pressed="false">有点看不懂</button>
-          <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="我发现了问题" aria-pressed="false">我发现了问题</button>
+          <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="匿名日记让我有被理解的感觉" aria-pressed="false">匿名日记让我有被理解的感觉</button>
+          <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="匿名日记一般" aria-pressed="false">匿名日记一般</button>
+          <button class="option-button secondary feedback-choice" type="button" data-feedback-choice="匿名日记有点不贴近我" aria-pressed="false">匿名日记有点不贴近我</button>
         </div>
 
-        <label for="feedback-body">再补充一点</label>
-        <textarea id="feedback-body" maxlength="800" placeholder="你觉得这个网站哪里最清楚？哪里还可以改进？有没有让你困惑、卡住、或者觉得有意思的地方？"></textarea>
+        <label for="feedback-body">这篇匿名日记里有没有哪一句或哪一段让你有感觉？</label>
+        <textarea id="feedback-body" maxlength="800" placeholder="可以写一句让你有感觉的话，也可以写“没有”。请不要写真实姓名、学校或联系方式。"></textarea>
+
+        <label for="feedback-change">读完以后，你现在有什么想法？</label>
+        <textarea id="feedback-change" maxlength="800" placeholder="例如：更平静了一点、能从外面看见这件事、或者觉得日记不太贴近。"></textarea>
 
         <div class="button-row">
           <button class="action-button" type="button" id="submit-feedback">提交反馈</button>
@@ -1138,10 +1250,10 @@
         <div class="notice success">
           可以把这里当作一次很小的整理。需要的时候，也可以再回来重新看一遍。
           <ul class="completion-summary" aria-label="完成小结">
-            <li><strong>你已经完成前后小问卷：</strong>它们使用完全相同的题目，可以用后测减前测来观察变化。</li>
-            <li><strong>你已经定位过一个困惑方向：</strong>它可以只是暂时最接近，不需要成为最终答案。</li>
-            <li><strong>你已经看过状态和安全提醒：</strong>下一步可以先保护隐私、找现实支持，或暂时不公开。</li>
-            <li><strong>你已经知道还有哪些入口：</strong>AI 帮助、同伴故事、匿名投稿和安全资源都可以按需要重新查看。</li>
+            <li><strong>你已经完成这次体验：</strong>谢谢你认真阅读和回答。</li>
+            <li><strong>你已经读过一篇 AI 匿名日记：</strong>它不是搜索到的真人个案，也不是诊断，只是一个陪伴式阅读材料。</li>
+            <li><strong>你留下的匿名反馈：</strong>会帮助我们继续改进日记的语气和安全边界。</li>
+            <li><strong>你仍然可以保护自己的节奏：</strong>如果现实里有危险或强烈情绪，请优先找可信成年人或专业支持。</li>
           </ul>
         </div>
       </div>
@@ -1220,12 +1332,6 @@
     </section>
 
     <nav class="flow-actions" aria-label="步骤导航">
-      <div class="flow-guidance" aria-live="polite">
-        <div class="flow-guidance-card">
-          <p><strong>本页目标：</strong><span id="flow-purpose-text">先了解这个空间能做什么。</span></p>
-          <p><strong>下一步：</strong><span id="flow-guidance-text">准备好后，点击“下一步”。</span></p>
-        </div>
-      </div>
       <div class="flow-actions-inner">
         <button class="action-button secondary" type="button" id="flow-prev">上一步</button>
         <button class="action-button" type="button" id="flow-next">下一步</button>
@@ -1237,7 +1343,20 @@
   <script>
     const SUPABASE_URL = "https://cyzuhqzzebeabrueqfdp.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_h0Zf1xqopABjfv10tNhuhA_jzn17qBy";
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const supabaseClient = window.supabase
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+      : {
+          from: function () {
+            return {
+              insert: async function () {
+                return { error: new Error("Supabase client did not load.") };
+              }
+            };
+          },
+          rpc: async function () {
+            return { error: new Error("Supabase client did not load."), data: [] };
+          }
+        };
     const CONSENT_STORAGE_KEY = "identitySupportConsentAccepted";
 
     const scenarios = {
@@ -1388,14 +1507,15 @@
     ];
 
     const surveyItems = [
-      "我能察觉到自己在性取向或自我认同上的困惑/感受正在发生什么。",
-      "当我遇到相关情境时，我能判断它更接近自我探索、隐私风险、表达安全、情绪压力或求助需求中的哪一类。",
-      "我觉得性取向或自我认同探索，和自己的生活、安全选择有关。",
-      "我能说出至少一个让这类困惑变得更难处理的原因，例如流言、隐私暴露、缺少支持或家庭压力。",
-      "遇到相关处境时，我会更愿意先停下来评估安全和支持，而不是直接忽略或冲动行动。"
+      "我现在感觉自己被理解。",
+      "我现在感觉自己没有那么孤单。",
+      "我现在对自己的困惑更能接纳。",
+      "我现在知道一个可以让自己更安全或更舒服的小行动。",
+      "我现在愿意给自己的困惑多一点耐心。"
     ];
 
     const buttons = document.querySelectorAll("#scenario-options .option-button");
+    const storyPromptButtons = document.querySelectorAll(".story-prompt");
     const emptyState = document.getElementById("empty-state");
     const pathwayBox = document.getElementById("pathway-box");
     const aiTopic = document.getElementById("ai-topic");
@@ -1405,10 +1525,18 @@
     const flowNext = document.getElementById("flow-next");
     const flowStepLabel = document.getElementById("flow-step-label");
     const flowFill = document.getElementById("flow-fill");
-    const flowPurposeText = document.getElementById("flow-purpose-text");
-    const flowGuidanceText = document.getElementById("flow-guidance-text");
+    const flowTabs = document.getElementById("flow-tabs");
+    const PRODUCTION_ORIGIN = "https://my-idea-topaz.vercel.app";
+    const DIARY_STORAGE_KEY = "anonymousReflectiveDiaryEntries";
+    const localApiHosts = ["localhost", "127.0.0.1", "my-idea-topaz.vercel.app"];
+    const API_ORIGIN = localApiHosts.includes(window.location.hostname) || window.location.hostname.endsWith(".vercel.app")
+      ? ""
+      : PRODUCTION_ORIGIN;
     let latestScaleSummary = null;
     let latestSurveyChange = null;
+    let latestGeneratedDiary = null;
+    let maxUnlockedFlowIndex = 0;
+    let storyGenerated = false;
     let submittedSurveyStages = {
       pre: false,
       post: false
@@ -1419,42 +1547,19 @@
     };
     let currentFlowIndex = 0;
     let selectedFeedbackChoice = "";
-    const flowPurposes = [
-      "先知道这个空间能帮你整理什么，也确认它不能替代现实求助。",
-      "记录体验前的初始状态，之后用同一组题目比较变化。",
-      "把模糊的烦恼先放进一个比较接近的方向，降低继续说下去的难度。",
-      "把刚才选到的大方向说具体一点，得到一个更稳、更小的下一步。",
-      "只看最近情绪压力的强弱，不需要解释原因，也不用给自己下结论。",
-      "把身边可能的支持者整理出来，看看有没有可以先靠近一点的人。",
-      "把表达风险拆开看，判断现在更适合表达、试探、暂缓还是先找支持。",
-      "把情绪、支持和表达安全合在一起看，形成一个临时状态小结。",
-      "通过匿名故事看到不同人的保护方式，确认自己不是孤立的。",
-      "如果愿意分享，只留下去识别化、可审核的安全版本。",
-      "把现实中可以求助的入口整理出来，方便需要时快速使用。",
-      "用和开始前完全相同的题目做后测，并自动算出变化。",
-      "留下使用感受，帮助这个支持空间继续变得更清楚、更安全。",
-      "回顾已经看过的内容，把下一步缩小到一个可执行的小行动。"
-    ];
-    const flowGuidance = [
-      "准备好后，点击“下一步”，先完成开始前小问卷。",
-      "请完成 5 个 1–5 分问题；填完后点击“下一步”，系统会先提交前测再进入正式体验。",
-      "先点一个情境，右侧会出现建议；看完后点击“下一步”，可以问 AI 一个更具体的问题。",
-      "把上一步的大方向具体展开一下，点击“让 AI 给我一个安全下一步”；也可以直接点击“下一步”做三分钟状态检查。",
-      "选完最近情绪压力后，点击“下一步”，继续看看你身边的支持。",
-      "选完身边支持后，点击“下一步”，继续判断现在表达是否安全。",
-      "选完安全表达题后，点击页面里的“生成自评建议”，系统会带你进入状态结果。",
-      "看完小结后，可以点击“下一步”去看同伴故事；也可以回到 AI 页面，让 AI 结合结果给建议。",
-      "先看看别人已经公开的匿名故事；点击“下一步”后，可以选择是否留下自己的故事。",
-      "如果想投稿，先生成预览并确认隐私；不想写也可以点击“下一步”查看安全资源。",
-      "这里适合收藏或记下现实支持方式；点击“下一步”后，完成结束前小问卷。",
-      "请完成同样的 5 个问题，再点击“计算变化”；点击“下一步”时系统会先提交后测。",
-      "愿意的话选一个真实感受，再写一点补充；提交后会进入完成页，也可以直接点击“下一步”。",
-      "体验已经结束。需要的话，可以点击“回到开始”重新查看。"
-    ];
-
     buttons.forEach(function (button) {
       button.addEventListener("click", function () {
         showScenario(button.dataset.key);
+      });
+    });
+    storyPromptButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        storyPromptButtons.forEach(function (item) {
+          item.setAttribute("aria-pressed", String(item === button));
+        });
+        aiTopic.value = button.dataset.topic || "匿名日记";
+        aiTopicLabel.textContent = button.dataset.topic || button.textContent;
+        storyGenerated = false;
       });
     });
 
@@ -1462,7 +1567,7 @@
     renderSurvey("pre");
     renderSurvey("post");
     renderScales();
-    loadApprovedStories();
+    renderFlowTabs();
     showFlowScreen(0);
     flowPrev.addEventListener("click", function () {
       showFlowScreen(currentFlowIndex - 1);
@@ -1474,6 +1579,10 @@
         if (!submitted) {
           return;
         }
+      }
+      if (currentScreen.id === "ai-helper" && !storyGenerated) {
+        document.getElementById("ai-status").textContent = "请先生成并阅读一篇匿名日记，再继续。";
+        return;
       }
       if (currentScreen.id === "post-survey") {
         if (!latestSurveyChange) {
@@ -1491,12 +1600,16 @@
         showFlowScreen(0);
         return;
       }
+      unlockFlowIndex(currentFlowIndex + 1);
       showFlowScreen(currentFlowIndex + 1);
     });
     document.getElementById("calculate-scales").addEventListener("click", calculateScales);
     document.getElementById("reset-scales").addEventListener("click", resetScales);
     document.getElementById("ask-ai").addEventListener("click", askAi);
     document.getElementById("clear-ai").addEventListener("click", clearAi);
+    document.getElementById("ai-question").addEventListener("input", function () {
+      storyGenerated = false;
+    });
     document.getElementById("generate-story").addEventListener("click", generateStory);
     document.getElementById("clear-story").addEventListener("click", clearStory);
     document.getElementById("submit-pre-survey").addEventListener("click", async function () {
@@ -1509,6 +1622,9 @@
     document.getElementById("submit-post-survey").addEventListener("click", function () {
       submitSurveyStage("post");
     });
+    document.getElementById("save-diary").addEventListener("click", saveCurrentDiary);
+    document.getElementById("submit-diary-research").addEventListener("click", submitDiaryForResearch);
+    document.getElementById("clear-diary-book").addEventListener("click", clearDiaryBook);
     document.getElementById("submit-feedback").addEventListener("click", submitSiteFeedback);
     document.getElementById("clear-feedback").addEventListener("click", clearSiteFeedback);
     document.querySelectorAll(".feedback-choice").forEach(function (button) {
@@ -1572,6 +1688,36 @@
       return button ? button.textContent : "还没有选择具体困惑";
     }
 
+    function renderFlowTabs() {
+      flowTabs.innerHTML = "";
+      flowScreens.forEach(function (screen, index) {
+        const tab = document.createElement("button");
+        tab.className = "flow-tab";
+        tab.type = "button";
+        tab.textContent = screen.dataset.stepTitle || "步骤 " + (index + 1);
+        tab.addEventListener("click", function () {
+          if (index > maxUnlockedFlowIndex) {
+            return;
+          }
+          showFlowScreen(index);
+        });
+        flowTabs.appendChild(tab);
+      });
+      updateFlowTabs();
+    }
+
+    function unlockFlowIndex(index) {
+      maxUnlockedFlowIndex = Math.max(maxUnlockedFlowIndex, Math.min(index, flowScreens.length - 1));
+      updateFlowTabs();
+    }
+
+    function updateFlowTabs() {
+      Array.from(flowTabs.children).forEach(function (tab, index) {
+        tab.setAttribute("aria-current", index === currentFlowIndex ? "step" : "false");
+        tab.setAttribute("aria-disabled", String(index > maxUnlockedFlowIndex));
+      });
+    }
+
     function showFlowScreen(index) {
       currentFlowIndex = Math.max(0, Math.min(index, flowScreens.length - 1));
       flowScreens.forEach(function (screen, screenIndex) {
@@ -1579,13 +1725,15 @@
       });
 
       const current = flowScreens[currentFlowIndex];
+      if (current.id === "diary-book") {
+        renderDiaryBook();
+      }
       const progress = ((currentFlowIndex + 1) / flowScreens.length) * 100;
       flowStepLabel.textContent = current.dataset.stepTitle || "";
       flowFill.style.width = progress + "%";
       flowPrev.hidden = currentFlowIndex === 0;
       flowNext.textContent = currentFlowIndex === flowScreens.length - 1 ? "回到开始" : "下一步";
-      flowPurposeText.textContent = flowPurposes[currentFlowIndex] || "先看清这一页能帮你整理什么。";
-      flowGuidanceText.textContent = flowGuidance[currentFlowIndex] || "看完本页后，点击下方按钮继续。";
+      updateFlowTabs();
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -1696,14 +1844,12 @@
         : document.getElementById("survey-submit-status");
 
       if (!values) {
-        status.textContent = stage === "pre"
-          ? "请先完成 5 个开始前问题，这样后面才能比较变化。"
-          : "请先完成 5 个结束前问题，才能计算变化。";
+        status.textContent = "请先完成这 5 个问题。";
         return false;
       }
 
       if (stage === "pre") {
-        status.textContent = "前测答案已填完整。点击“提交前测并继续”或底部“下一步”即可提交到 Supabase。";
+        status.textContent = "已经填完整，点击继续。";
       }
       return true;
     }
@@ -1728,13 +1874,13 @@
 
       if (!preValues) {
         result.className = "notice warning";
-        result.textContent = "开始前小问卷还没有填完。请回到“开始前问卷”补齐 5 题。";
+        result.textContent = "前面的部分还没有填完整。";
         return;
       }
 
       if (!postValues) {
         result.className = "notice warning";
-        result.textContent = "结束前小问卷还没有填完。请先完成这 5 题。";
+        result.textContent = "请先完成这 5 个问题。";
         return;
       }
 
@@ -1748,7 +1894,7 @@
 
       latestSurveyChange = {
         sessionId: getSurveySessionId(),
-        topic: "匿名自我认同支持空间前后测",
+        topic: "匿名日记本研究记录",
         scale: "1=非常不同意, 5=非常同意",
         items: surveyItems,
         pre: preValues,
@@ -1761,23 +1907,9 @@
         calculatedAt: new Date().toISOString()
       };
 
-      const changeText = totalChange > 0
-        ? "整体分数上升，说明体验后相关觉察或安全判断更强。"
-        : totalChange < 0
-          ? "整体分数下降，可能说明体验后用户更谨慎，或题目理解发生了变化。"
-          : "整体分数没有变化，可以再看单题变化。";
-
       result.className = "notice success";
-      result.innerHTML = [
-        "<p><strong>总分变化：</strong>前测 " + totalPre + " / 25，后测 " + totalPost + " / 25，变化 " + formatChange(totalChange) + "。</p>",
-        "<p><strong>平均变化：</strong>每题平均 " + formatChange(averageChange.toFixed(2)) + " 分。</p>",
-        "<p><strong>怎么读：</strong>" + changeText + "</p>",
-        "<div class=\"survey-result-grid\">" + changes.map(function (change, index) {
-          return "<p><strong>第 " + (index + 1) + " 题</strong><br>前测 " + preValues[index] + "，后测 " + postValues[index] + "，变化 " + formatChange(change) + "</p>";
-        }).join("") + "</div>"
-      ].join("");
-
-      status.textContent = "变化已算好。点击“提交后测”或底部“下一步”，系统会把后测答案写入 Supabase。";
+      result.textContent = "已经完成，点击继续。";
+      status.textContent = "已经完成，点击继续。";
       document.getElementById("submit-post-survey").disabled = false;
     }
 
@@ -1805,6 +1937,58 @@
       return submitSurveyStage(stage);
     }
 
+    async function submitResearchRecord(record) {
+      const response = await fetch(apiUrl("/api/submit"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ record: record })
+      });
+      const responseText = await response.text();
+      let data = {};
+
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch (error) {
+        data = { error: responseText || "Save failed." };
+      }
+
+      if (!response.ok) {
+        throw new Error(data.error || "Save failed.");
+      }
+
+      return data;
+    }
+
+    function apiUrl(path) {
+      return API_ORIGIN + path;
+    }
+
+    async function saveResearchRecord(record) {
+      try {
+        return await submitResearchRecord(record);
+      } catch (error) {
+        queueResearchRecord(record, error);
+        return { ok: false, queuedLocally: true };
+      }
+    }
+
+    function queueResearchRecord(record, error) {
+      const key = "aiStoryRadioPendingRecords";
+      try {
+        const existing = JSON.parse(localStorage.getItem(key) || "[]");
+        existing.push({
+          record: record,
+          queuedAt: new Date().toISOString(),
+          reason: error && error.message ? error.message : String(error)
+        });
+        localStorage.setItem(key, JSON.stringify(existing.slice(-80)));
+      } catch (storageError) {
+        console.warn("Could not queue research record locally.", storageError);
+      }
+    }
+
     async function submitSurveyStage(stage, options) {
       const settings = options || {};
       const label = surveyStageLabel(stage);
@@ -1830,39 +2014,46 @@
         }
       }
 
-      status.textContent = "正在提交" + label + "到 Supabase...";
+      status.textContent = "请稍等...";
       submittingSurveyStages[stage] = true;
       submitButton.disabled = true;
 
       try {
         const payload = buildSurveyPayload(stage, values);
-        const result = await supabaseClient
-          .from("anonymous_stories")
-          .insert({
-            topic: "研究问卷",
-            title: label + "答案",
-            body: JSON.stringify(payload),
-            privacy_warnings: [],
-            status: "pending_review"
-          });
-
-        if (result.error) {
-          throw result.error;
-        }
+        await saveResearchRecord({
+          topic: "研究问卷",
+          title: label + "答案",
+          body: JSON.stringify(payload),
+          privacy_warnings: [],
+          status: "pending_review"
+        });
 
         submittedSurveyStages[stage] = true;
         submittingSurveyStages[stage] = false;
-        status.textContent = label + "已提交到 Supabase。";
+        status.textContent = "可以继续。";
 
         if (settings.advanceAfterSubmit) {
+          unlockFlowIndex(currentFlowIndex + 1);
           showFlowScreen(currentFlowIndex + 1);
         }
         return true;
       } catch (error) {
         submittingSurveyStages[stage] = false;
-        status.textContent = label + "提交失败，请稍后再试：" + error.message;
+        queueResearchRecord({
+          topic: "研究问卷",
+          title: label + "答案",
+          body: JSON.stringify(buildSurveyPayload(stage, values)),
+          privacy_warnings: [],
+          status: "pending_review"
+        }, error);
+        submittedSurveyStages[stage] = true;
+        status.textContent = "可以继续。";
         submitButton.disabled = false;
-        return false;
+        if (settings.advanceAfterSubmit) {
+          unlockFlowIndex(currentFlowIndex + 1);
+          showFlowScreen(currentFlowIndex + 1);
+        }
+        return true;
       }
     }
 
@@ -1892,7 +2083,7 @@
     }
 
     function surveyStageLabel(stage) {
-      return stage === "pre" ? "前测" : "后测";
+      return stage === "pre" ? "第一部分" : "第二部分";
     }
 
     function surveyStatusElement(stage) {
@@ -1919,7 +2110,7 @@
     function resetSurveyChangeResult() {
       const result = document.getElementById("survey-change-result");
       result.className = "notice success";
-      result.textContent = "完成后测后，点击“计算变化”，这里会显示前测、后测和变化值。";
+      result.textContent = "完成所有选择后，点击继续。";
     }
 
     function renderScales() {
@@ -2044,7 +2235,7 @@
         "情绪困扰总分：" + distressTotal + " / 12；焦虑小计：" + anxietySub + " / 6；低落小计：" + depressionSub + " / 6。<br>" + distressText,
         "支持地图平均分：" + supportAvg.toFixed(1) + " / 5。<br>" + supportText,
         "安全表达检查：" + safetyTotal + " 分。<br>" + safetyText,
-        "下一步建议：如果分数提示风险较高，请先使用资源导航；如果只是轻度困惑，可以回到情境路径或阅读同伴故事。"
+        "下一步建议：如果分数提示风险较高，请先使用资源导航；如果只是轻度困惑，可以回到匿名日记或阅读同伴故事。"
       ].map(function (item) {
         return "<p>" + item + "</p>";
       }).join("");
@@ -2097,12 +2288,12 @@
         return;
       }
 
-      status.textContent = "正在请求 DeepSeek...";
-      answer.textContent = "请稍等，AI 正在整理回应。";
+      status.textContent = "正在整理匿名日记...";
+      answer.textContent = "请稍等，AI 正在把你的困惑整理成一篇匿名日记。";
       button.disabled = true;
 
       try {
-        const response = await fetch("/api/chat", {
+        const response = await fetch(apiUrl("/api/chat"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -2110,6 +2301,7 @@
           body: JSON.stringify({
             topic: topic,
             question: question,
+            mode: "supportive_story",
             scaleSummary: latestScaleSummary
           })
         });
@@ -2120,10 +2312,20 @@
         }
 
         answer.textContent = data.answer;
-        status.textContent = "AI 回应已生成。";
+        latestGeneratedDiary = {
+          id: window.crypto && window.crypto.randomUUID
+            ? window.crypto.randomUUID()
+            : "diary-" + Date.now() + "-" + Math.random().toString(16).slice(2),
+          createdAt: new Date().toISOString(),
+          topic: topic || "未选择方向",
+          diary: data.answer
+        };
+        storyGenerated = true;
+        unlockFlowIndex(currentFlowIndex + 1);
+        status.textContent = "匿名日记已生成。读完后可以继续。";
       } catch (error) {
-        answer.textContent = "暂时没有拿到 AI 回应。请确认本地或 Vercel 已配置服务器环境变量，然后再试一次。\n\n错误信息：" + error.message;
-        status.textContent = "AI 请求失败。";
+        answer.textContent = "暂时没有生成匿名日记。可能是网络刚才没有连上生成服务，请刷新后再试一次。";
+        status.textContent = "暂时没有生成成功。";
       } finally {
         button.disabled = false;
       }
@@ -2132,7 +2334,136 @@
     function clearAi() {
       document.getElementById("ai-question").value = "";
       document.getElementById("ai-status").textContent = "";
-      document.getElementById("ai-answer").textContent = "AI 回应会显示在这里。";
+      document.getElementById("ai-answer").textContent = "生成后的匿名日记会显示在这里。读完后，请继续下一步。";
+      document.getElementById("ai-topic").value = "未选择日记方向";
+      document.getElementById("ai-topic-label").textContent = "还没有选择";
+      storyPromptButtons.forEach(function (button) {
+        button.setAttribute("aria-pressed", "false");
+      });
+      storyGenerated = false;
+      latestGeneratedDiary = null;
+    }
+
+    function readDiaryEntries() {
+      try {
+        const entries = JSON.parse(localStorage.getItem(DIARY_STORAGE_KEY) || "[]");
+        return Array.isArray(entries) ? entries : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function writeDiaryEntries(entries) {
+      localStorage.setItem(DIARY_STORAGE_KEY, JSON.stringify(entries.slice(0, 20)));
+    }
+
+    function saveCurrentDiary() {
+      const status = document.getElementById("diary-book-status");
+      if (!latestGeneratedDiary) {
+        status.textContent = "请先生成一篇匿名日记，再保存到日记本。";
+        return;
+      }
+
+      const entries = readDiaryEntries();
+      const alreadySaved = entries.some(function (entry) {
+        return entry.id === latestGeneratedDiary.id;
+      });
+
+      if (!alreadySaved) {
+        entries.unshift(latestGeneratedDiary);
+        writeDiaryEntries(entries);
+      }
+
+      status.textContent = alreadySaved ? "这篇日记已经在日记本里。" : "已经保存到你的匿名日记本。";
+      renderDiaryBook();
+    }
+
+    async function submitDiaryForResearch() {
+      const status = document.getElementById("diary-book-status");
+      const consent = document.getElementById("diary-research-consent");
+      const button = document.getElementById("submit-diary-research");
+
+      if (!latestGeneratedDiary) {
+        status.textContent = "请先生成一篇匿名日记，再选择是否提交给研究者。";
+        return;
+      }
+
+      if (!consent.checked) {
+        status.textContent = "如果愿意提交，请先勾选匿名研究同意。";
+        return;
+      }
+
+      const payload = {
+        session_id: getSurveySessionId(),
+        diary_id: latestGeneratedDiary.id,
+        diary_topic: latestGeneratedDiary.topic,
+        generated_at: latestGeneratedDiary.createdAt,
+        submitted_at: new Date().toISOString(),
+        submitted_content: "AI 整理后的匿名日记，不包含用户原始输入。",
+        diary: latestGeneratedDiary.diary
+      };
+
+      status.textContent = "正在匿名提交...";
+      button.disabled = true;
+
+      try {
+        await saveResearchRecord({
+          topic: "匿名日记研究提交",
+          title: latestGeneratedDiary.topic || "匿名日记",
+          body: JSON.stringify(payload),
+          privacy_warnings: detectPrivacyRisk(latestGeneratedDiary.diary || ""),
+          status: "pending_review"
+        });
+        status.textContent = "已匿名提交给研究者。谢谢你愿意帮助改进这个原型。";
+      } catch (error) {
+        status.textContent = "已在本地排队，网络恢复后可继续处理。";
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function clearDiaryBook() {
+      localStorage.removeItem(DIARY_STORAGE_KEY);
+      document.getElementById("diary-book-status").textContent = "本地日记本已清空。";
+      renderDiaryBook();
+    }
+
+    function renderDiaryBook() {
+      const list = document.getElementById("diary-list");
+      const empty = document.getElementById("diary-empty");
+      const entries = readDiaryEntries();
+
+      list.innerHTML = "";
+      empty.style.display = entries.length ? "none" : "grid";
+
+      entries.forEach(function (entry) {
+        const article = document.createElement("article");
+        article.className = "diary-entry";
+
+        const time = document.createElement("time");
+        time.dateTime = entry.createdAt;
+        time.textContent = formatDiaryDate(entry.createdAt) + " · " + (entry.topic || "匿名日记");
+
+        const body = document.createElement("div");
+        body.textContent = entry.diary || "";
+
+        article.appendChild(time);
+        article.appendChild(body);
+        list.appendChild(article);
+      });
+    }
+
+    function formatDiaryDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return "刚刚";
+      }
+      return date.toLocaleString("zh-CN", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
     }
 
     async function generateStory() {
@@ -2185,7 +2516,7 @@
       submitButton.disabled = false;
 
       if (result.error) {
-        status.textContent = "提交失败，请稍后重试：" + result.error.message;
+        status.textContent = "暂时无法完成，请稍后再试。";
         return;
       }
 
@@ -2223,25 +2554,26 @@
 
     async function submitSiteFeedback() {
       const body = document.getElementById("feedback-body").value.trim();
+      const change = document.getElementById("feedback-change").value.trim();
       const status = document.getElementById("feedback-status");
       const submitButton = document.getElementById("submit-feedback");
 
-      if (!selectedFeedbackChoice && !body) {
-        status.textContent = "可以先选一个按钮，或者写一句你最想说的话。";
+      if (!selectedFeedbackChoice && !body && !change) {
+        status.textContent = "可以先选一个按钮，或者回答任意一个开放题。";
         return;
       }
 
-      status.textContent = "正在提交反馈...";
+      status.textContent = "请稍等...";
       submitButton.disabled = true;
 
       const feedbackBody = [
         "快捷选择：" + (selectedFeedbackChoice || "未选择"),
-        "补充说明：" + (body || "用户没有补充说明。")
+        "有感觉的句子或段落：" + (body || "用户没有补充说明。"),
+        "读完后的想法：" + (change || "用户没有补充说明。")
       ].join("\n");
 
-      const result = await supabaseClient
-        .from("anonymous_stories")
-        .insert({
+      try {
+        await saveResearchRecord({
           topic: "网站反馈",
           title: selectedFeedbackChoice || "文字反馈",
           body: feedbackBody,
@@ -2249,20 +2581,27 @@
           status: "pending_review"
         });
 
-      submitButton.disabled = false;
-
-      if (result.error) {
-        status.textContent = "提交失败，请稍后再试：" + result.error.message;
-        return;
+        status.textContent = "收到啦，谢谢你的反馈。";
+        showCompletionScreen();
+      } catch (error) {
+        queueResearchRecord({
+          topic: "网站反馈",
+          title: selectedFeedbackChoice || "文字反馈",
+          body: feedbackBody,
+          privacy_warnings: detectPrivacyRisk(feedbackBody),
+          status: "pending_review"
+        }, error);
+        status.textContent = "收到啦，谢谢你的反馈。";
+        showCompletionScreen();
+      } finally {
+        submitButton.disabled = false;
       }
-
-      status.textContent = "收到啦，谢谢你的建议。这会真的帮到我们。";
-      showCompletionScreen();
     }
 
     function clearSiteFeedback() {
       selectedFeedbackChoice = "";
       document.getElementById("feedback-body").value = "";
+      document.getElementById("feedback-change").value = "";
       document.getElementById("feedback-status").textContent = "";
       document.querySelectorAll(".feedback-choice").forEach(function (button) {
         button.setAttribute("aria-pressed", "false");

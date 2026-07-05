@@ -2,6 +2,7 @@ const fs = require("fs");
 const http = require("http");
 const path = require("path");
 const chatHandler = require("../api/chat");
+const submitHandler = require("../api/submit");
 
 const root = path.resolve(__dirname, "..");
 const port = Number(process.env.PORT || 8787);
@@ -36,6 +37,11 @@ const server = http.createServer(function (req, res) {
 
   if (url.pathname === "/api/chat") {
     chatHandler(req, res);
+    return;
+  }
+
+  if (url.pathname === "/api/submit") {
+    submitHandler(req, res);
     return;
   }
 
