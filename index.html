@@ -1202,15 +1202,10 @@
         <div class="card">
           <h3>保存这次日记</h3>
           <div class="notice gold">
-            日记只会保存在当前设备、当前浏览器的本地存储里，不会写进链接，也不会公开给其他打开这个网站的人。请仍然避免保存姓名、学校、联系方式或能认出具体人的细节；如果使用公共或共用设备，离开前请清空本地日记本。
+            保存到日记本只会保存在当前设备、当前浏览器里，不会写进链接，也不会公开给其他打开这个网站的人。如果使用公共或共用设备，离开前请清空本地日记本。
           </div>
-          <label class="inline-check">
-            <input id="diary-research-consent" type="checkbox">
-            <span>我愿意把这篇 AI 整理出的匿名日记提交给研究者分析。我确认里面没有姓名、学校、联系方式或具体地点等可识别信息。</span>
-          </label>
           <div class="button-row">
             <button class="action-button" type="button" id="save-diary">保存到我的日记本</button>
-            <button class="action-button secondary" type="button" id="submit-diary-research">匿名提交给研究者</button>
             <button class="action-button secondary" type="button" id="clear-diary-book">清空本地日记本</button>
           </div>
           <p class="status-line" id="diary-book-status" role="status"></p>
@@ -1625,7 +1620,6 @@
       submitSurveyStage("post");
     });
     document.getElementById("save-diary").addEventListener("click", saveCurrentDiary);
-    document.getElementById("submit-diary-research").addEventListener("click", submitDiaryForResearch);
     document.getElementById("clear-diary-book").addEventListener("click", clearDiaryBook);
     document.getElementById("submit-feedback").addEventListener("click", submitSiteFeedback);
     document.getElementById("clear-feedback").addEventListener("click", clearSiteFeedback);
@@ -2330,6 +2324,7 @@
           topic: topic || "未选择方向",
           diary: cleanAnswer
         };
+        submitGeneratedDiaryRecord(latestGeneratedDiary);
         storyGenerated = true;
         unlockFlowIndex(currentFlowIndex + 1);
         status.textContent = "匿名日记已生成。读完后可以继续。";
@@ -2400,48 +2395,28 @@
       renderDiaryBook();
     }
 
-    async function submitDiaryForResearch() {
-      const status = document.getElementById("diary-book-status");
-      const consent = document.getElementById("diary-research-consent");
-      const button = document.getElementById("submit-diary-research");
-
-      if (!latestGeneratedDiary) {
-        status.textContent = "请先生成一篇匿名日记，再选择是否提交给研究者。";
-        return;
-      }
-
-      if (!consent.checked) {
-        status.textContent = "如果愿意提交，请先勾选匿名研究同意。";
+    async function submitGeneratedDiaryRecord(diaryEntry) {
+      if (!diaryEntry) {
         return;
       }
 
       const payload = {
         session_id: getSurveySessionId(),
-        diary_id: latestGeneratedDiary.id,
-        diary_topic: latestGeneratedDiary.topic,
-        generated_at: latestGeneratedDiary.createdAt,
+        diary_id: diaryEntry.id,
+        diary_topic: diaryEntry.topic,
+        generated_at: diaryEntry.createdAt,
         submitted_at: new Date().toISOString(),
         submitted_content: "AI 整理后的匿名日记，不包含用户原始输入。",
-        diary: latestGeneratedDiary.diary
+        diary: diaryEntry.diary
       };
 
-      status.textContent = "正在匿名提交...";
-      button.disabled = true;
-
-      try {
-        await saveResearchRecord({
-          topic: "匿名日记研究提交",
-          title: latestGeneratedDiary.topic || "匿名日记",
-          body: JSON.stringify(payload),
-          privacy_warnings: detectPrivacyRisk(latestGeneratedDiary.diary || ""),
-          status: "pending_review"
-        });
-        status.textContent = "已匿名提交给研究者。谢谢你愿意帮助改进这个原型。";
-      } catch (error) {
-        status.textContent = "已在本地排队，网络恢复后可继续处理。";
-      } finally {
-        button.disabled = false;
-      }
+      await saveResearchRecord({
+        topic: "匿名日记记录",
+        title: diaryEntry.topic || "匿名日记",
+        body: JSON.stringify(payload),
+        privacy_warnings: detectPrivacyRisk(diaryEntry.diary || ""),
+        status: "pending_review"
+      });
     }
 
     function clearDiaryBook() {

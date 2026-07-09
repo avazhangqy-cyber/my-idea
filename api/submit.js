@@ -116,7 +116,7 @@ module.exports = async function handler(req, res) {
   }
 
   const insertPayload = {
-    topic: String(record.topic || "研究记录").slice(0, 80),
+    topic: String(record.topic || "匿名记录").slice(0, 80),
     title: String(record.title || "匿名记录").slice(0, 120),
     body: String(record.body || "").slice(0, 12000),
     privacy_warnings: Array.isArray(record.privacy_warnings) ? record.privacy_warnings.slice(0, 12) : [],
