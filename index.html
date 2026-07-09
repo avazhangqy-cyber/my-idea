@@ -390,22 +390,6 @@
       margin-bottom: 2px;
     }
 
-    .completion-summary {
-      display: grid;
-      gap: 10px;
-      margin: 16px 0 0;
-      padding: 0;
-      list-style: none;
-      text-align: left;
-    }
-
-    .completion-summary li {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.6);
-      padding: 11px 12px;
-    }
-
     .survey-note {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -509,6 +493,30 @@
       max-width: 760px;
       margin: 0 auto;
       text-align: center;
+    }
+
+    .completion-visual {
+      display: grid;
+      place-items: center;
+      width: 132px;
+      height: 132px;
+      margin: 0 auto 22px;
+      border: 1px solid #b9d7c5;
+      border-radius: 50%;
+      background: var(--green-soft);
+    }
+
+    .completion-check {
+      width: 54px;
+      height: 30px;
+      border-left: 8px solid var(--green);
+      border-bottom: 8px solid var(--green);
+      transform: rotate(-45deg) translate(3px, -5px);
+    }
+
+    .completion-note {
+      max-width: 520px;
+      margin: 0 auto;
     }
 
     .warning {
@@ -956,15 +964,20 @@
 
     <section id="ai-helper" aria-labelledby="ai-helper-title" data-flow-screen data-step-title="匿名日记">
       <h2 id="ai-helper-title">整理成一篇匿名日记</h2>
-      <p class="muted">写下一句最近让你困扰的问题。AI 会把它整理成一篇匿名、去识别化的反思日记；它不是搜索到的真人经历，也不是心理咨询。</p>
       <div class="grid">
         <div class="card">
-          <h3>先选一个接近的方向，也可以直接自己写</h3>
+          <h3>先选一个整理角度，也可以直接自己写</h3>
           <div class="story-prompts" id="story-prompts" aria-label="困惑方向">
-            <button class="option-button story-prompt" type="button" data-topic="自我探索">不确定自己喜欢谁</button>
-            <button class="option-button story-prompt" type="button" data-topic="孤独感">感觉只有我这样</button>
-            <button class="option-button story-prompt" type="button" data-topic="隐私安全">害怕别人知道</button>
-            <button class="option-button story-prompt" type="button" data-topic="表达和支持">想找人聊但害怕</button>
+            <button class="option-button story-prompt" type="button" data-topic="学习压力">学习压力有点大</button>
+            <button class="option-button story-prompt" type="button" data-topic="人际关系">和朋友或同学相处很累</button>
+            <button class="option-button story-prompt" type="button" data-topic="家庭沟通">家里的沟通让我烦</button>
+            <button class="option-button story-prompt" type="button" data-topic="情绪状态">最近情绪起伏很大</button>
+            <button class="option-button story-prompt" type="button" data-topic="自我理解">对自己有点不确定</button>
+            <button class="option-button story-prompt" type="button" data-topic="未来选择">对未来或选择有点迷茫</button>
+            <button class="option-button story-prompt" type="button" data-topic="表达压力">有些话不知道怎么说</button>
+            <button class="option-button story-prompt" type="button" data-topic="整理心事">只是想把事情理清楚</button>
+            <button class="option-button story-prompt" type="button" data-topic="情感和吸引">不确定自己喜欢谁</button>
+            <button class="option-button story-prompt" type="button" data-topic="其他困惑">其他</button>
           </div>
           <div class="notice selection-summary">
             <strong>日记方向：</strong><span id="ai-topic-label">还没有选择</span>
@@ -972,10 +985,8 @@
           <input id="ai-topic" type="hidden" value="未选择日记方向">
 
           <label for="ai-question">最近让我困扰的是</label>
+          <p class="muted">写下一段想整理的心事，AI 会帮你改写成一篇匿名反思日记，并从更客观的角度分析你当下的处境。</p>
           <textarea id="ai-question" placeholder="请写下你的困惑。不要写姓名、学校、班级、联系方式、具体地点，或任何能识别你/他人的信息。"></textarea>
-          <div class="notice gold" id="ai-scale-note">
-            我会根据你的问题整理一篇匿名日记。它不是心理治疗，也不代表真实个案；它只是一个安全、非评判的阅读材料，帮你从稍微远一点的角度看见这件事。
-          </div>
 
           <div class="button-row">
             <button class="action-button" type="button" id="ask-ai">生成匿名日记</button>
@@ -986,9 +997,6 @@
 
         <div class="card white">
           <h3>生成的匿名日记</h3>
-          <div class="notice warning">
-            透明说明：下面如果出现日记，它是 AI 根据你的输入整理生成的匿名文本，不是真人投稿、搜索结果或诊断建议。
-          </div>
           <div class="story-mode" aria-label="日记原则">
             <span>去识别</span>
             <span>整理</span>
@@ -1244,18 +1252,12 @@
 
     <section id="completion" aria-labelledby="completion-title" data-flow-screen data-step-title="完成">
       <div class="completion-panel">
-        <p class="eyebrow">完成</p>
-        <h2 id="completion-title">你已经完成这个体验了</h2>
-        <p class="lead">无论你是否留下反馈，谢谢你认真走到这里。</p>
-        <div class="notice success">
-          可以把这里当作一次很小的整理。需要的时候，也可以再回来重新看一遍。
-          <ul class="completion-summary" aria-label="完成小结">
-            <li><strong>你已经完成这次体验：</strong>谢谢你认真阅读和回答。</li>
-            <li><strong>你已经读过一篇 AI 匿名日记：</strong>它不是搜索到的真人个案，也不是诊断，只是一个陪伴式阅读材料。</li>
-            <li><strong>你留下的匿名反馈：</strong>会帮助我们继续改进日记的语气和安全边界。</li>
-            <li><strong>你仍然可以保护自己的节奏：</strong>如果现实里有危险或强烈情绪，请优先找可信成年人或专业支持。</li>
-          </ul>
+        <div class="completion-visual" aria-hidden="true">
+          <div class="completion-check"></div>
         </div>
+        <p class="eyebrow">完成</p>
+        <h2 id="completion-title">这次整理完成了</h2>
+        <p class="lead completion-note">需要的时候，可以再回来看看自己的匿名日记。</p>
       </div>
     </section>
 
@@ -2240,7 +2242,7 @@
         return "<p>" + item + "</p>";
       }).join("");
 
-      document.getElementById("ai-scale-note").textContent = "AI 已可以结合你的三分钟自评：情绪困扰 " + distressTotal + " / 12，支持地图 " + supportAvg.toFixed(1) + " / 5，安全表达检查 " + safetyTotal + " 分。";
+      updateAiScaleNote("AI 已可以结合你的三分钟自评：情绪困扰 " + distressTotal + " / 12，支持地图 " + supportAvg.toFixed(1) + " / 5，安全表达检查 " + safetyTotal + " 分。");
       const summaryIndex = flowScreens.findIndex(function (screen) {
         return screen.id === "scale-summary";
       });
@@ -2273,7 +2275,14 @@
       result.className = "notice success";
       result.textContent = "完成上面的选项后，点击“生成自评建议”。结果只在你的浏览器里显示，不会自动上传。";
       latestScaleSummary = null;
-      document.getElementById("ai-scale-note").textContent = "如果你先完成“三分钟自评”，AI 会结合你的情绪困扰、支持地图和表达安全度来给建议。自评结果只用于这次回答，不会自动上传。";
+      updateAiScaleNote("如果你先完成“三分钟自评”，AI 会结合你的情绪困扰、支持地图和表达安全度来给建议。自评结果只用于这次回答，不会自动上传。");
+    }
+
+    function updateAiScaleNote(text) {
+      const note = document.getElementById("ai-scale-note");
+      if (note) {
+        note.textContent = text;
+      }
     }
 
     async function askAi() {
@@ -2311,14 +2320,15 @@
           throw new Error(data.error || "DeepSeek 请求失败。");
         }
 
-        answer.textContent = data.answer;
+        const cleanAnswer = sanitizeDiaryText(data.answer || "");
+        answer.textContent = cleanAnswer;
         latestGeneratedDiary = {
           id: window.crypto && window.crypto.randomUUID
             ? window.crypto.randomUUID()
             : "diary-" + Date.now() + "-" + Math.random().toString(16).slice(2),
           createdAt: new Date().toISOString(),
           topic: topic || "未选择方向",
-          diary: data.answer
+          diary: cleanAnswer
         };
         storyGenerated = true;
         unlockFlowIndex(currentFlowIndex + 1);
@@ -2342,6 +2352,16 @@
       });
       storyGenerated = false;
       latestGeneratedDiary = null;
+    }
+
+    function sanitizeDiaryText(text) {
+      return String(text || "")
+        .replace(/[#*]/g, "")
+        .replace(/^\s*-{3,}\s*$/gm, "")
+        .replace(/^\s*透明说明\s*[\r\n]+[\s\S]*?(?=^\s*(匿名日记|换个角度看|可以先做的一小步)\s*$)/m, "")
+        .replace(/[ \t]+\n/g, "\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
     }
 
     function readDiaryEntries() {
