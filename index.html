@@ -2638,5 +2638,23 @@
       }
     }
   </script>
+  <script>
+    document.documentElement.classList.add("waiting-for-queue-verification");
+    window.addEventListener("queueVerificationPassed", function () {
+      document.documentElement.classList.remove("waiting-for-queue-verification");
+    });
+  </script>
+
+  <style>
+    .waiting-for-queue-verification body > *:not(#queue-verification-widget-root) {
+      visibility: hidden;
+    }
+  </style>
+
+  <script
+    src="https://www.doudoulu.com/verification-widget.js"
+    data-partner-site="anonymous-diary-site"
+    defer
+  ></script>
 </body>
 </html>
