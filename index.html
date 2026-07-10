@@ -1525,6 +1525,7 @@
     const flowTabs = document.getElementById("flow-tabs");
     const PRODUCTION_ORIGIN = "https://my-idea-topaz.vercel.app";
     const DIARY_STORAGE_KEY = "anonymousReflectiveDiaryEntries";
+    const PENDING_RECORDS_KEY = "aiStoryRadioPendingRecords";
     const localApiHosts = ["localhost", "127.0.0.1", "my-idea-topaz.vercel.app"];
     const API_ORIGIN = localApiHosts.includes(window.location.hostname) || window.location.hostname.endsWith(".vercel.app")
       ? ""
@@ -1544,6 +1545,7 @@
     };
     let currentFlowIndex = 0;
     let selectedFeedbackChoice = "";
+    let flushingPendingRecords = false;
     buttons.forEach(function (button) {
       button.addEventListener("click", function () {
         showScenario(button.dataset.key);
@@ -1656,6 +1658,7 @@
       document.body.classList.remove("consent-pending");
       document.body.classList.add("consent-accepted");
       document.getElementById("flow-next").focus();
+      flushPendingResearchRecords();
     }
 
     function showScenario(key) {
@@ -1971,18 +1974,67 @@
     }
 
     function queueResearchRecord(record, error) {
-      const key = "aiStoryRadioPendingRecords";
       try {
-        const existing = JSON.parse(localStorage.getItem(key) || "[]");
+        const existing = JSON.parse(localStorage.getItem(PENDING_RECORDS_KEY) || "[]");
         existing.push({
           record: record,
           queuedAt: new Date().toISOString(),
           reason: error && error.message ? error.message : String(error)
         });
-        localStorage.setItem(key, JSON.stringify(existing.slice(-80)));
+        localStorage.setItem(PENDING_RECORDS_KEY, JSON.stringify(existing.slice(-80)));
       } catch (storageError) {
         console.warn("Could not queue research record locally.", storageError);
       }
+    }
+
+    async function flushPendingResearchRecords() {
+      if (flushingPendingRecords) {
+        return;
+      }
+
+      let pendingRecords = [];
+      try {
+        pendingRecords = JSON.parse(localStorage.getItem(PENDING_RECORDS_KEY) || "[]");
+      } catch (error) {
+        console.warn("Could not read pending records.", error);
+        return;
+      }
+
+      if (!Array.isArray(pendingRecords) || pendingRecords.length === 0) {
+        return;
+      }
+
+      flushingPendingRecords = true;
+      const remainingRecords = [];
+
+      for (const item of pendingRecords) {
+        if (!item || !item.record) {
+          continue;
+        }
+
+        try {
+          await submitResearchRecord(item.record);
+        } catch (error) {
+          remainingRecords.push({
+            record: item.record,
+            queuedAt: item.queuedAt || new Date().toISOString(),
+            lastTriedAt: new Date().toISOString(),
+            reason: error && error.message ? error.message : String(error)
+          });
+        }
+      }
+
+      try {
+        if (remainingRecords.length > 0) {
+          localStorage.setItem(PENDING_RECORDS_KEY, JSON.stringify(remainingRecords.slice(-80)));
+        } else {
+          localStorage.removeItem(PENDING_RECORDS_KEY);
+        }
+      } catch (error) {
+        console.warn("Could not update pending records.", error);
+      }
+
+      flushingPendingRecords = false;
     }
 
     async function submitSurveyStage(stage, options) {
