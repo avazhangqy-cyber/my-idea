@@ -2109,6 +2109,8 @@
       const label = surveyStageLabel(stage);
       const total = values.reduce(sum, 0);
       const payload = {
+        schema_version: 2,
+        record_type: stage === "pre" ? "pre_survey" : "post_survey",
         session_id: getSurveySessionId(),
         survey_stage: stage,
         survey_stage_label: label,
@@ -2453,6 +2455,8 @@
       }
 
       const payload = {
+        schema_version: 2,
+        record_type: "ai_diary",
         session_id: getSurveySessionId(),
         diary_id: diaryEntry.id,
         diary_topic: diaryEntry.topic,
@@ -2620,12 +2624,22 @@
         "有感觉的句子或段落：" + (body || "用户没有补充说明。"),
         "读完后的想法：" + (change || "用户没有补充说明。")
       ].join("\n");
+      const feedbackPayload = {
+        schema_version: 2,
+        record_type: "site_feedback",
+        session_id: getSurveySessionId(),
+        submitted_at: new Date().toISOString(),
+        feedback_choice: selectedFeedbackChoice || "未选择",
+        felt_sentence: body || "用户没有补充说明。",
+        thought_change: change || "用户没有补充说明。",
+        feedback_text: feedbackBody
+      };
 
       try {
         await saveResearchRecord({
           topic: "网站反馈",
           title: selectedFeedbackChoice || "文字反馈",
-          body: feedbackBody,
+          body: JSON.stringify(feedbackPayload),
           privacy_warnings: detectPrivacyRisk(feedbackBody),
           status: "pending_review"
         });
@@ -2636,7 +2650,7 @@
         queueResearchRecord({
           topic: "网站反馈",
           title: selectedFeedbackChoice || "文字反馈",
-          body: feedbackBody,
+          body: JSON.stringify(feedbackPayload),
           privacy_warnings: detectPrivacyRisk(feedbackBody),
           status: "pending_review"
         }, error);
