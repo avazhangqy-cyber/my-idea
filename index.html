@@ -905,17 +905,6 @@
       margin-top: 10px;
     }
 
-    .sound-control {
-      display: grid;
-      gap: 6px;
-      margin-top: 12px;
-    }
-
-    .sound-toggle {
-      min-height: 42px;
-      font-size: 14px;
-    }
-
     .ai-answer {
       white-space: pre-wrap;
       overflow-wrap: anywhere;
@@ -1207,10 +1196,6 @@
             <button class="action-button secondary" type="button" id="clear-ai">清空内容</button>
           </div>
           <p class="status-line" id="ai-status" role="status"></p>
-          <div class="sound-control">
-            <button class="action-button secondary sound-toggle" type="button" id="toggle-soft-sound" aria-pressed="false">开启轻音效</button>
-            <p class="muted">音效默认关闭。开启后，只会在生成、保存、完成这些关键节点轻轻提示。</p>
-          </div>
         </div>
 
         <div class="card white">
@@ -1773,8 +1758,8 @@
     let currentFlowIndex = 0;
     let selectedFeedbackChoice = "";
     let flushingPendingRecords = false;
-    let softSoundEnabled = false;
     let softAudioContext = null;
+    let softSoundUnlocked = false;
 
     const lucideIcons = {
       "arrow-left": ['<path d="m12 19-7-7 7-7"></path>', '<path d="M19 12H5"></path>'],
@@ -1789,9 +1774,7 @@
       save: ['<path d="M15.2 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.8a2 2 0 0 0-.6-1.4l-3.8-3.8a2 2 0 0 0-1.4-.6Z"></path>', '<path d="M17 21v-7H7v7"></path>', '<path d="M7 3v5h8"></path>'],
       send: ['<path d="m22 2-7 20-4-9-9-4Z"></path>', '<path d="M22 2 11 13"></path>'],
       sparkles: ['<path d="M11 4.5 9.4 8.6 5.5 10l3.9 1.4L11 15.5l1.6-4.1 3.9-1.4-3.9-1.4Z"></path>', '<path d="M18 13.5 17.1 16 15 17l2.1 1 .9 2.5.9-2.5 2.1-1-2.1-1Z"></path>', '<path d="M5 3v4"></path>', '<path d="M3 5h4"></path>'],
-      trash: ['<path d="M3 6h18"></path>', '<path d="M8 6V4h8v2"></path>', '<path d="m19 6-1 14H6L5 6"></path>', '<path d="M10 11v5"></path>', '<path d="M14 11v5"></path>'],
-      "volume-2": ['<path d="M11 5 6 9H2v6h4l5 4z"></path>', '<path d="M15.5 8.5a5 5 0 0 1 0 7"></path>', '<path d="M19 5a9 9 0 0 1 0 14"></path>'],
-      "volume-x": ['<path d="M11 5 6 9H2v6h4l5 4z"></path>', '<path d="m22 9-6 6"></path>', '<path d="m16 9 6 6"></path>']
+      trash: ['<path d="M3 6h18"></path>', '<path d="M8 6V4h8v2"></path>', '<path d="m19 6-1 14H6L5 6"></path>', '<path d="M10 11v5"></path>', '<path d="M14 11v5"></path>']
     };
 
     function createLucideIcon(name, className) {
@@ -1852,7 +1835,6 @@
         ["clear-pre-survey", "重新选择", "refresh-ccw"],
         ["ask-ai", "生成匿名日记", "sparkles"],
         ["clear-ai", "清空内容", "eraser"],
-        ["toggle-soft-sound", "开启轻音效", "volume-x"],
         ["submit-post-survey", "保存并继续", "save"],
         ["save-diary", "保存到我的日记本", "book-open"],
         ["clear-diary-book", "清空本地日记本", "trash"],
@@ -1871,6 +1853,7 @@
     buttons.forEach(function (button) {
       button.addEventListener("click", function () {
         showScenario(button.dataset.key);
+        playSoftSound("choice");
       });
     });
     storyPromptButtons.forEach(function (button) {
@@ -1882,6 +1865,7 @@
         aiTopicLabel.textContent = button.dataset.topic || button.textContent;
         storyGenerated = false;
         updateFlowActions();
+        playSoftSound("choice");
       });
     });
 
@@ -1891,8 +1875,11 @@
     renderScales();
     renderFlowTabs();
     showFlowScreen(0);
+    document.addEventListener("pointerdown", unlockSoftSound, { once: true, capture: true });
+    document.addEventListener("keydown", unlockSoftSound, { once: true, capture: true });
     flowPrev.addEventListener("click", function () {
       showFlowScreen(currentFlowIndex - 1);
+      playSoftSound("nav");
     });
     flowNext.addEventListener("click", async function () {
       const currentScreen = flowScreens[currentFlowIndex];
@@ -1920,16 +1907,17 @@
       }
       if (currentFlowIndex === flowScreens.length - 1) {
         showFlowScreen(0);
+        playSoftSound("nav");
         return;
       }
       unlockFlowIndex(currentFlowIndex + 1);
       showFlowScreen(currentFlowIndex + 1);
+      playSoftSound("nav");
     });
     document.getElementById("calculate-scales").addEventListener("click", calculateScales);
     document.getElementById("reset-scales").addEventListener("click", resetScales);
     document.getElementById("ask-ai").addEventListener("click", askAi);
     document.getElementById("clear-ai").addEventListener("click", clearAi);
-    document.getElementById("toggle-soft-sound").addEventListener("click", toggleSoftSound);
     document.getElementById("ai-question").addEventListener("input", function () {
       storyGenerated = false;
       updateFlowActions();
@@ -1955,6 +1943,7 @@
         document.querySelectorAll(".feedback-choice").forEach(function (item) {
           item.setAttribute("aria-pressed", String(item === button));
         });
+        playSoftSound("choice");
       });
     });
 
@@ -1970,6 +1959,7 @@
 
       acceptButton.addEventListener("click", function () {
         triggerSoftPulse(acceptButton);
+        playSoftSound("consent");
         localStorage.setItem(CONSENT_STORAGE_KEY, "true");
         showMainContent();
       });
@@ -2001,16 +1991,6 @@
       }, 520);
     }
 
-    function updateSoftSoundButton() {
-      const button = document.getElementById("toggle-soft-sound");
-      if (!button) {
-        return;
-      }
-
-      button.setAttribute("aria-pressed", String(softSoundEnabled));
-      setButtonLabel(button, softSoundEnabled ? "轻音效已开启" : "开启轻音效", softSoundEnabled ? "volume-2" : "volume-x");
-    }
-
     async function ensureSoftAudioContext() {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       if (!AudioContextClass) {
@@ -2028,26 +2008,23 @@
       return softAudioContext;
     }
 
-    async function toggleSoftSound() {
-      softSoundEnabled = !softSoundEnabled;
-      updateSoftSoundButton();
-      triggerSoftPulse(document.getElementById("toggle-soft-sound"));
-
-      if (softSoundEnabled) {
-        await playSoftSound("toggle");
-      }
+    function unlockSoftSound() {
+      ensureSoftAudioContext()
+        .then(function (context) {
+          softSoundUnlocked = Boolean(context);
+        })
+        .catch(function (error) {
+          console.warn("Soft sound could not be prepared.", error);
+        });
     }
 
     async function playSoftSound(kind) {
-      if (!softSoundEnabled) {
-        return;
-      }
-
       try {
         const context = await ensureSoftAudioContext();
         if (!context) {
           return;
         }
+        softSoundUnlocked = true;
 
         const now = context.currentTime;
         const gain = context.createGain();
@@ -2055,7 +2032,9 @@
         const first = context.createOscillator();
         const second = context.createOscillator();
         const settings = {
-          toggle: [392, 523],
+          consent: [392, 523],
+          nav: [349, 440],
+          choice: [440, 523],
           ready: [440, 587],
           save: [392, 494],
           complete: [523, 659]
@@ -2547,6 +2526,7 @@
         if (settings.advanceAfterSubmit) {
           unlockFlowIndex(currentFlowIndex + 1);
           showFlowScreen(currentFlowIndex + 1);
+          playSoftSound("save");
         }
         return true;
       } catch (error) {
@@ -2564,6 +2544,7 @@
         if (settings.advanceAfterSubmit) {
           unlockFlowIndex(currentFlowIndex + 1);
           showFlowScreen(currentFlowIndex + 1);
+          playSoftSound("save");
         }
         return true;
       }
