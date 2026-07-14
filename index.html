@@ -510,12 +510,44 @@
       background: var(--green-soft);
     }
 
+    .active-screen .completion-visual {
+      animation: completionBloom 0.62s ease-out both;
+    }
+
     .completion-check {
       width: 54px;
       height: 30px;
       border-left: 8px solid var(--green);
       border-bottom: 8px solid var(--green);
       transform: rotate(-45deg) translate(3px, -5px);
+    }
+
+    .active-screen .completion-check {
+      animation: checkSettle 0.52s ease-out 0.08s both;
+    }
+
+    @keyframes completionBloom {
+      from {
+        opacity: 0;
+        transform: scale(0.92);
+        box-shadow: 0 0 0 0 rgba(122, 96, 103, 0);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 18px 42px rgba(122, 96, 103, 0.16);
+      }
+    }
+
+    @keyframes checkSettle {
+      from {
+        opacity: 0;
+        transform: rotate(-45deg) translate(3px, -5px) scale(0.82);
+      }
+      to {
+        opacity: 1;
+        transform: rotate(-45deg) translate(3px, -5px) scale(1);
+      }
     }
 
     .completion-note {
@@ -589,6 +621,8 @@
 
     .option-button,
     .action-button {
+      position: relative;
+      overflow: hidden;
       display: inline-flex;
       align-items: center;
       justify-content: flex-start;
@@ -603,7 +637,8 @@
       line-height: 1.45;
       padding: 13px 15px;
       text-align: left;
-      transition: background 0.16s ease, transform 0.16s ease, border-color 0.16s ease;
+      transition: background 0.16s ease, transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+      will-change: transform;
     }
 
     .button-icon,
@@ -647,6 +682,24 @@
     .action-button:hover {
       background: #3c3c3c;
       transform: translateY(-1px);
+    }
+
+    .option-button:active,
+    .action-button:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    .soft-pulse {
+      animation: softPulse 0.42s ease-out;
+    }
+
+    @keyframes softPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(141, 93, 107, 0.24);
+      }
+      100% {
+        box-shadow: 0 0 0 10px rgba(141, 93, 107, 0);
+      }
     }
 
     .action-button:disabled {
@@ -858,6 +911,36 @@
       margin-top: 14px;
     }
 
+    .ai-answer.is-thinking {
+      animation: gentleBreath 1.8s ease-in-out infinite;
+    }
+
+    .ai-answer.is-ready {
+      animation: diaryReady 0.48s ease-out;
+    }
+
+    @keyframes gentleBreath {
+      0%, 100% {
+        box-shadow: 0 0 0 rgba(141, 93, 107, 0);
+        transform: translateY(0);
+      }
+      50% {
+        box-shadow: 0 10px 30px rgba(141, 93, 107, 0.12);
+        transform: translateY(-1px);
+      }
+    }
+
+    @keyframes diaryReady {
+      from {
+        opacity: 0.72;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .tag {
       display: inline-flex;
       width: fit-content;
@@ -930,6 +1013,17 @@
       table {
         display: block;
         overflow-x: auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
@@ -1339,6 +1433,15 @@
 
         <label for="feedback-change">读完以后，你现在有什么想法？</label>
         <textarea id="feedback-change" maxlength="800" placeholder="可以写下你读完后的任何想法。"></textarea>
+
+        <label for="feedback-emotion-understanding">你觉得 AI 对你情绪的理解怎么样？</label>
+        <select id="feedback-emotion-understanding">
+          <option value="">可以选择一个最接近的感受</option>
+          <option value="很贴近，基本理解了我的情绪">很贴近，基本理解了我的情绪</option>
+          <option value="有一点贴近，但还不完全">有一点贴近，但还不完全</option>
+          <option value="一般，说到了一些但没有很懂">一般，说到了一些但没有很懂</option>
+          <option value="不太贴近，没有理解我的情绪">不太贴近，没有理解我的情绪</option>
+        </select>
 
         <div class="button-row">
           <button class="action-button" type="button" id="submit-feedback">提交反馈</button>
@@ -1844,11 +1947,13 @@
       }
 
       acceptButton.addEventListener("click", function () {
+        triggerSoftPulse(acceptButton);
         localStorage.setItem(CONSENT_STORAGE_KEY, "true");
         showMainContent();
       });
 
       declineButton.addEventListener("click", function () {
+        triggerSoftPulse(declineButton);
         status.textContent = "没关系，你可以直接关闭这个网页离开。正式内容不会显示。";
       });
     }
@@ -1858,6 +1963,20 @@
       document.body.classList.add("consent-accepted");
       document.getElementById("flow-next").focus();
       flushPendingResearchRecords();
+    }
+
+    function triggerSoftPulse(element) {
+      if (!element) {
+        return;
+      }
+
+      element.classList.remove("soft-pulse");
+      window.requestAnimationFrame(function () {
+        element.classList.add("soft-pulse");
+      });
+      window.setTimeout(function () {
+        element.classList.remove("soft-pulse");
+      }, 520);
     }
 
     function showScenario(key) {
@@ -2304,7 +2423,7 @@
 
       try {
         const payload = buildSurveyPayload(stage, values);
-        await saveResearchRecord({
+        const saveResult = await saveResearchRecord({
           topic: "研究问卷",
           title: label + "答案",
           body: JSON.stringify(payload),
@@ -2314,7 +2433,9 @@
 
         submittedSurveyStages[stage] = true;
         submittingSurveyStages[stage] = false;
-        status.textContent = settings.advanceAfterSubmit ? "已保存，正在进入下一步。" : "已保存。";
+        status.textContent = saveResult && saveResult.queuedLocally
+          ? (settings.advanceAfterSubmit ? "网络较慢，已先保存在本机，后台暂时看不到；正在进入下一步。" : "网络较慢，已先保存在本机，后台暂时看不到。")
+          : (settings.advanceAfterSubmit ? "已保存到后台，正在进入下一步。" : "已保存到后台。");
 
         if (settings.advanceAfterSubmit) {
           unlockFlowIndex(currentFlowIndex + 1);
@@ -2586,7 +2707,10 @@
 
       status.textContent = "正在整理匿名日记...";
       answer.textContent = "请稍等，AI 正在把你的困惑整理成一篇匿名日记。";
+      answer.classList.remove("is-ready");
+      answer.classList.add("is-thinking");
       button.disabled = true;
+      triggerSoftPulse(button);
 
       try {
         const response = await fetch(apiUrl("/api/chat"), {
@@ -2609,6 +2733,8 @@
 
         const cleanAnswer = sanitizeDiaryText(data.answer || "");
         answer.textContent = cleanAnswer;
+        answer.classList.remove("is-thinking");
+        answer.classList.add("is-ready");
         latestGeneratedDiary = {
           id: window.crypto && window.crypto.randomUUID
             ? window.crypto.randomUUID()
@@ -2622,7 +2748,9 @@
         unlockFlowIndex(currentFlowIndex + 1);
         updateFlowActions();
         status.textContent = "匿名日记已生成。读完后可以继续。";
+        triggerSoftPulse(answer);
       } catch (error) {
+        answer.classList.remove("is-thinking", "is-ready");
         answer.textContent = "暂时没有生成匿名日记。原因：" + (error.message || "生成服务暂时不可用。");
         status.textContent = "暂时没有生成成功。";
       } finally {
@@ -2633,7 +2761,9 @@
     function clearAi() {
       document.getElementById("ai-question").value = "";
       document.getElementById("ai-status").textContent = "";
-      document.getElementById("ai-answer").textContent = "生成后的匿名日记会显示在这里。读完后，请继续下一步。";
+      const answer = document.getElementById("ai-answer");
+      answer.classList.remove("is-thinking", "is-ready");
+      answer.textContent = "生成后的匿名日记会显示在这里。读完后，请继续下一步。";
       document.getElementById("ai-topic").value = "未选择日记方向";
       document.getElementById("ai-topic-label").textContent = "还没有选择";
       storyPromptButtons.forEach(function (button) {
@@ -2671,6 +2801,7 @@
 
     function saveCurrentDiary() {
       const status = document.getElementById("diary-book-status");
+      triggerSoftPulse(document.getElementById("save-diary"));
       if (!latestGeneratedDiary) {
         status.textContent = "请先生成一篇匿名日记，再保存到日记本。";
         return;
@@ -2687,6 +2818,7 @@
       }
 
       status.textContent = alreadySaved ? "这篇日记已经在日记本里。" : "已经保存到你的匿名日记本。";
+      triggerSoftPulse(status);
       renderDiaryBook();
     }
 
@@ -2797,24 +2929,22 @@
       status.textContent = "正在提交到 Supabase...";
       submitButton.disabled = true;
 
-      const result = await supabaseClient
-        .from("anonymous_stories")
-        .insert({
-          topic: topic,
-          title: title,
-          body: body,
-          privacy_warnings: warnings,
-          status: "pending_review"
-        });
+      const result = await saveResearchRecord({
+        topic: topic,
+        title: title,
+        body: body,
+        privacy_warnings: warnings,
+        status: "pending_review"
+      });
 
       submitButton.disabled = false;
 
-      if (result.error) {
-        status.textContent = "暂时无法完成，请稍后再试。";
+      if (result && result.queuedLocally) {
+        status.textContent = "网络较慢，投稿已先保存在本机，后台暂时看不到；重新打开网页会自动补交。";
         return;
       }
 
-      status.textContent = "投稿已提交到 Supabase，等待人工审核后才可能公开。";
+      status.textContent = "投稿已提交到后台，等待人工审核后才可能公开。";
     }
 
     function detectPrivacyRisk(text) {
@@ -2849,21 +2979,24 @@
     async function submitSiteFeedback() {
       const body = document.getElementById("feedback-body").value.trim();
       const change = document.getElementById("feedback-change").value.trim();
+      const emotionUnderstanding = document.getElementById("feedback-emotion-understanding").value;
       const status = document.getElementById("feedback-status");
       const submitButton = document.getElementById("submit-feedback");
 
-      if (!selectedFeedbackChoice && !body && !change) {
+      if (!selectedFeedbackChoice && !body && !change && !emotionUnderstanding) {
         status.textContent = "可以先选一个按钮，或者回答任意一个开放题。";
         return;
       }
 
       status.textContent = "请稍等...";
       submitButton.disabled = true;
+      triggerSoftPulse(submitButton);
 
       const feedbackBody = [
         "快捷选择：" + (selectedFeedbackChoice || "未选择"),
         "有感觉的句子或段落：" + (body || "用户没有补充说明。"),
-        "读完后的想法：" + (change || "用户没有补充说明。")
+        "读完后的想法：" + (change || "用户没有补充说明。"),
+        "AI 对情绪的理解：" + (emotionUnderstanding || "用户没有选择。")
       ].join("\n");
       const feedbackPayload = {
         schema_version: 2,
@@ -2873,11 +3006,12 @@
         feedback_choice: selectedFeedbackChoice || "未选择",
         felt_sentence: body || "用户没有补充说明。",
         thought_change: change || "用户没有补充说明。",
+        emotion_understanding: emotionUnderstanding || "用户没有选择。",
         feedback_text: feedbackBody
       };
 
       try {
-        await saveResearchRecord({
+        const saveResult = await saveResearchRecord({
           topic: "网站反馈",
           title: selectedFeedbackChoice || "文字反馈",
           body: JSON.stringify(feedbackPayload),
@@ -2885,7 +3019,10 @@
           status: "pending_review"
         });
 
-        status.textContent = "收到啦，谢谢你的反馈。";
+        status.textContent = saveResult && saveResult.queuedLocally
+          ? "收到啦，但网络较慢，已先保存在本机，后台暂时看不到。"
+          : "收到啦，谢谢你的反馈。";
+        triggerSoftPulse(status);
         showCompletionScreen();
       } catch (error) {
         queueResearchRecord({
@@ -2896,6 +3033,7 @@
           status: "pending_review"
         }, error);
         status.textContent = "收到啦，谢谢你的反馈。";
+        triggerSoftPulse(status);
         showCompletionScreen();
       } finally {
         submitButton.disabled = false;
@@ -2906,6 +3044,7 @@
       selectedFeedbackChoice = "";
       document.getElementById("feedback-body").value = "";
       document.getElementById("feedback-change").value = "";
+      document.getElementById("feedback-emotion-understanding").value = "";
       document.getElementById("feedback-status").textContent = "";
       document.querySelectorAll(".feedback-choice").forEach(function (button) {
         button.setAttribute("aria-pressed", "false");
