@@ -905,6 +905,17 @@
       margin-top: 10px;
     }
 
+    .sound-control {
+      display: grid;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .sound-toggle {
+      min-height: 42px;
+      font-size: 14px;
+    }
+
     .ai-answer {
       white-space: pre-wrap;
       overflow-wrap: anywhere;
@@ -1196,6 +1207,10 @@
             <button class="action-button secondary" type="button" id="clear-ai">清空内容</button>
           </div>
           <p class="status-line" id="ai-status" role="status"></p>
+          <div class="sound-control">
+            <button class="action-button secondary sound-toggle" type="button" id="toggle-soft-sound" aria-pressed="false">开启轻音效</button>
+            <p class="muted">音效默认关闭。开启后，只会在生成、保存、完成这些关键节点轻轻提示。</p>
+          </div>
         </div>
 
         <div class="card white">
@@ -1419,7 +1434,7 @@
 
     <section id="site-feedback" aria-labelledby="site-feedback-title" data-flow-screen data-step-title="想法">
       <h2 id="site-feedback-title">谢谢你做到这里</h2>
-      <p class="lead">如果你愿意，可以留下几句话，帮助我们理解 AI 匿名日记为什么有用或没用。</p>
+      <p class="lead">如果你愿意，可以留下几句话：哪些地方有帮助，哪些地方不像你，都可以说。</p>
       <div class="card">
         <h3>读完匿名日记后的开放反馈</h3>
         <div class="options" id="feedback-options">
@@ -1434,13 +1449,14 @@
         <label for="feedback-change">读完以后，你现在有什么想法？</label>
         <textarea id="feedback-change" maxlength="800" placeholder="可以写下你读完后的任何想法。"></textarea>
 
-        <label for="feedback-emotion-understanding">你觉得 AI 对你情绪的理解怎么样？</label>
+        <label for="feedback-emotion-understanding">AI 有没有说中你当时的感受？</label>
         <select id="feedback-emotion-understanding">
           <option value="">可以选择一个最接近的感受</option>
-          <option value="很贴近，基本理解了我的情绪">很贴近，基本理解了我的情绪</option>
-          <option value="有一点贴近，但还不完全">有一点贴近，但还不完全</option>
-          <option value="一般，说到了一些但没有很懂">一般，说到了一些但没有很懂</option>
-          <option value="不太贴近，没有理解我的情绪">不太贴近，没有理解我的情绪</option>
+          <option value="很说中">很说中</option>
+          <option value="有一点说中">有一点说中</option>
+          <option value="一般">一般</option>
+          <option value="不太说中">不太说中</option>
+          <option value="说错了，不像我">说错了 / 不像我</option>
         </select>
 
         <div class="button-row">
@@ -1757,6 +1773,8 @@
     let currentFlowIndex = 0;
     let selectedFeedbackChoice = "";
     let flushingPendingRecords = false;
+    let softSoundEnabled = false;
+    let softAudioContext = null;
 
     const lucideIcons = {
       "arrow-left": ['<path d="m12 19-7-7 7-7"></path>', '<path d="M19 12H5"></path>'],
@@ -1771,7 +1789,9 @@
       save: ['<path d="M15.2 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.8a2 2 0 0 0-.6-1.4l-3.8-3.8a2 2 0 0 0-1.4-.6Z"></path>', '<path d="M17 21v-7H7v7"></path>', '<path d="M7 3v5h8"></path>'],
       send: ['<path d="m22 2-7 20-4-9-9-4Z"></path>', '<path d="M22 2 11 13"></path>'],
       sparkles: ['<path d="M11 4.5 9.4 8.6 5.5 10l3.9 1.4L11 15.5l1.6-4.1 3.9-1.4-3.9-1.4Z"></path>', '<path d="M18 13.5 17.1 16 15 17l2.1 1 .9 2.5.9-2.5 2.1-1-2.1-1Z"></path>', '<path d="M5 3v4"></path>', '<path d="M3 5h4"></path>'],
-      trash: ['<path d="M3 6h18"></path>', '<path d="M8 6V4h8v2"></path>', '<path d="m19 6-1 14H6L5 6"></path>', '<path d="M10 11v5"></path>', '<path d="M14 11v5"></path>']
+      trash: ['<path d="M3 6h18"></path>', '<path d="M8 6V4h8v2"></path>', '<path d="m19 6-1 14H6L5 6"></path>', '<path d="M10 11v5"></path>', '<path d="M14 11v5"></path>'],
+      "volume-2": ['<path d="M11 5 6 9H2v6h4l5 4z"></path>', '<path d="M15.5 8.5a5 5 0 0 1 0 7"></path>', '<path d="M19 5a9 9 0 0 1 0 14"></path>'],
+      "volume-x": ['<path d="M11 5 6 9H2v6h4l5 4z"></path>', '<path d="m22 9-6 6"></path>', '<path d="m16 9 6 6"></path>']
     };
 
     function createLucideIcon(name, className) {
@@ -1832,6 +1852,7 @@
         ["clear-pre-survey", "重新选择", "refresh-ccw"],
         ["ask-ai", "生成匿名日记", "sparkles"],
         ["clear-ai", "清空内容", "eraser"],
+        ["toggle-soft-sound", "开启轻音效", "volume-x"],
         ["submit-post-survey", "保存并继续", "save"],
         ["save-diary", "保存到我的日记本", "book-open"],
         ["clear-diary-book", "清空本地日记本", "trash"],
@@ -1908,6 +1929,7 @@
     document.getElementById("reset-scales").addEventListener("click", resetScales);
     document.getElementById("ask-ai").addEventListener("click", askAi);
     document.getElementById("clear-ai").addEventListener("click", clearAi);
+    document.getElementById("toggle-soft-sound").addEventListener("click", toggleSoftSound);
     document.getElementById("ai-question").addEventListener("input", function () {
       storyGenerated = false;
       updateFlowActions();
@@ -1977,6 +1999,91 @@
       window.setTimeout(function () {
         element.classList.remove("soft-pulse");
       }, 520);
+    }
+
+    function updateSoftSoundButton() {
+      const button = document.getElementById("toggle-soft-sound");
+      if (!button) {
+        return;
+      }
+
+      button.setAttribute("aria-pressed", String(softSoundEnabled));
+      setButtonLabel(button, softSoundEnabled ? "轻音效已开启" : "开启轻音效", softSoundEnabled ? "volume-2" : "volume-x");
+    }
+
+    async function ensureSoftAudioContext() {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) {
+        return null;
+      }
+
+      if (!softAudioContext) {
+        softAudioContext = new AudioContextClass();
+      }
+
+      if (softAudioContext.state === "suspended") {
+        await softAudioContext.resume();
+      }
+
+      return softAudioContext;
+    }
+
+    async function toggleSoftSound() {
+      softSoundEnabled = !softSoundEnabled;
+      updateSoftSoundButton();
+      triggerSoftPulse(document.getElementById("toggle-soft-sound"));
+
+      if (softSoundEnabled) {
+        await playSoftSound("toggle");
+      }
+    }
+
+    async function playSoftSound(kind) {
+      if (!softSoundEnabled) {
+        return;
+      }
+
+      try {
+        const context = await ensureSoftAudioContext();
+        if (!context) {
+          return;
+        }
+
+        const now = context.currentTime;
+        const gain = context.createGain();
+        const filter = context.createBiquadFilter();
+        const first = context.createOscillator();
+        const second = context.createOscillator();
+        const settings = {
+          toggle: [392, 523],
+          ready: [440, 587],
+          save: [392, 494],
+          complete: [523, 659]
+        }[kind] || [392, 523];
+
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(1800, now);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.035, now + 0.035);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+
+        first.type = "sine";
+        second.type = "triangle";
+        first.frequency.setValueAtTime(settings[0], now);
+        second.frequency.setValueAtTime(settings[1], now + 0.05);
+
+        first.connect(filter);
+        second.connect(filter);
+        filter.connect(gain);
+        gain.connect(context.destination);
+
+        first.start(now);
+        second.start(now + 0.04);
+        first.stop(now + 0.42);
+        second.stop(now + 0.5);
+      } catch (error) {
+        console.warn("Soft sound could not play.", error);
+      }
     }
 
     function showScenario(key) {
@@ -2749,6 +2856,7 @@
         updateFlowActions();
         status.textContent = "匿名日记已生成。读完后可以继续。";
         triggerSoftPulse(answer);
+        playSoftSound("ready");
       } catch (error) {
         answer.classList.remove("is-thinking", "is-ready");
         answer.textContent = "暂时没有生成匿名日记。原因：" + (error.message || "生成服务暂时不可用。");
@@ -2819,6 +2927,7 @@
 
       status.textContent = alreadySaved ? "这篇日记已经在日记本里。" : "已经保存到你的匿名日记本。";
       triggerSoftPulse(status);
+      playSoftSound("save");
       renderDiaryBook();
     }
 
@@ -2996,7 +3105,7 @@
         "快捷选择：" + (selectedFeedbackChoice || "未选择"),
         "有感觉的句子或段落：" + (body || "用户没有补充说明。"),
         "读完后的想法：" + (change || "用户没有补充说明。"),
-        "AI 对情绪的理解：" + (emotionUnderstanding || "用户没有选择。")
+        "AI 有没有说中感受：" + (emotionUnderstanding || "用户没有选择。")
       ].join("\n");
       const feedbackPayload = {
         schema_version: 2,
@@ -3023,6 +3132,7 @@
           ? "收到啦，但网络较慢，已先保存在本机，后台暂时看不到。"
           : "收到啦，谢谢你的反馈。";
         triggerSoftPulse(status);
+        playSoftSound("complete");
         showCompletionScreen();
       } catch (error) {
         queueResearchRecord({
@@ -3034,6 +3144,7 @@
         }, error);
         status.textContent = "收到啦，谢谢你的反馈。";
         triggerSoftPulse(status);
+        playSoftSound("complete");
         showCompletionScreen();
       } finally {
         submitButton.disabled = false;
