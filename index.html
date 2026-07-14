@@ -470,6 +470,59 @@
       text-align: center;
     }
 
+    .start-choices {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      align-self: stretch;
+    }
+
+    .start-choice {
+      display: grid;
+      align-content: start;
+      gap: 9px;
+      min-height: 210px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      padding: 22px;
+      text-align: left;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .start-choice:hover {
+      background: var(--paper-2);
+      border-color: var(--blue);
+      box-shadow: 0 14px 30px rgba(141, 93, 107, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .start-choice.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #ffffff;
+    }
+
+    .start-choice.primary .muted,
+    .start-choice.primary .start-choice-meta {
+      color: rgba(255, 255, 255, 0.84);
+    }
+
+    .start-choice-title {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .start-choice-meta {
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
     .diary-list {
       display: grid;
       gap: 10px;
@@ -477,20 +530,60 @@
     }
 
     .diary-entry {
+      display: grid;
+      gap: 8px;
+      width: 100%;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #ffffff;
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
       padding: 14px;
+      text-align: left;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+    }
+
+    .diary-entry:hover {
+      border-color: var(--blue);
+      box-shadow: 0 10px 24px rgba(141, 93, 107, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .diary-entry-title {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .diary-entry-preview {
+      color: var(--muted);
+      line-height: 1.55;
       white-space: pre-wrap;
     }
 
-    .diary-entry time {
+    .diary-entry time,
+    .diary-detail-meta {
       display: block;
       color: var(--muted);
       font-size: 14px;
       font-weight: 700;
-      margin-bottom: 8px;
       white-space: normal;
+    }
+
+    .diary-detail {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .diary-detail[hidden] {
+      display: none;
+    }
+
+    .diary-detail-body {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
 
     .completion-panel {
@@ -1002,6 +1095,10 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .start-choices {
+        grid-template-columns: 1fr;
+      }
+
       .check-row {
         gap: 6px;
       }
@@ -1064,19 +1161,25 @@
       </div>
     </nav>
 
-    <header data-flow-screen data-step-title="开始">
+    <header data-flow-screen data-step-title="入口">
       <div>
         <p class="eyebrow">Anonymous Reflective Diary</p>
         <h1>匿名日记本</h1>
-        <p class="lead">写下一段困惑，让 AI 帮你整理成一篇匿名日记。你可以像读别人的故事一样，重新看见自己的处境。</p>
+        <p class="lead">这里可以保存你愿意留下的匿名日记，也可以开始一次新的整理。你可以像读别人的故事一样，重新看见自己的处境。</p>
       </div>
-      <aside class="header-panel" aria-label="安全边界">
-        <h2>安全边界</h2>
-        <p>这个网页不会判断你的身份，也不会搜索或展示真人个案。日记由 AI 根据你的输入整理生成，只作为陪伴式阅读材料和课堂研究刺激材料。</p>
-        <div class="notice warning">
-          如果你正在面对暴力、威胁、被迫曝光、自伤念头或强烈情绪危机，请优先联系可信成年人、学校心理老师、当地心理援助热线，或在紧急情况下联系 110 / 120。
-        </div>
-      </aside>
+      <div class="start-choices" aria-label="今天想做什么">
+        <button class="start-choice" type="button" id="open-diary-book">
+          <span class="start-choice-meta" id="saved-diary-count">查看已保存的日记</span>
+          <span class="start-choice-title">查看我的匿名日记本</span>
+          <span class="muted">按日期和主题浏览以前保存的匿名日记，点开某一篇再查看完整内容。</span>
+        </button>
+        <button class="start-choice primary" type="button" id="start-new-diary">
+          <span class="start-choice-meta">开始一次新的整理</span>
+          <span class="start-choice-title">整理一段新的心事</span>
+          <span class="muted">先记录此刻感受，再写下想整理的事情，最后回看它是否带来一点变化。</span>
+        </button>
+      </div>
+      <p class="status-line" id="start-choice-status" role="status"></p>
     </header>
 
     <section id="pre-survey" aria-labelledby="pre-survey-title" data-flow-screen data-step-title="第一站">
@@ -1408,11 +1511,21 @@
           <p class="status-line" id="diary-book-status" role="status"></p>
         </div>
         <div class="card white">
-          <h3>已经保存的日记</h3>
+          <h3>日记目录</h3>
+          <p class="muted" id="diary-list-summary">按时间倒序显示你保存在这个浏览器里的匿名日记。</p>
           <div class="empty-state" id="diary-empty" style="min-height: 220px;">
             <p>这里还没有保存的日记。生成一篇匿名日记后，可以选择把它留下来。</p>
           </div>
           <div class="diary-list" id="diary-list" aria-live="polite"></div>
+          <div class="diary-detail" id="diary-detail" hidden>
+            <span class="diary-detail-meta" id="diary-detail-meta"></span>
+            <h3 id="diary-detail-title">匿名日记</h3>
+            <div class="notice success diary-detail-body" id="diary-detail-body"></div>
+            <div class="button-row">
+              <button class="action-button secondary" type="button" id="diary-detail-back">返回目录</button>
+              <button class="action-button" type="button" id="diary-detail-new">整理一段新的心事</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1760,6 +1873,8 @@
     let flushingPendingRecords = false;
     let softAudioContext = null;
     let softSoundUnlocked = false;
+    let selectedDiaryId = "";
+    let diaryBrowsingMode = false;
 
     const lucideIcons = {
       "arrow-left": ['<path d="m12 19-7-7 7-7"></path>', '<path d="M19 12H5"></path>'],
@@ -1838,6 +1953,8 @@
         ["submit-post-survey", "保存并继续", "save"],
         ["save-diary", "保存到我的日记本", "book-open"],
         ["clear-diary-book", "清空本地日记本", "trash"],
+        ["diary-detail-back", "返回目录", "arrow-left"],
+        ["diary-detail-new", "整理一段新的心事", "arrow-right"],
         ["submit-feedback", "提交反馈", "send"],
         ["clear-feedback", "清空反馈", "eraser"]
       ].forEach(function (item) {
@@ -1875,9 +1992,18 @@
     renderScales();
     renderFlowTabs();
     showFlowScreen(0);
+    updateStartChoiceState();
     document.addEventListener("pointerdown", unlockSoftSound, { once: true, capture: true });
     document.addEventListener("keydown", unlockSoftSound, { once: true, capture: true });
     flowPrev.addEventListener("click", function () {
+      if (diaryBrowsingMode && flowScreens[currentFlowIndex].id === "diary-book") {
+        selectedDiaryId = "";
+        diaryBrowsingMode = false;
+        maxUnlockedFlowIndex = 0;
+        showFlowScreen(0);
+        playSoftSound("nav");
+        return;
+      }
       showFlowScreen(currentFlowIndex - 1);
       playSoftSound("nav");
     });
@@ -1916,6 +2042,8 @@
     });
     document.getElementById("calculate-scales").addEventListener("click", calculateScales);
     document.getElementById("reset-scales").addEventListener("click", resetScales);
+    document.getElementById("open-diary-book").addEventListener("click", openSavedDiaryBook);
+    document.getElementById("start-new-diary").addEventListener("click", startNewReflection);
     document.getElementById("ask-ai").addEventListener("click", askAi);
     document.getElementById("clear-ai").addEventListener("click", clearAi);
     document.getElementById("ai-question").addEventListener("input", function () {
@@ -1935,6 +2063,12 @@
     });
     document.getElementById("save-diary").addEventListener("click", saveCurrentDiary);
     document.getElementById("clear-diary-book").addEventListener("click", clearDiaryBook);
+    document.getElementById("diary-detail-back").addEventListener("click", function () {
+      selectedDiaryId = "";
+      renderDiaryBook();
+      playSoftSound("nav");
+    });
+    document.getElementById("diary-detail-new").addEventListener("click", startNewReflection);
     document.getElementById("submit-feedback").addEventListener("click", submitSiteFeedback);
     document.getElementById("clear-feedback").addEventListener("click", clearSiteFeedback);
     document.querySelectorAll(".feedback-choice").forEach(function (button) {
@@ -1973,6 +2107,7 @@
     function showMainContent() {
       document.body.classList.remove("consent-pending");
       document.body.classList.add("consent-accepted");
+      updateStartChoiceState();
       document.getElementById("flow-next").focus();
       flushPendingResearchRecords();
     }
@@ -2099,8 +2234,12 @@
         tab.type = "button";
         tab.textContent = screen.dataset.stepTitle || "步骤 " + (index + 1);
         tab.addEventListener("click", function () {
-          if (index > maxUnlockedFlowIndex) {
+          if (!canOpenFlowTab(index)) {
             return;
+          }
+          if (index === 0) {
+            diaryBrowsingMode = false;
+            maxUnlockedFlowIndex = 0;
           }
           showFlowScreen(index);
         });
@@ -2114,11 +2253,24 @@
       updateFlowTabs();
     }
 
+    function findFlowScreenIndex(id) {
+      return flowScreens.findIndex(function (screen) {
+        return screen.id === id;
+      });
+    }
+
     function updateFlowTabs() {
       Array.from(flowTabs.children).forEach(function (tab, index) {
         tab.setAttribute("aria-current", index === currentFlowIndex ? "step" : "false");
-        tab.setAttribute("aria-disabled", String(index > maxUnlockedFlowIndex));
+        tab.setAttribute("aria-disabled", String(!canOpenFlowTab(index)));
       });
+    }
+
+    function canOpenFlowTab(index) {
+      if (diaryBrowsingMode) {
+        return index === 0 || index === currentFlowIndex;
+      }
+      return index <= maxUnlockedFlowIndex;
     }
 
     function showFlowScreen(index) {
@@ -2128,6 +2280,9 @@
       });
 
       const current = flowScreens[currentFlowIndex];
+      if (currentFlowIndex === 0) {
+        updateStartChoiceState();
+      }
       if (current.id === "diary-book") {
         renderDiaryBook();
       }
@@ -2143,9 +2298,16 @@
     function updateFlowActions(current) {
       const currentScreen = current || flowScreens[currentFlowIndex];
       const inlineSubmitSteps = ["pre-survey", "post-survey"];
+      setButtonLabel(flowPrev, "上一步", "arrow-left");
       flowPrev.hidden = currentFlowIndex === 0;
       flowNext.hidden = inlineSubmitSteps.includes(currentScreen.id);
       flowNext.disabled = false;
+
+      if (currentFlowIndex === 0) {
+        flowPrev.hidden = true;
+        flowNext.hidden = true;
+        return;
+      }
 
       if (currentScreen.id === "ai-helper") {
         setButtonLabel(flowNext, storyGenerated ? "读完后继续" : "生成后继续", "arrow-right", { trailing: true });
@@ -2154,6 +2316,12 @@
       }
 
       if (currentScreen.id === "diary-book") {
+        if (diaryBrowsingMode) {
+          setButtonLabel(flowPrev, "返回入口", "arrow-left");
+          flowPrev.hidden = false;
+          flowNext.hidden = true;
+          return;
+        }
         setButtonLabel(flowNext, "继续到反馈", "arrow-right", { trailing: true });
         return;
       }
@@ -2169,6 +2337,62 @@
         currentFlowIndex === flowScreens.length - 1 ? "refresh-ccw" : "arrow-right",
         { trailing: true }
       );
+    }
+
+    function updateStartChoiceState() {
+      const count = document.getElementById("saved-diary-count");
+      if (!count) {
+        return;
+      }
+
+      const entries = readDiaryEntries();
+      count.textContent = entries.length ? "已有 " + entries.length + " 篇保存的日记" : "还没有保存过日记";
+    }
+
+    function openSavedDiaryBook() {
+      const diaryIndex = findFlowScreenIndex("diary-book");
+      const entries = readDiaryEntries();
+      selectedDiaryId = "";
+
+      if (diaryIndex < 0) {
+        return;
+      }
+
+      unlockFlowIndex(diaryIndex);
+      diaryBrowsingMode = true;
+      showFlowScreen(diaryIndex);
+      document.getElementById("diary-book-status").textContent = entries.length
+        ? "这里是你保存在这个浏览器里的匿名日记。"
+        : "你还没有保存过匿名日记，可以先整理一段新的心事。";
+      playSoftSound("nav");
+    }
+
+    function startNewReflection() {
+      const preIndex = findFlowScreenIndex("pre-survey");
+      if (preIndex < 0) {
+        return;
+      }
+
+      resetCurrentReflection();
+      diaryBrowsingMode = false;
+      maxUnlockedFlowIndex = 0;
+      unlockFlowIndex(preIndex);
+      showFlowScreen(preIndex);
+      playSoftSound("nav");
+    }
+
+    function resetCurrentReflection() {
+      clearSurveyStage("pre");
+      clearSurveyStage("post");
+      clearAi();
+      clearSiteFeedback();
+      resetScales();
+      latestSurveyChange = null;
+      latestGeneratedDiary = null;
+      storyGenerated = false;
+      selectedDiaryId = "";
+      diaryBrowsingMode = false;
+      updateFlowActions();
     }
 
     function renderList(id, items) {
@@ -2909,6 +3133,7 @@
       status.textContent = alreadySaved ? "这篇日记已经在日记本里。" : "已经保存到你的匿名日记本。";
       triggerSoftPulse(status);
       playSoftSound("save");
+      updateStartChoiceState();
       renderDiaryBook();
     }
 
@@ -2941,32 +3166,87 @@
     function clearDiaryBook() {
       localStorage.removeItem(DIARY_STORAGE_KEY);
       document.getElementById("diary-book-status").textContent = "本地日记本已清空。";
+      selectedDiaryId = "";
+      updateStartChoiceState();
       renderDiaryBook();
     }
 
     function renderDiaryBook() {
       const list = document.getElementById("diary-list");
       const empty = document.getElementById("diary-empty");
+      const summary = document.getElementById("diary-list-summary");
+      const detail = document.getElementById("diary-detail");
+      const detailMeta = document.getElementById("diary-detail-meta");
+      const detailTitle = document.getElementById("diary-detail-title");
+      const detailBody = document.getElementById("diary-detail-body");
       const entries = readDiaryEntries();
+      const selectedEntry = entries.find(function (entry) {
+        return entry.id === selectedDiaryId;
+      });
 
       list.innerHTML = "";
       empty.style.display = entries.length ? "none" : "grid";
+      summary.textContent = entries.length
+        ? "共保存 " + entries.length + " 篇。点开某一篇，可以查看完整匿名日记。"
+        : "按时间倒序显示你保存在这个浏览器里的匿名日记。";
+
+      if (!selectedEntry) {
+        selectedDiaryId = "";
+      }
+
+      detail.hidden = !selectedEntry;
+      if (selectedEntry) {
+        detailMeta.textContent = formatDiaryDate(selectedEntry.createdAt) + " · " + (selectedEntry.topic || "匿名日记");
+        detailTitle.textContent = diaryDisplayTitle(selectedEntry);
+        detailBody.textContent = selectedEntry.diary || "";
+      } else {
+        detailMeta.textContent = "";
+        detailTitle.textContent = "匿名日记";
+        detailBody.textContent = "";
+      }
 
       entries.forEach(function (entry) {
-        const article = document.createElement("article");
+        const article = document.createElement("button");
         article.className = "diary-entry";
+        article.type = "button";
+        article.setAttribute("aria-pressed", String(entry.id === selectedDiaryId));
 
         const time = document.createElement("time");
         time.dateTime = entry.createdAt;
         time.textContent = formatDiaryDate(entry.createdAt) + " · " + (entry.topic || "匿名日记");
 
+        const title = document.createElement("div");
+        title.className = "diary-entry-title";
+        title.textContent = diaryDisplayTitle(entry);
+
         const body = document.createElement("div");
-        body.textContent = entry.diary || "";
+        body.className = "diary-entry-preview";
+        body.textContent = diaryPreview(entry.diary || "");
+
+        article.addEventListener("click", function () {
+          selectedDiaryId = entry.id;
+          renderDiaryBook();
+          playSoftSound("choice");
+          document.getElementById("diary-detail").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
 
         article.appendChild(time);
+        article.appendChild(title);
         article.appendChild(body);
         list.appendChild(article);
       });
+    }
+
+    function diaryDisplayTitle(entry) {
+      return entry.topic ? entry.topic + " · 匿名日记" : "匿名日记";
+    }
+
+    function diaryPreview(text) {
+      const compact = String(text || "").replace(/\s+/g, " ").trim();
+      if (!compact) {
+        return "这篇日记暂时没有内容。";
+      }
+      return compact.length > 96 ? compact.slice(0, 96) + "..." : compact;
     }
 
     function formatDiaryDate(value) {
