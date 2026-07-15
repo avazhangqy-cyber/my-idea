@@ -2179,6 +2179,10 @@
     function unlockSoftSound() {
       const shouldConfirmUnlock = !softSoundUnlockAttempted;
       softSoundUnlockAttempted = true;
+      if (shouldConfirmUnlock && isMobileAudioEnvironment()) {
+        playSoftSound("choice");
+        return;
+      }
       ensureSoftAudioContext()
         .then(function (context) {
           softSoundUnlocked = Boolean(context);
@@ -2224,7 +2228,7 @@
 
     function softSoundDataUrl(kind) {
       const settings = softSoundSettings(kind);
-      const sampleRate = 12000;
+      const sampleRate = 44100;
       const duration = settings.duration;
       const samples = Math.floor(sampleRate * duration);
       const headerSize = 44;
@@ -2303,6 +2307,12 @@
       lastSoftSoundAt = nowMs;
 
       try {
+        if (isMobileAudioEnvironment()) {
+          softSoundUnlocked = true;
+          playFallbackSoftSound(kind);
+          return;
+        }
+
         const context = await ensureSoftAudioContext();
         if (!context) {
           playFallbackSoftSound(kind);
