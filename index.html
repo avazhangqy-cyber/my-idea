@@ -2211,24 +2211,25 @@
 
     function softSoundSettings(kind) {
       return {
-        consent: [392, 523],
-        nav: [349, 440],
-        choice: [440, 523],
-        ready: [440, 587],
-        save: [392, 494],
-        complete: [523, 659]
-      }[kind] || [392, 523];
+        consent: { start: 680, end: 260, duration: 0.2, volume: 0.042 },
+        nav: { start: 610, end: 230, duration: 0.18, volume: 0.034 },
+        choice: { start: 720, end: 280, duration: 0.17, volume: 0.032 },
+        ready: { start: 780, end: 300, duration: 0.22, volume: 0.042 },
+        save: { start: 700, end: 240, duration: 0.22, volume: 0.044 },
+        complete: { start: 820, end: 320, duration: 0.24, volume: 0.046 }
+      }[kind] || { start: 680, end: 260, duration: 0.2, volume: 0.038 };
     }
 
     function softSoundDataUrl(kind) {
       const settings = softSoundSettings(kind);
       const sampleRate = 12000;
-      const duration = 0.28;
+      const duration = settings.duration;
       const samples = Math.floor(sampleRate * duration);
       const headerSize = 44;
       const dataSize = samples * 2;
       const buffer = new ArrayBuffer(headerSize + dataSize);
       const view = new DataView(buffer);
+      let phase = 0;
 
       function writeString(offset, value) {
         for (let i = 0; i < value.length; i += 1) {
@@ -2252,12 +2253,17 @@
 
       for (let i = 0; i < samples; i += 1) {
         const time = i / sampleRate;
-        const fadeIn = Math.min(1, time / 0.035);
-        const fadeOut = Math.min(1, (duration - time) / 0.12);
-        const envelope = Math.max(0, Math.min(fadeIn, fadeOut));
-        const tone = Math.sin(2 * Math.PI * settings[0] * time) * 0.55
-          + Math.sin(2 * Math.PI * settings[1] * time) * 0.35;
-        const sample = Math.max(-1, Math.min(1, tone * envelope * 0.14));
+        const progress = time / duration;
+        const frequency = settings.start * Math.pow(settings.end / settings.start, progress);
+        const fadeIn = Math.min(1, time / 0.012);
+        const fadeOut = Math.pow(Math.max(0, 1 - progress), 2.2);
+        const envelope = fadeIn * fadeOut;
+        const pseudoRandom = Math.sin(i * 12.9898) * 43758.5453;
+        const airyNoise = pseudoRandom - Math.floor(pseudoRandom);
+        phase += 2 * Math.PI * frequency / sampleRate;
+        const bubble = Math.sin(phase) * envelope;
+        const air = (airyNoise * 2 - 1) * Math.pow(Math.max(0, 1 - progress), 5);
+        const sample = Math.max(-1, Math.min(1, bubble * 0.16 + air * 0.035));
         view.setInt16(headerSize + i * 2, sample * 32767, true);
       }
 
@@ -2304,32 +2310,51 @@
 
         const now = context.currentTime;
         const mobileBoost = isMobileAudioEnvironment();
-        const gain = context.createGain();
+        const bubbleGain = context.createGain();
         const filter = context.createBiquadFilter();
-        const first = context.createOscillator();
-        const second = context.createOscillator();
+        const bubble = context.createOscillator();
+        const air = context.createBufferSource();
+        const airFilter = context.createBiquadFilter();
+        const airGain = context.createGain();
         const settings = softSoundSettings(kind);
+        const volume = settings.volume * (mobileBoost ? 1.25 : 1);
+        const airLength = Math.max(1, Math.floor(context.sampleRate * 0.08));
+        const airBuffer = context.createBuffer(1, airLength, context.sampleRate);
+        const airData = airBuffer.getChannelData(0);
+
+        for (let i = 0; i < airLength; i += 1) {
+          const progress = i / airLength;
+          airData[i] = (Math.random() * 2 - 1) * Math.pow(1 - progress, 4);
+        }
 
         filter.type = "lowpass";
-        filter.frequency.setValueAtTime(mobileBoost ? 2400 : 1800, now);
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(mobileBoost ? 0.052 : 0.035, now + 0.035);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.46);
+        filter.frequency.setValueAtTime(mobileBoost ? 1600 : 1300, now);
+        bubbleGain.gain.setValueAtTime(0.0001, now);
+        bubbleGain.gain.exponentialRampToValueAtTime(volume, now + 0.012);
+        bubbleGain.gain.exponentialRampToValueAtTime(0.0001, now + settings.duration);
 
-        first.type = "sine";
-        second.type = "triangle";
-        first.frequency.setValueAtTime(settings[0], now);
-        second.frequency.setValueAtTime(settings[1], now + 0.05);
+        bubble.type = "sine";
+        bubble.frequency.setValueAtTime(settings.start, now);
+        bubble.frequency.exponentialRampToValueAtTime(settings.end, now + settings.duration);
 
-        first.connect(filter);
-        second.connect(filter);
-        filter.connect(gain);
-        gain.connect(context.destination);
+        air.buffer = airBuffer;
+        airFilter.type = "bandpass";
+        airFilter.frequency.setValueAtTime(mobileBoost ? 900 : 760, now);
+        airFilter.Q.setValueAtTime(0.7, now);
+        airGain.gain.setValueAtTime(volume * 0.38, now);
+        airGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
 
-        first.start(now);
-        second.start(now + 0.04);
-        first.stop(now + 0.42);
-        second.stop(now + 0.5);
+        bubble.connect(filter);
+        filter.connect(bubbleGain);
+        bubbleGain.connect(context.destination);
+        air.connect(airFilter);
+        airFilter.connect(airGain);
+        airGain.connect(context.destination);
+
+        bubble.start(now);
+        air.start(now);
+        bubble.stop(now + settings.duration + 0.02);
+        air.stop(now + 0.09);
         playFallbackSoftSound(kind);
       } catch (error) {
         playFallbackSoftSound(kind);
