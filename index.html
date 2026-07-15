@@ -473,22 +473,22 @@
     .start-choices {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 14px;
+      gap: 12px;
       align-self: stretch;
     }
 
     .start-choice {
       display: grid;
-      place-items: center;
-      min-height: 138px;
+      align-items: center;
+      min-height: 92px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #ffffff;
       color: var(--ink);
       cursor: pointer;
       font: inherit;
-      padding: 22px;
-      text-align: center;
+      padding: 18px 20px;
+      text-align: left;
       transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background 0.16s ease;
     }
 
@@ -506,9 +506,9 @@
     }
 
     .start-choice-title {
-      font-size: clamp(24px, 3vw, 34px);
+      font-size: clamp(18px, 2vw, 24px);
       font-weight: 800;
-      line-height: 1.25;
+      line-height: 1.32;
     }
 
     .diary-list {
@@ -1153,7 +1153,7 @@
       <div>
         <p class="eyebrow">Anonymous Reflective Diary</p>
         <h1>匿名日记本</h1>
-        <p class="lead">你可以先梳理一段新的心事，也可以回来看自己愿意留下的匿名日记。像读别人的故事一样，重新看见自己的处境。</p>
+        <p class="lead">你可以先梳理一段新的心事，也可以回来看自己愿意留下的匿名日记。<br>像读别人的故事一样，重新看见自己的处境。</p>
       </div>
       <div class="start-choices" aria-label="今天想做什么">
         <button class="start-choice" type="button" id="open-diary-book">
