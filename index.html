@@ -2179,17 +2179,19 @@
     function unlockSoftSound() {
       const shouldConfirmUnlock = !softSoundUnlockAttempted;
       softSoundUnlockAttempted = true;
-      if (shouldConfirmUnlock) {
-        playFallbackSoftSound("choice");
-      }
       ensureSoftAudioContext()
         .then(function (context) {
           softSoundUnlocked = Boolean(context);
           if (shouldConfirmUnlock && context) {
             playSoftSound("choice");
+          } else if (shouldConfirmUnlock) {
+            playFallbackSoftSound("choice");
           }
         })
         .catch(function (error) {
+          if (shouldConfirmUnlock) {
+            playFallbackSoftSound("choice");
+          }
           console.warn("Soft sound could not be prepared.", error);
         });
     }
@@ -2309,7 +2311,6 @@
         softSoundUnlocked = true;
 
         const now = context.currentTime;
-        const mobileBoost = isMobileAudioEnvironment();
         const bubbleGain = context.createGain();
         const filter = context.createBiquadFilter();
         const bubble = context.createOscillator();
@@ -2317,7 +2318,7 @@
         const airFilter = context.createBiquadFilter();
         const airGain = context.createGain();
         const settings = softSoundSettings(kind);
-        const volume = settings.volume * (mobileBoost ? 1.25 : 1);
+        const volume = settings.volume;
         const airLength = Math.max(1, Math.floor(context.sampleRate * 0.08));
         const airBuffer = context.createBuffer(1, airLength, context.sampleRate);
         const airData = airBuffer.getChannelData(0);
@@ -2328,7 +2329,7 @@
         }
 
         filter.type = "lowpass";
-        filter.frequency.setValueAtTime(mobileBoost ? 2200 : 1800, now);
+        filter.frequency.setValueAtTime(1800, now);
         bubbleGain.gain.setValueAtTime(0.0001, now);
         bubbleGain.gain.exponentialRampToValueAtTime(volume, now + 0.008);
         bubbleGain.gain.exponentialRampToValueAtTime(0.0001, now + settings.duration);
@@ -2339,7 +2340,7 @@
 
         air.buffer = airBuffer;
         airFilter.type = "bandpass";
-        airFilter.frequency.setValueAtTime(mobileBoost ? 1300 : 1100, now);
+        airFilter.frequency.setValueAtTime(1100, now);
         airFilter.Q.setValueAtTime(0.7, now);
         airGain.gain.setValueAtTime(volume * 0.24, now);
         airGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
@@ -2355,7 +2356,6 @@
         air.start(now);
         bubble.stop(now + settings.duration + 0.02);
         air.stop(now + 0.09);
-        playFallbackSoftSound(kind);
       } catch (error) {
         playFallbackSoftSound(kind);
         console.warn("Soft sound could not play.", error);
