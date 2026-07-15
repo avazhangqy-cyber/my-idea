@@ -2026,8 +2026,7 @@
     renderScales();
     renderFlowTabs();
     showFlowScreen(0);
-    document.addEventListener("pointerdown", unlockSoftSound, { once: true, capture: true });
-    document.addEventListener("keydown", unlockSoftSound, { once: true, capture: true });
+    setupSoftSoundUnlockEvents();
     flowPrev.addEventListener("click", function () {
       if (diaryBrowsingMode && flowScreens[currentFlowIndex].id === "diary-book") {
         selectedDiaryId = "";
@@ -2183,6 +2182,17 @@
         .catch(function (error) {
           console.warn("Soft sound could not be prepared.", error);
         });
+    }
+
+    function setupSoftSoundUnlockEvents() {
+      ["pointerdown", "touchstart", "touchend", "mousedown", "click", "keydown"].forEach(function (eventName) {
+        document.addEventListener(eventName, unlockSoftSound, {
+          once: true,
+          capture: true,
+          passive: true
+        });
+      });
+      document.addEventListener("WeixinJSBridgeReady", unlockSoftSound, false);
     }
 
     async function playSoftSound(kind) {
@@ -3459,14 +3469,127 @@
   </script>
   <script>
     document.documentElement.classList.add("waiting-for-queue-verification");
+    const queueWidgetRootStyles = {
+      position: "fixed",
+      inset: "0",
+      "z-index": "2147483647",
+      display: "grid",
+      "place-items": "center",
+      "min-height": "100vh",
+      padding: "18px",
+      overflow: "auto",
+      background: "#ffffff"
+    };
+    const queueWidgetChildStyles = {
+      "max-width": "min(92vw, 560px)",
+      "max-height": "88vh",
+      "transform-origin": "center center"
+    };
+
+    function setImportantStyle(element, styles) {
+      Object.keys(styles).forEach(function (key) {
+        element.style.setProperty(key, styles[key], "important");
+      });
+    }
+
+    function clearImportantStyle(element, styles) {
+      Object.keys(styles).forEach(function (key) {
+        element.style.removeProperty(key);
+      });
+    }
+
+    function fitQueueVerificationWidget() {
+      if (!document.documentElement.classList.contains("waiting-for-queue-verification")) {
+        return;
+      }
+      const root = document.getElementById("queue-verification-widget-root");
+      if (!root) {
+        return;
+      }
+      const smallPhoneScale = window.innerWidth <= 380 ? "scale(0.86)" : "scale(0.92)";
+      setImportantStyle(root, queueWidgetRootStyles);
+      Array.from(root.children).forEach(function (child) {
+        setImportantStyle(child, queueWidgetChildStyles);
+        if (window.innerWidth <= 520) {
+          child.style.setProperty("max-width", "94vw", "important");
+          child.style.setProperty("transform", smallPhoneScale, "important");
+        }
+      });
+    }
+
+    function clearQueueVerificationWidgetFit() {
+      const root = document.getElementById("queue-verification-widget-root");
+      if (!root) {
+        return;
+      }
+      clearImportantStyle(root, queueWidgetRootStyles);
+      Array.from(root.children).forEach(function (child) {
+        clearImportantStyle(child, queueWidgetChildStyles);
+        child.style.removeProperty("transform");
+      });
+    }
+
+    const queueWidgetObserver = new MutationObserver(fitQueueVerificationWidget);
+    queueWidgetObserver.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener("resize", fitQueueVerificationWidget);
+    fitQueueVerificationWidget();
+
     window.addEventListener("queueVerificationPassed", function () {
       document.documentElement.classList.remove("waiting-for-queue-verification");
+      clearQueueVerificationWidgetFit();
+      queueWidgetObserver.disconnect();
+      window.removeEventListener("resize", fitQueueVerificationWidget);
     });
   </script>
 
   <style>
+    .waiting-for-queue-verification body #queue-verification-widget-root {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 2147483647 !important;
+      display: grid !important;
+      place-items: center !important;
+      min-height: 100vh !important;
+      padding: 18px !important;
+      overflow: auto !important;
+      background: #ffffff !important;
+    }
+
+    .waiting-for-queue-verification body #queue-verification-widget-root > * {
+      max-width: min(92vw, 560px) !important;
+      max-height: 88vh !important;
+      transform-origin: center center;
+    }
+
+    .waiting-for-queue-verification body #queue-verification-widget-root img,
+    .waiting-for-queue-verification body #queue-verification-widget-root canvas,
+    .waiting-for-queue-verification body #queue-verification-widget-root svg {
+      max-width: 100% !important;
+      height: auto !important;
+      object-fit: contain !important;
+    }
+
     .waiting-for-queue-verification body > *:not(#queue-verification-widget-root) {
       visibility: hidden;
+    }
+
+    @media (max-width: 520px) {
+      .waiting-for-queue-verification body #queue-verification-widget-root {
+        align-items: center;
+        justify-items: center;
+        padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+      }
+
+      .waiting-for-queue-verification body #queue-verification-widget-root > * {
+        max-width: 94vw !important;
+        transform: scale(0.92);
+      }
+    }
+
+    @media (max-width: 380px) {
+      .waiting-for-queue-verification body #queue-verification-widget-root > * {
+        transform: scale(0.86);
+      }
     }
   </style>
 
