@@ -1907,6 +1907,8 @@
     let flushingPendingRecords = false;
     let softAudioContext = null;
     let softSoundUnlocked = false;
+    let softSoundUnlockAttempted = false;
+    let lastSoftSoundAt = 0;
     let selectedDiaryId = "";
     let diaryBrowsingMode = false;
 
@@ -2175,9 +2177,17 @@
     }
 
     function unlockSoftSound() {
+      const shouldConfirmUnlock = !softSoundUnlockAttempted;
+      softSoundUnlockAttempted = true;
+      if (shouldConfirmUnlock) {
+        playFallbackSoftSound("choice");
+      }
       ensureSoftAudioContext()
         .then(function (context) {
           softSoundUnlocked = Boolean(context);
+          if (shouldConfirmUnlock && context) {
+            playSoftSound("choice");
+          }
         })
         .catch(function (error) {
           console.warn("Soft sound could not be prepared.", error);
@@ -2195,33 +2205,116 @@
       document.addEventListener("WeixinJSBridgeReady", unlockSoftSound, false);
     }
 
+    function isMobileAudioEnvironment() {
+      return /iPhone|iPad|iPod|Android|MicroMessenger/i.test(navigator.userAgent) || window.innerWidth <= 860;
+    }
+
+    function softSoundSettings(kind) {
+      return {
+        consent: [392, 523],
+        nav: [349, 440],
+        choice: [440, 523],
+        ready: [440, 587],
+        save: [392, 494],
+        complete: [523, 659]
+      }[kind] || [392, 523];
+    }
+
+    function softSoundDataUrl(kind) {
+      const settings = softSoundSettings(kind);
+      const sampleRate = 12000;
+      const duration = 0.28;
+      const samples = Math.floor(sampleRate * duration);
+      const headerSize = 44;
+      const dataSize = samples * 2;
+      const buffer = new ArrayBuffer(headerSize + dataSize);
+      const view = new DataView(buffer);
+
+      function writeString(offset, value) {
+        for (let i = 0; i < value.length; i += 1) {
+          view.setUint8(offset + i, value.charCodeAt(i));
+        }
+      }
+
+      writeString(0, "RIFF");
+      view.setUint32(4, 36 + dataSize, true);
+      writeString(8, "WAVE");
+      writeString(12, "fmt ");
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeString(36, "data");
+      view.setUint32(40, dataSize, true);
+
+      for (let i = 0; i < samples; i += 1) {
+        const time = i / sampleRate;
+        const fadeIn = Math.min(1, time / 0.035);
+        const fadeOut = Math.min(1, (duration - time) / 0.12);
+        const envelope = Math.max(0, Math.min(fadeIn, fadeOut));
+        const tone = Math.sin(2 * Math.PI * settings[0] * time) * 0.55
+          + Math.sin(2 * Math.PI * settings[1] * time) * 0.35;
+        const sample = Math.max(-1, Math.min(1, tone * envelope * 0.22));
+        view.setInt16(headerSize + i * 2, sample * 32767, true);
+      }
+
+      let binary = "";
+      const bytes = new Uint8Array(buffer);
+      for (let i = 0; i < bytes.length; i += 1) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return "data:audio/wav;base64," + btoa(binary);
+    }
+
+    function playFallbackSoftSound(kind) {
+      if (!isMobileAudioEnvironment()) {
+        return;
+      }
+      try {
+        const audio = new Audio(softSoundDataUrl(kind));
+        audio.preload = "auto";
+        audio.volume = 0.65;
+        audio.setAttribute("playsinline", "");
+        const playPromise = audio.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(function () {});
+        }
+      } catch (error) {
+        console.warn("Fallback soft sound could not play.", error);
+      }
+    }
+
     async function playSoftSound(kind) {
+      const nowMs = Date.now();
+      if (nowMs - lastSoftSoundAt < 90) {
+        return;
+      }
+      lastSoftSoundAt = nowMs;
+
       try {
         const context = await ensureSoftAudioContext();
         if (!context) {
+          playFallbackSoftSound(kind);
           return;
         }
         softSoundUnlocked = true;
 
         const now = context.currentTime;
+        const mobileBoost = isMobileAudioEnvironment();
         const gain = context.createGain();
         const filter = context.createBiquadFilter();
         const first = context.createOscillator();
         const second = context.createOscillator();
-        const settings = {
-          consent: [392, 523],
-          nav: [349, 440],
-          choice: [440, 523],
-          ready: [440, 587],
-          save: [392, 494],
-          complete: [523, 659]
-        }[kind] || [392, 523];
+        const settings = softSoundSettings(kind);
 
         filter.type = "lowpass";
-        filter.frequency.setValueAtTime(1800, now);
+        filter.frequency.setValueAtTime(mobileBoost ? 2400 : 1800, now);
         gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(0.035, now + 0.035);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+        gain.gain.exponentialRampToValueAtTime(mobileBoost ? 0.085 : 0.035, now + 0.035);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.46);
 
         first.type = "sine";
         second.type = "triangle";
@@ -2237,7 +2330,9 @@
         second.start(now + 0.04);
         first.stop(now + 0.42);
         second.stop(now + 0.5);
+        playFallbackSoftSound(kind);
       } catch (error) {
+        playFallbackSoftSound(kind);
         console.warn("Soft sound could not play.", error);
       }
     }
