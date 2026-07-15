@@ -2257,7 +2257,7 @@
         const envelope = Math.max(0, Math.min(fadeIn, fadeOut));
         const tone = Math.sin(2 * Math.PI * settings[0] * time) * 0.55
           + Math.sin(2 * Math.PI * settings[1] * time) * 0.35;
-        const sample = Math.max(-1, Math.min(1, tone * envelope * 0.22));
+        const sample = Math.max(-1, Math.min(1, tone * envelope * 0.14));
         view.setInt16(headerSize + i * 2, sample * 32767, true);
       }
 
@@ -2276,7 +2276,7 @@
       try {
         const audio = new Audio(softSoundDataUrl(kind));
         audio.preload = "auto";
-        audio.volume = 0.65;
+        audio.volume = 0.42;
         audio.setAttribute("playsinline", "");
         const playPromise = audio.play();
         if (playPromise && typeof playPromise.catch === "function") {
@@ -2313,7 +2313,7 @@
         filter.type = "lowpass";
         filter.frequency.setValueAtTime(mobileBoost ? 2400 : 1800, now);
         gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.exponentialRampToValueAtTime(mobileBoost ? 0.085 : 0.035, now + 0.035);
+        gain.gain.exponentialRampToValueAtTime(mobileBoost ? 0.052 : 0.035, now + 0.035);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.46);
 
         first.type = "sine";
