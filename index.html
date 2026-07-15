@@ -2211,13 +2211,13 @@
 
     function softSoundSettings(kind) {
       return {
-        consent: { start: 680, end: 260, duration: 0.2, volume: 0.042 },
-        nav: { start: 610, end: 230, duration: 0.18, volume: 0.034 },
-        choice: { start: 720, end: 280, duration: 0.17, volume: 0.032 },
-        ready: { start: 780, end: 300, duration: 0.22, volume: 0.042 },
-        save: { start: 700, end: 240, duration: 0.22, volume: 0.044 },
-        complete: { start: 820, end: 320, duration: 0.24, volume: 0.046 }
-      }[kind] || { start: 680, end: 260, duration: 0.2, volume: 0.038 };
+        consent: { start: 520, end: 690, duration: 0.14, volume: 0.036 },
+        nav: { start: 500, end: 640, duration: 0.12, volume: 0.03 },
+        choice: { start: 560, end: 760, duration: 0.11, volume: 0.03 },
+        ready: { start: 560, end: 780, duration: 0.15, volume: 0.036 },
+        save: { start: 540, end: 720, duration: 0.15, volume: 0.038 },
+        complete: { start: 580, end: 820, duration: 0.16, volume: 0.04 }
+      }[kind] || { start: 520, end: 690, duration: 0.14, volume: 0.034 };
     }
 
     function softSoundDataUrl(kind) {
@@ -2255,15 +2255,15 @@
         const time = i / sampleRate;
         const progress = time / duration;
         const frequency = settings.start * Math.pow(settings.end / settings.start, progress);
-        const fadeIn = Math.min(1, time / 0.012);
-        const fadeOut = Math.pow(Math.max(0, 1 - progress), 2.2);
+        const fadeIn = Math.min(1, time / 0.008);
+        const fadeOut = Math.pow(Math.max(0, 1 - progress), 2.8);
         const envelope = fadeIn * fadeOut;
         const pseudoRandom = Math.sin(i * 12.9898) * 43758.5453;
         const airyNoise = pseudoRandom - Math.floor(pseudoRandom);
         phase += 2 * Math.PI * frequency / sampleRate;
         const bubble = Math.sin(phase) * envelope;
-        const air = (airyNoise * 2 - 1) * Math.pow(Math.max(0, 1 - progress), 5);
-        const sample = Math.max(-1, Math.min(1, bubble * 0.16 + air * 0.035));
+        const air = (airyNoise * 2 - 1) * Math.pow(Math.max(0, 1 - progress), 6);
+        const sample = Math.max(-1, Math.min(1, bubble * 0.13 + air * 0.022));
         view.setInt16(headerSize + i * 2, sample * 32767, true);
       }
 
@@ -2328,9 +2328,9 @@
         }
 
         filter.type = "lowpass";
-        filter.frequency.setValueAtTime(mobileBoost ? 1600 : 1300, now);
+        filter.frequency.setValueAtTime(mobileBoost ? 2200 : 1800, now);
         bubbleGain.gain.setValueAtTime(0.0001, now);
-        bubbleGain.gain.exponentialRampToValueAtTime(volume, now + 0.012);
+        bubbleGain.gain.exponentialRampToValueAtTime(volume, now + 0.008);
         bubbleGain.gain.exponentialRampToValueAtTime(0.0001, now + settings.duration);
 
         bubble.type = "sine";
@@ -2339,10 +2339,10 @@
 
         air.buffer = airBuffer;
         airFilter.type = "bandpass";
-        airFilter.frequency.setValueAtTime(mobileBoost ? 900 : 760, now);
+        airFilter.frequency.setValueAtTime(mobileBoost ? 1300 : 1100, now);
         airFilter.Q.setValueAtTime(0.7, now);
-        airGain.gain.setValueAtTime(volume * 0.38, now);
-        airGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+        airGain.gain.setValueAtTime(volume * 0.24, now);
+        airGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
 
         bubble.connect(filter);
         filter.connect(bubbleGain);
