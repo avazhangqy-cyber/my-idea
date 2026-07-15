@@ -1064,7 +1064,6 @@
       .grid,
       .three-grid,
       .flow-overview,
-      .survey-note,
       .survey-result-grid,
       .button-row,
       .check-row {
@@ -1081,14 +1080,58 @@
       }
 
       main {
-        padding-top: 176px;
-        padding-bottom: 178px;
+        padding-top: 86px;
+        padding-bottom: calc(104px + env(safe-area-inset-bottom));
       }
 
-      .flow-tabs,
+      [data-flow-screen] {
+        min-height: auto;
+        align-content: start;
+      }
+
+      .flow-progress-inner {
+        padding: 12px 16px 10px;
+      }
+
+      .flow-meta {
+        margin-bottom: 8px;
+      }
+
+      .flow-tabs {
+        display: none;
+      }
+
+      .flow-track {
+        height: 5px;
+      }
+
+      .flow-actions-inner {
+        gap: 8px;
+        padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+      }
+
+      .flow-actions .action-button {
+        min-height: 52px;
+        padding: 12px 14px;
+      }
+
       .story-prompts,
       .story-mode {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .survey-note {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .survey-note li {
+        padding: 7px 4px;
+        font-size: 12px;
+      }
+
+      .survey-note strong {
+        font-size: 18px;
       }
 
       .start-choices {
