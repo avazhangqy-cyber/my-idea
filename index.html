@@ -472,10 +472,9 @@
 
     .start-choices {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 14px;
       align-self: stretch;
-      grid-column: 1 / -1;
     }
 
     .start-choice {
@@ -1151,6 +1150,11 @@
     </nav>
 
     <header data-flow-screen data-step-title="入口">
+      <div>
+        <p class="eyebrow">Anonymous Reflective Diary</p>
+        <h1>匿名日记本</h1>
+        <p class="lead">你可以先梳理一段新的心事，也可以回来看自己愿意留下的匿名日记。像读别人的故事一样，重新看见自己的处境。</p>
+      </div>
       <div class="start-choices" aria-label="今天想做什么">
         <button class="start-choice" type="button" id="open-diary-book">
           <span class="start-choice-title">查看我的匿名日记本</span>
@@ -3158,12 +3162,12 @@
 
       detail.hidden = !selectedEntry;
       if (selectedEntry) {
-        detailMeta.textContent = formatDiaryDate(selectedEntry.createdAt) + " · " + (selectedEntry.topic || "匿名日记");
+        detailMeta.textContent = formatDiaryDate(selectedEntry.createdAt);
         detailTitle.textContent = diaryDisplayTitle(selectedEntry);
-        detailBody.textContent = selectedEntry.diary || "";
+        detailBody.textContent = diaryDisplayBody(selectedEntry.diary || "");
       } else {
         detailMeta.textContent = "";
-        detailTitle.textContent = "匿名日记";
+        detailTitle.textContent = "未选择日记方向";
         detailBody.textContent = "";
       }
 
@@ -3175,7 +3179,7 @@
 
         const time = document.createElement("time");
         time.dateTime = entry.createdAt;
-        time.textContent = formatDiaryDate(entry.createdAt) + " · " + (entry.topic || "匿名日记");
+        time.textContent = formatDiaryDate(entry.createdAt);
 
         const title = document.createElement("div");
         title.className = "diary-entry-title";
@@ -3200,11 +3204,18 @@
     }
 
     function diaryDisplayTitle(entry) {
-      return entry.topic ? entry.topic + " · 匿名日记" : "匿名日记";
+      const topic = String(entry && entry.topic ? entry.topic : "").trim();
+      return topic || "未选择日记方向";
+    }
+
+    function diaryDisplayBody(text) {
+      return String(text || "")
+        .replace(/^\s*匿名日记\s*[，,。:：\r\n]*/u, "")
+        .trim();
     }
 
     function diaryPreview(text) {
-      const compact = String(text || "").replace(/\s+/g, " ").trim();
+      const compact = diaryDisplayBody(text).replace(/\s+/g, " ").trim();
       if (!compact) {
         return "这篇日记暂时没有内容。";
       }
