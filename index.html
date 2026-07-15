@@ -475,13 +475,13 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 14px;
       align-self: stretch;
+      grid-column: 1 / -1;
     }
 
     .start-choice {
       display: grid;
-      align-content: start;
-      gap: 9px;
-      min-height: 210px;
+      place-items: center;
+      min-height: 138px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #ffffff;
@@ -489,7 +489,7 @@
       cursor: pointer;
       font: inherit;
       padding: 22px;
-      text-align: left;
+      text-align: center;
       transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background 0.16s ease;
     }
 
@@ -506,21 +506,10 @@
       color: #ffffff;
     }
 
-    .start-choice.primary .muted,
-    .start-choice.primary .start-choice-meta {
-      color: rgba(255, 255, 255, 0.84);
-    }
-
     .start-choice-title {
-      font-size: 24px;
+      font-size: clamp(24px, 3vw, 34px);
       font-weight: 800;
       line-height: 1.25;
-    }
-
-    .start-choice-meta {
-      color: var(--blue);
-      font-size: 14px;
-      font-weight: 800;
     }
 
     .diary-list {
@@ -1162,24 +1151,14 @@
     </nav>
 
     <header data-flow-screen data-step-title="入口">
-      <div>
-        <p class="eyebrow">Anonymous Reflective Diary</p>
-        <h1>匿名日记本</h1>
-        <p class="lead">这里可以保存你愿意留下的匿名日记，也可以开始一次新的整理。你可以像读别人的故事一样，重新看见自己的处境。</p>
-      </div>
       <div class="start-choices" aria-label="今天想做什么">
         <button class="start-choice" type="button" id="open-diary-book">
-          <span class="start-choice-meta" id="saved-diary-count">查看已保存的日记</span>
           <span class="start-choice-title">查看我的匿名日记本</span>
-          <span class="muted">按日期和主题浏览以前保存的匿名日记，点开某一篇再查看完整内容。</span>
         </button>
         <button class="start-choice primary" type="button" id="start-new-diary">
-          <span class="start-choice-meta">开始一次新的整理</span>
           <span class="start-choice-title">整理一段新的心事</span>
-          <span class="muted">先记录此刻感受，再写下想整理的事情，最后回看它是否带来一点变化。</span>
         </button>
       </div>
-      <p class="status-line" id="start-choice-status" role="status"></p>
     </header>
 
     <section id="pre-survey" aria-labelledby="pre-survey-title" data-flow-screen data-step-title="第一站">
@@ -1992,7 +1971,6 @@
     renderScales();
     renderFlowTabs();
     showFlowScreen(0);
-    updateStartChoiceState();
     document.addEventListener("pointerdown", unlockSoftSound, { once: true, capture: true });
     document.addEventListener("keydown", unlockSoftSound, { once: true, capture: true });
     flowPrev.addEventListener("click", function () {
@@ -2107,7 +2085,6 @@
     function showMainContent() {
       document.body.classList.remove("consent-pending");
       document.body.classList.add("consent-accepted");
-      updateStartChoiceState();
       document.getElementById("flow-next").focus();
       flushPendingResearchRecords();
     }
@@ -2280,9 +2257,6 @@
       });
 
       const current = flowScreens[currentFlowIndex];
-      if (currentFlowIndex === 0) {
-        updateStartChoiceState();
-      }
       if (current.id === "diary-book") {
         renderDiaryBook();
       }
@@ -2337,16 +2311,6 @@
         currentFlowIndex === flowScreens.length - 1 ? "refresh-ccw" : "arrow-right",
         { trailing: true }
       );
-    }
-
-    function updateStartChoiceState() {
-      const count = document.getElementById("saved-diary-count");
-      if (!count) {
-        return;
-      }
-
-      const entries = readDiaryEntries();
-      count.textContent = entries.length ? "已有 " + entries.length + " 篇保存的日记" : "还没有保存过日记";
     }
 
     function openSavedDiaryBook() {
@@ -3133,7 +3097,6 @@
       status.textContent = alreadySaved ? "这篇日记已经在日记本里。" : "已经保存到你的匿名日记本。";
       triggerSoftPulse(status);
       playSoftSound("save");
-      updateStartChoiceState();
       renderDiaryBook();
     }
 
@@ -3167,7 +3130,6 @@
       localStorage.removeItem(DIARY_STORAGE_KEY);
       document.getElementById("diary-book-status").textContent = "本地日记本已清空。";
       selectedDiaryId = "";
-      updateStartChoiceState();
       renderDiaryBook();
     }
 
