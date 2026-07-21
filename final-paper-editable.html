@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editable Paper Draft - Value-Aligned AI Reflective Diaries</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --paper: #fffdf8;
+      --ink: #202124;
+      --muted: #62676d;
+      --line: #ded7cc;
+      --blue: #285f7a;
+      --blue-soft: #e8f3f6;
+      --coral: #b84d3b;
+      --coral-soft: #fae8e3;
+      --green: #3d6f55;
+      --green-soft: #e9f3ed;
+      --gold: #9a7426;
+      --gold-soft: #f8efd7;
+      --shadow: rgba(37, 42, 48, 0.12);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(40, 95, 122, 0.08), transparent 32%),
+        linear-gradient(180deg, #f5f1e9 0%, #fffaf2 46%, #eef5f1 100%);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.62;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
+      overflow: auto;
+      border-right: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.94);
+      padding: 22px;
+    }
+
+    main {
+      width: min(100%, 980px);
+      padding: 34px 28px 80px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.18;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 30px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      border-bottom: 2px solid var(--line);
+      font-size: 24px;
+      margin-top: 28px;
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      color: var(--blue);
+      font-size: 17px;
+      margin-top: 20px;
+    }
+
+    p,
+    li {
+      font-size: 16px;
+    }
+
+    a {
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .eyebrow {
+      color: var(--coral);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    button,
+    .link-button {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 9px 12px;
+      text-align: left;
+      text-decoration: none;
+    }
+
+    button:hover,
+    .link-button:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #ffffff;
+    }
+
+    .primary:hover {
+      color: #ffffff;
+      filter: brightness(0.95);
+    }
+
+    .status {
+      min-height: 22px;
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 800;
+      margin-top: 12px;
+    }
+
+    .fact-box,
+    .note-box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: 0 12px 28px var(--shadow);
+      margin-top: 18px;
+      padding: 16px;
+    }
+
+    .fact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .fact {
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .fact:nth-child(1) {
+      background: var(--blue-soft);
+    }
+
+    .fact:nth-child(2) {
+      background: var(--green-soft);
+    }
+
+    .fact:nth-child(3) {
+      background: var(--gold-soft);
+    }
+
+    .number {
+      display: block;
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 6px 0 0;
+    }
+
+    .paper {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 44px var(--shadow);
+      padding: 42px;
+    }
+
+    .title-block {
+      text-align: center;
+    }
+
+    .title-block p {
+      margin: 6px 0;
+    }
+
+    [contenteditable="true"] {
+      border-radius: 5px;
+      outline: 2px solid transparent;
+      padding: 2px 4px;
+      transition: background 0.15s ease, outline-color 0.15s ease;
+    }
+
+    [contenteditable="true"]:hover {
+      background: rgba(40, 95, 122, 0.06);
+    }
+
+    [contenteditable="true"]:focus {
+      background: #ffffff;
+      outline-color: rgba(40, 95, 122, 0.32);
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 18px 0;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 9px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--blue-soft);
+    }
+
+    @media (max-width: 860px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      main {
+        padding: 20px 14px 60px;
+      }
+
+      .paper {
+        padding: 24px 16px;
+      }
+
+      .fact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      aside {
+        display: none;
+      }
+
+      .app-shell {
+        display: block;
+      }
+
+      main {
+        width: 100%;
+        padding: 0;
+      }
+
+      .paper {
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+      }
+
+      [contenteditable="true"] {
+        outline: 0;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside>
+      <p class="eyebrow">Editable Draft</p>
+      <h1>Value-Aligned AI Reflective Diaries</h1>
+      <p class="small">Click any paragraph or heading in the paper to edit. Your saved edits stay in this browser.</p>
+
+      <div class="toolbar" aria-label="Draft actions">
+        <button class="primary" id="save-draft">Save Draft</button>
+        <button id="export-md">Export Markdown</button>
+        <button id="print-draft">Print / Save PDF</button>
+        <button id="reset-draft">Reset to Prepared Draft</button>
+        <a class="link-button" href="https://www.ava-design.net/" target="_blank" rel="noreferrer">Open Live Website</a>
+      </div>
+      <div class="status" id="status" role="status"></div>
+
+      <div class="fact-box">
+        <h3>Locked Data Line</h3>
+        <div class="fact-grid">
+          <div class="fact">
+            <span class="number">44</span>
+            <p class="small">participant records on or after July 11, 2026</p>
+          </div>
+          <div class="fact">
+            <span class="number">24</span>
+            <p class="small">core complete records with pre, post, and AI diary</p>
+          </div>
+          <div class="fact">
+            <span class="number">10</span>
+            <p class="small">complete open-ended feedback records</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="note-box">
+        <h3>Source Notes</h3>
+        <p class="small">Website artifact: https://www.ava-design.net/</p>
+        <p class="small">Main result: pre M = 18.46, post M = 20.50, mean gain = 2.04 points.</p>
+        <p class="small">Claim style: early supportive evidence, not clinical proof.</p>
+      </div>
+    </aside>
+
+    <main>
+      <article class="paper" id="paper" contenteditable="true" spellcheck="true">
+        <div class="title-block">
+          <h1>Value-Aligned AI Reflective Diaries for Adolescent Emotional Support: A Prototype Study</h1>
+          <p>Ava Zhang</p>
+          <p>Generation AI 2026</p>
+          <p>AI for Social Sciences</p>
+          <p>July 21, 2026</p>
+        </div>
+
+        <h2>Abstract</h2>
+        <p>Adolescents often experience academic pressure, family conflict, relationship stress, uncertainty about the future, or identity-related concerns before they are ready to seek formal help. Generative AI may lower the barrier to reflection, but youth-facing support tools must avoid diagnosis, overreliance, privacy leakage, and unsafe advice. This prototype study tested a value-aligned anonymous AI reflective diary hosted at <a href="https://www.ava-design.net/">https://www.ava-design.net/</a>. Users completed a five-item pre-survey, generated or selected an anonymous concern, read an AI-written reflective diary constrained by safety rules, and completed the same five-item post-survey. In the formal released dataset from July 11, 2026 onward, there were 44 participant submission records; 24 records contained complete pre-survey, post-survey, and AI diary generation data; and 10 of those records also contained complete open-ended feedback. In the 24-record core sample, mean total score increased from 18.46 to 20.50 out of 25, a mean gain of 2.04 points. These early results suggest that value-aligned AI reflection may support some students' feeling of being understood and ability to identify a safe next step, but the study is small, nonrandom, uncontrolled, and not clinical evidence.</p>
+
+        <h2>Introduction</h2>
+        <p>Many adolescents do not begin emotional help-seeking with a formal appointment. They begin with a private worry: pressure from school, uncertainty about the future, conflict at home, a friendship problem, a question about attraction, or the feeling that no one would understand. These concerns may not be severe enough to trigger emergency care, but they can still affect sleep, concentration, safety, and willingness to seek support. The first barrier is often not only lack of information. It is the fear of being judged, exposed, mislabeled, or pushed into a conversation before the student feels ready.</p>
+        <p>The project website was designed around that first barrier. The page begins with a consent and privacy screen, then asks users to complete a short pre-survey. Users can select or enter a concern, receive an anonymous AI reflective diary, review safety-oriented next steps, and then complete the same survey again. The website also includes fixed scenario guidance, a brief state check, a moderated peer story wall, a local diary notebook, and resource navigation. These features make the artifact more than a chatbot. It is a structured, privacy-first reflection space.</p>
+        <p>Generative AI creates a new possibility for early support because it can transform a student's short concern into personalized reflective writing. However, this possibility is ethically fragile, especially for minors. An AI system that behaves like a therapist, encourages dependence, asks for identifying details, diagnoses the user, or gives unsafe advice would create serious risks. Therefore, the central question is not whether AI should replace counseling. It should not. The more useful question is whether AI can be constrained by clear values and safety rules so that it provides low-risk emotional support before formal help-seeking.</p>
+        <p>This study defines value-aligned AI support as AI-generated content that is explicitly constrained by protective values: do not diagnose, do not label identity, do not predict sexual orientation or mental illness, do not request names or school information, do not replace human support, and do redirect users toward trusted adults or emergency services when safety risks appear. The final research question is: Can a value-aligned anonymous AI reflective diary help high school students feel more understood, less alone, more self-accepting, clearer about one safe next step, and more patient toward their concern?</p>
+
+        <h2>Method</h2>
+        <h3>Design</h3>
+        <p>This study used a within-subject pre-post design. Each user completed the same five-item survey before and after using the anonymous AI reflective diary tool. The independent variable was exposure to the tool: the user entered or selected a concern, received a value-aligned AI diary, and read a safer next step. The dependent variable was change in the five-item total score. Item-level changes and optional qualitative feedback were also examined descriptively.</p>
+        <p>The study is a prototype evaluation, not a clinical trial. There was no random assignment, no control group, and no diagnosis. Therefore, the results can indicate whether scores moved in the expected direction after the tool experience, but they cannot prove that the AI diary caused the change or that it would work as clinical mental health treatment.</p>
+
+        <h3>Participants and Data Source</h3>
+        <p>Responses were collected through the project's Supabase database. The formal released dataset analyzed for this paper included records submitted on July 11, 2026 or later. Within that dataset, 44 participant submission records were available. Twenty-four records contained the core complete pattern of pre-survey, post-survey, and AI diary generation data. Ten of those 24 records also contained complete open-ended feedback.</p>
+        <p>The primary analytic sample was the 24 core complete records. A record was considered core complete if it had a complete pre-survey, a complete post-survey, and an AI diary record associated with the same anonymous session. This definition matched the product question closely because the study evaluates the AI reflective diary experience, not only the survey interface. The sample was a small convenience sample of users who tested the webpage. The site did not intentionally collect names, schools, contact information, exact location, WeChat accounts, phone numbers, email addresses, or other direct identifiers.</p>
+
+        <h3>Artifact</h3>
+        <p>The artifact was a one-page anonymous web tool called Anonymous Diary, hosted for testing at <a href="https://www.ava-design.net/">https://www.ava-design.net/</a>. The user first saw a consent and privacy screen. This screen stated that participation was voluntary, that the user could leave at any time, and that the tool was not counseling, diagnosis, crisis intervention, or a sexual-orientation test. The page also warned users not to enter names, school names, contact information, exact locations, or other identifiable details.</p>
+        <p>After consent, the user completed a five-item pre-survey. The user then selected a concern direction or wrote a short concern. The website could present fixed scenario guidance and could also generate an AI reflective diary. The diary was framed transparently as AI-generated reflective writing, not as a real peer story, search result, diagnosis, or therapy session. The intended structure of the diary was a short anonymous narrative, a nonjudgmental reinterpretation of the concern, and one small safer next step.</p>
+        <p>The AI helper was deliberately constrained. Its instructions prohibited diagnosis, identity labeling, sexual-orientation prediction, requests for identifying information, and replacement of professional counseling or crisis support. It was designed to produce general emotional support and safety-oriented next steps. If the user described serious danger, violence, self-harm, forced outing, or acute distress, the correct product behavior was to direct the user toward trusted adults, school counselors, local support lines, or emergency services.</p>
+
+        <h3>Measures</h3>
+        <p>The main measure contained five Likert-style items rated from 1 to 5, with higher scores indicating stronger agreement. The items measured whether the user felt understood, felt less alone, could accept their confusion more, knew one small action that could make them safer or more comfortable, and was willing to give their concern more patience. The five responses were summed into a total score from 5 to 25.</p>
+        <p>Because this was a classroom prototype, these items were treated as project-specific feedback measures, not validated clinical measures. The webpage also included optional self-check items related to distress, perceived support, and expression safety, but these were not used as diagnoses.</p>
+
+        <h3>Procedure and Analysis</h3>
+        <p>Users opened the webpage and read the consent screen. After accepting, they completed the pre-survey. They then selected or entered a concern and read a value-aligned AI reflective diary. Finally, they completed the post-survey and could submit optional feedback. Responses were stored as anonymous research records in Supabase. Open-ended text was not quoted if it contained identifiable information.</p>
+        <p>The primary analysis compared pre-survey and post-survey total scores in the 24 core complete records. I reported means, standard deviations, mean total change, average item change, and the number of users whose scores increased, stayed the same, or decreased. The pre-specified success line was a mean total increase of at least 2 points out of 25, or a mean item increase of at least 0.4 points. Because the sample was small, descriptive statistics were treated as the main evidence. A paired-samples t test and Wilcoxon signed-rank check were calculated as exploratory statistical checks.</p>
+
+        <h2>Results</h2>
+        <p>Of the 44 participant submission records in the formal released dataset, 20 were excluded from the primary analysis because they did not contain the full core pattern of pre-survey, post-survey, and AI diary generation data. The final core analytic sample contained 24 complete sessions. Ten of those sessions also contained complete open-ended feedback.</p>
+        <p>Table 1 summarizes the pre-post survey results for the 24 core complete records. The mean pre-survey total score was 18.46 out of 25 (SD = 2.90). The mean post-survey total score was 20.50 (SD = 2.80). Recalculating change directly from the paired pre- and post-survey answers, the mean total change was +2.04 points (SD = 2.42), and the mean item change was +0.41 points. This met the pre-specified success line.</p>
+
+        <table>
+          <caption>Table 1. Pre-Post Survey Scores in the Core Complete Sample</caption>
+          <thead>
+            <tr>
+              <th>Outcome</th>
+              <th>Pre M</th>
+              <th>Pre SD</th>
+              <th>Post M</th>
+              <th>Post SD</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Total score (5-25)</td>
+              <td>18.46</td>
+              <td>2.90</td>
+              <td>20.50</td>
+              <td>2.80</td>
+            </tr>
+            <tr>
+              <td>Feeling understood</td>
+              <td>3.46</td>
+              <td>0.72</td>
+              <td>3.96</td>
+              <td>0.62</td>
+            </tr>
+            <tr>
+              <td>Less alone</td>
+              <td>3.54</td>
+              <td>0.78</td>
+              <td>4.08</td>
+              <td>0.78</td>
+            </tr>
+            <tr>
+              <td>Self-acceptance</td>
+              <td>3.75</td>
+              <td>0.79</td>
+              <td>4.12</td>
+              <td>0.61</td>
+            </tr>
+            <tr>
+              <td>Safer next step</td>
+              <td>3.79</td>
+              <td>0.66</td>
+              <td>4.08</td>
+              <td>0.65</td>
+            </tr>
+            <tr>
+              <td>Patience toward concern</td>
+              <td>3.92</td>
+              <td>0.78</td>
+              <td>4.25</td>
+              <td>0.68</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>The direction of change was also positive. Fourteen of the 24 core complete users had higher post-survey scores than pre-survey scores. Eight users showed no change, and two users decreased. The largest increase was +9 points.</p>
+        <p>The open-ended feedback subset was smaller. Ten core complete records contained complete feedback. Nine of these users selected "the anonymous diary made me feel understood," and one selected "the anonymous diary was average." These qualitative responses were supportive but limited, and they should be treated as early usability feedback rather than proof of effectiveness.</p>
+        <p>Exploratory inferential checks also pointed in the same direction. In the 24-record core complete sample, post-survey total scores were higher than pre-survey total scores, t(23) = 4.13, p &lt; .001. A Wilcoxon signed-rank check led to the same directional conclusion, W = 128.5, one-sided p &lt; .001. These statistics are reported as exploratory because the study was small and uncontrolled.</p>
+        <p>User concern topics showed how the product was actually used. In the 24 core complete records, common diary topics included academic pressure, future choices, other concerns, family communication, emotion and attraction, self-understanding, interpersonal relationships, expression pressure, and unselected diary directions. This pattern suggests that the tool functioned as a broader adolescent emotional support space rather than only a sexual-orientation exploration tool.</p>
+
+        <h2>Discussion</h2>
+        <p>The results suggest that a value-aligned AI reflective diary may provide early emotional support for some adolescents. In the 24-record core complete sample, post-survey total scores were higher than pre-survey total scores by an average of 2.04 points, meeting the project's pre-specified success line. The strongest interpretation is cautious: after using the tool, users tended to report feeling more understood, less alone, more accepting, clearer about a safer next step, or more patient toward their concern, but the evidence is still early.</p>
+        <p>The finding matters because the tool did not attempt to function as a therapist. Its value was narrower and more realistic. It helped transform a private, vague concern into a structured reflective diary with nonjudgmental language and a small next step. This may be useful for adolescents who are not ready to speak face to face with a counselor, parent, teacher, or friend. In product terms, the tool is best understood as a front-door support layer: it can lower the threshold for reflection and help users decide whether to seek human support, but it should not replace that support.</p>
+        <p>The topic distribution is also important. Although the project began with self-identity and sexual-orientation-related concerns, actual use included academic pressure, future choices, family communication, relationship stress, and general emotional confusion. This suggests a broader product direction: a privacy-first AI reflective diary for adolescent emotional support. The sexual-orientation and identity pathway can remain one protected use case, but the product should not be limited to it.</p>
+        <p>Commercialization should be built around safety rather than engagement. A responsible version of this product would likely be business-to-business rather than directly monetized from minors. Potential customers include schools, youth development programs, counseling centers, and education organizations. The product could offer anonymous reflection, risk-aware safety language, resource navigation, and aggregate trend dashboards for adults without exposing individual identities. The core value proposition would be: reduce the barrier to first-step help-seeking while preserving privacy and directing high-risk users toward human support.</p>
+        <p>The safety boundary must remain clear. The tool should not claim to diagnose, treat, or provide clinical mental health intervention. It should not imitate a human therapist or romantic companion. It should not encourage repeated dependence. It should not collect sensitive identity data unless there is a clear, protected, and consent-based reason. This is especially important for minors, because AI systems can feel intimate even when they are not capable of responsibility, care, or crisis judgment.</p>
+        <p>Several limitations are clear. First, the sample was small and nonrandom, so the findings cannot generalize to all students. Second, the study had no control group, so the score increase could partly reflect repeated measurement, demand characteristics, mood change, or the simple effect of taking time to reflect. Third, the five-item measure was project-specific and not a validated clinical scale. Fourth, the data came from a prototype database that included incomplete and test-like sessions, so cleaning decisions affected the analytic sample. Fifth, because the topic is sensitive and the users may be minors, the study intentionally avoided collecting demographic information; this protects privacy but limits subgroup analysis.</p>
+        <p>Future research should test the tool with a larger sample, a comparison condition, and clearer separation between fixed scenario guidance and AI-generated diary content. A stronger design could randomly assign users to a static support page, a fixed scenario page, or an AI reflective diary, then compare pre-post changes. Future work should also test crisis detection, refusal behavior, privacy warnings, and human escalation more systematically before the product is used in any real school support setting.</p>
+        <p>In conclusion, this prototype provides early evidence that value-aligned AI reflection can support some adolescents' sense of being understood and ability to identify a safer next step. The promise is real, but it depends on refusing the wrong product claim. The product should not be marketed as AI therapy for minors. It should be developed as a constrained, privacy-first, human-support-oriented reflection tool.</p>
+
+        <h2>AI Disclosure</h2>
+        <p>An AI assistant was used to help organize the manuscript, convert sections into APA-style academic prose, and check wording consistency. The research question, artifact, data cleaning choices, analysis, and final claims were reviewed by the author.</p>
+      </article>
+    </main>
+  </div>
+
+  <script>
+    const storageKey = "avaFinalPaperEditableDraft";
+    const paper = document.getElementById("paper");
+    const status = document.getElementById("status");
+    const originalDraft = paper.innerHTML;
+
+    function setStatus(message) {
+      status.textContent = message;
+      window.clearTimeout(setStatus.timer);
+      setStatus.timer = window.setTimeout(() => {
+        status.textContent = "";
+      }, 2400);
+    }
+
+    function saveDraft() {
+      localStorage.setItem(storageKey, paper.innerHTML);
+      setStatus("Saved in this browser.");
+    }
+
+    function exportMarkdown() {
+      const clone = paper.cloneNode(true);
+      const pieces = [];
+
+      clone.childNodes.forEach((node) => {
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+        const tag = node.tagName.toLowerCase();
+        const text = node.innerText.trim();
+        if (!text) return;
+
+        if (tag === "div" && node.classList.contains("title-block")) {
+          pieces.push("# " + node.querySelector("h1").innerText.trim());
+          Array.from(node.querySelectorAll("p")).forEach((p) => pieces.push(p.innerText.trim()));
+          return;
+        }
+
+        if (tag === "h1") pieces.push("# " + text);
+        if (tag === "h2") pieces.push("## " + text);
+        if (tag === "h3") pieces.push("### " + text);
+        if (tag === "p") pieces.push(text);
+        if (tag === "table") pieces.push(text);
+      });
+
+      const blob = new Blob([pieces.join("\n\n") + "\n"], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "final-paper-draft.md";
+      link.click();
+      URL.revokeObjectURL(url);
+      setStatus("Markdown exported.");
+    }
+
+    document.getElementById("save-draft").addEventListener("click", saveDraft);
+    document.getElementById("export-md").addEventListener("click", exportMarkdown);
+    document.getElementById("print-draft").addEventListener("click", () => window.print());
+    document.getElementById("reset-draft").addEventListener("click", () => {
+      if (!window.confirm("Reset this page to the prepared draft?")) return;
+      paper.innerHTML = originalDraft;
+      localStorage.removeItem(storageKey);
+      setStatus("Reset complete.");
+    });
+
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      paper.innerHTML = saved;
+      setStatus("Loaded saved draft.");
+    }
+
+    paper.addEventListener("input", () => {
+      window.clearTimeout(paper.saveTimer);
+      paper.saveTimer = window.setTimeout(saveDraft, 900);
+    });
+  </script>
+</body>
+</html>

@@ -704,6 +704,84 @@
       gap: 10px;
     }
 
+    .story-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .story-filter {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 7px 12px;
+      transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+    }
+
+    .story-filter:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+      transform: translateY(-1px);
+    }
+
+    .story-filter[aria-pressed="true"] {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #ffffff;
+    }
+
+    .story-card {
+      display: grid;
+      align-content: start;
+      gap: 8px;
+    }
+
+    .story-card[hidden] {
+      display: none;
+    }
+
+    .story-card h3,
+    .story-card p {
+      margin: 0;
+    }
+
+    .story-summary,
+    .story-detail {
+      line-height: 1.7;
+    }
+
+    .story-detail[hidden] {
+      display: none;
+    }
+
+    .story-toggle {
+      width: fit-content;
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--paper-2);
+      color: var(--blue);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 7px 11px;
+    }
+
+    .story-empty-note {
+      display: none;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      padding: 14px;
+      text-align: center;
+    }
+
     .option-button,
     .action-button {
       position: relative;
@@ -1392,29 +1470,45 @@
 
     <section id="stories" aria-labelledby="stories-title" hidden>
       <h2 id="stories-title">匿名故事墙：看见相似的人</h2>
-      <p class="muted">这里不是开放论坛，也不开放评论和私信。第一版适合做成“匿名投稿，去识别化审核后公开”的同伴故事库。</p>
+      <p class="muted">这里不是开放论坛，也不开放评论和私信。可以先按标签找相似处境，也可以随便浏览；每张卡片默认只露出摘要，想继续读再展开。</p>
+      <div class="story-tools" aria-label="故事标签筛选">
+        <button class="story-filter" type="button" data-story-filter="all" aria-pressed="true">全部</button>
+        <button class="story-filter" type="button" data-story-filter="uncertain" aria-pressed="false">迷茫中</button>
+        <button class="story-filter" type="button" data-story-filter="friend" aria-pressed="false">朋友支持</button>
+        <button class="story-filter" type="button" data-story-filter="family" aria-pressed="false">家庭压力</button>
+        <button class="story-filter" type="button" data-story-filter="bullying" aria-pressed="false">校园流言</button>
+      </div>
       <div class="grid story-list" id="story-list">
         <article class="story-card" data-topic="uncertain">
           <span class="tag">迷茫中</span>
           <h3>“我后来发现，不急着起名字也没关系。”</h3>
-          <p>我以前一直想立刻知道自己到底是什么，但越想越焦虑。后来我给自己设了一个规则：先观察什么关系让我舒服，不急着对任何人解释。</p>
+          <p class="story-summary">我以前一直想立刻知道自己到底是什么，但越想越焦虑。</p>
+          <p class="story-detail" hidden>后来我给自己设了一个规则：先观察什么关系让我舒服，不急着对任何人解释。把“马上确定答案”换成“慢慢看见自己”，心里反而松了一点。</p>
+          <button class="story-toggle" type="button" aria-expanded="false">展开</button>
         </article>
         <article class="story-card" data-topic="friend">
           <span class="tag">朋友支持</span>
           <h3>“我先试探了一个很小的话题。”</h3>
-          <p>我没有一上来讲自己的全部经历，而是先问朋友怎么看待不同性取向。她的反应让我知道，她至少愿意认真听人说话。</p>
+          <p class="story-summary">我没有一上来讲自己的全部经历，而是先问朋友怎么看待不同性取向。</p>
+          <p class="story-detail" hidden>她的反应让我知道，她至少愿意认真听人说话。后来我才发现，先试探一点点不是不真诚，而是在保护自己，也是在给关系一个更安全的开始。</p>
+          <button class="story-toggle" type="button" aria-expanded="false">展开</button>
         </article>
         <article class="story-card" data-topic="family">
           <span class="tag">家庭压力</span>
           <h3>“暂时不说不是懦弱，是计划。”</h3>
-          <p>我很想告诉家人，但我也知道自己现在完全依赖他们。我先把重点放在稳定情绪、找可信老师、准备未来能保护自己的资源上。</p>
+          <p class="story-summary">我很想告诉家人，但我也知道自己现在完全依赖他们。</p>
+          <p class="story-detail" hidden>我先把重点放在稳定情绪、找可信老师、准备未来能保护自己的资源上。暂时不说不是逃避，而是在确认自己有足够安全的支持以前，不把自己推到危险里。</p>
+          <button class="story-toggle" type="button" aria-expanded="false">展开</button>
         </article>
         <article class="story-card" data-topic="bullying">
           <span class="tag">校园流言</span>
           <h3>“截图和记录让我没有那么慌。”</h3>
-          <p>被人在群里开玩笑后，我先保存了截图和时间，没有单独去吵。后来找了一个比较稳的老师帮我一起判断下一步。</p>
+          <p class="story-summary">被人在群里开玩笑后，我先保存了截图和时间，没有单独去吵。</p>
+          <p class="story-detail" hidden>后来找了一个比较稳的老师帮我一起判断下一步。那一刻我才知道，保护自己不一定是马上反击，也可以是留下证据、找支持、让自己先安全下来。</p>
+          <button class="story-toggle" type="button" aria-expanded="false">展开</button>
         </article>
       </div>
+      <p class="story-empty-note" id="story-empty-note">这个标签下暂时没有故事，可以换一个标签看看。</p>
     </section>
 
     <section id="story-submit" aria-labelledby="story-submit-title" hidden>
@@ -1866,6 +1960,7 @@
 
     const buttons = document.querySelectorAll("#scenario-options .option-button");
     const storyPromptButtons = document.querySelectorAll(".story-prompt");
+    const storyFilterButtons = document.querySelectorAll("[data-story-filter]");
     const emptyState = document.getElementById("empty-state");
     const pathwayBox = document.getElementById("pathway-box");
     const aiTopic = document.getElementById("ai-topic");
@@ -1876,13 +1971,12 @@
     const flowStepLabel = document.getElementById("flow-step-label");
     const flowFill = document.getElementById("flow-fill");
     const flowTabs = document.getElementById("flow-tabs");
-    const PRODUCTION_ORIGIN = "https://my-idea-topaz.vercel.app";
+    const PRODUCTION_ORIGIN = "https://www.ava-design.net";
     const DIARY_STORAGE_KEY = "anonymousReflectiveDiaryEntries";
     const PENDING_RECORDS_KEY = "aiStoryRadioPendingRecords";
     const localApiHosts = [
       "localhost",
       "127.0.0.1",
-      "my-idea-topaz.vercel.app",
       "ava-design.net",
       "www.ava-design.net"
     ];
@@ -1911,6 +2005,7 @@
     let lastSoftSoundAt = 0;
     let selectedDiaryId = "";
     let diaryBrowsingMode = false;
+    let activeStoryFilter = "all";
 
     const lucideIcons = {
       "arrow-left": ['<path d="m12 19-7-7 7-7"></path>', '<path d="M19 12H5"></path>'],
@@ -2021,8 +2116,20 @@
         playSoftSound("choice");
       });
     });
+    storyFilterButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        activeStoryFilter = button.dataset.storyFilter || "all";
+        storyFilterButtons.forEach(function (item) {
+          item.setAttribute("aria-pressed", String(item === button));
+        });
+        applyStoryFilter();
+        playSoftSound("choice");
+      });
+    });
 
     initializeConsent();
+    initializeStoryWall();
+    loadApprovedStories();
     renderSurvey("pre");
     renderSurvey("post");
     renderScales();
@@ -2564,6 +2671,112 @@
       });
     }
 
+    function initializeStoryWall() {
+      document.querySelectorAll(".story-card").forEach(function (card) {
+        prepareStoryCard(card);
+      });
+      applyStoryFilter();
+    }
+
+    function prepareStoryCard(card) {
+      const toggle = card.querySelector(".story-toggle");
+      const detail = card.querySelector(".story-detail");
+      if (!toggle || !detail || toggle.dataset.ready === "true") {
+        return;
+      }
+
+      toggle.dataset.ready = "true";
+      toggle.addEventListener("click", function () {
+        const expanded = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", String(!expanded));
+        detail.hidden = expanded;
+        toggle.textContent = expanded ? "展开" : "收起";
+        playSoftSound("choice");
+      });
+    }
+
+    function applyStoryFilter() {
+      const emptyNote = document.getElementById("story-empty-note");
+      let visibleCount = 0;
+      document.querySelectorAll(".story-card").forEach(function (card) {
+        const matches = activeStoryFilter === "all" || card.dataset.topic === activeStoryFilter;
+        card.hidden = !matches;
+        if (matches) {
+          visibleCount += 1;
+        }
+      });
+
+      if (emptyNote) {
+        emptyNote.style.display = visibleCount ? "none" : "block";
+      }
+    }
+
+    function storyTopicKey(topic) {
+      const value = String(topic || "").trim();
+      const map = {
+        "迷茫中": "uncertain",
+        "自我理解": "uncertain",
+        "情感和吸引": "uncertain",
+        "朋友支持": "friend",
+        "人际关系": "friend",
+        "家庭压力": "family",
+        "家庭沟通": "family",
+        "校园流言": "bullying",
+        "校园安全": "bullying"
+      };
+      return map[value] || "uncertain";
+    }
+
+    function splitStoryText(text) {
+      const clean = String(text || "").replace(/\s+/g, " ").trim();
+      if (clean.length <= 70) {
+        return { summary: clean, detail: "" };
+      }
+      const sentenceMatch = clean.match(/^(.{28,90}?[。！？.!?])/);
+      const summary = sentenceMatch ? sentenceMatch[1] : clean.slice(0, 68) + "…";
+      return {
+        summary: summary,
+        detail: clean.slice(summary.length).trim()
+      };
+    }
+
+    function createStoryCard(story) {
+      const article = document.createElement("article");
+      article.className = "story-card";
+      article.dataset.topic = storyTopicKey(story.topic);
+
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = story.topic || "匿名故事";
+
+      const heading = document.createElement("h3");
+      heading.textContent = "“" + (story.title || "一段匿名故事") + "”";
+
+      const parts = splitStoryText(story.body);
+      const summary = document.createElement("p");
+      summary.className = "story-summary";
+      summary.textContent = parts.summary || "这个故事还在等待补充摘要。";
+
+      const detail = document.createElement("p");
+      detail.className = "story-detail";
+      detail.hidden = true;
+      detail.textContent = parts.detail || "暂无更多正文。";
+
+      const toggle = document.createElement("button");
+      toggle.className = "story-toggle";
+      toggle.type = "button";
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.textContent = "展开";
+
+      article.appendChild(tag);
+      article.appendChild(heading);
+      article.appendChild(summary);
+      article.appendChild(detail);
+      article.appendChild(toggle);
+      prepareStoryCard(article);
+      return article;
+    }
+
     async function loadApprovedStories() {
       const list = document.getElementById("story-list");
       const result = await supabaseClient.rpc("get_approved_anonymous_stories");
@@ -2573,24 +2786,9 @@
       }
 
       result.data.forEach(function (story) {
-        const article = document.createElement("article");
-        article.className = "story-card";
-
-        const tag = document.createElement("span");
-        tag.className = "tag";
-        tag.textContent = story.topic;
-
-        const heading = document.createElement("h3");
-        heading.textContent = "“" + story.title + "”";
-
-        const body = document.createElement("p");
-        body.textContent = story.body;
-
-        article.appendChild(tag);
-        article.appendChild(heading);
-        article.appendChild(body);
-        list.appendChild(article);
+        list.appendChild(createStoryCard(story));
       });
+      applyStoryFilter();
     }
 
     function renderSurvey(stage) {

@@ -4,7 +4,7 @@
 
 ## 上线地址
 
-https://my-idea-topaz.vercel.app/
+https://www.ava-design.net/
 
 ## 本地打开方式
 
@@ -18,6 +18,7 @@ https://my-idea-topaz.vercel.app/
 - `index.html`: 网页主入口，也是 Vercel 部署的页面。
 - `spec.md`: MVP 计划，说明项目目标、核心流程、反馈收集方式和成功标准。
 - `research/`: 研究资料整理，包含研究问题、资料来源、摘要和数据表。
+- `final-paper-editable.html`: 可在浏览器中直接修改、保存、导出 Markdown 或打印成 PDF 的论文初稿页面。
 
 ## MVP 功能
 
