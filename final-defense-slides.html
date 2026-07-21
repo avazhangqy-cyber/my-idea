@@ -1,0 +1,1192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Value-Aligned AI Reflective Diaries · Defense Slides</title>
+  <style>
+    :root {
+      --ink: #34242b;
+      --paper: #fff6f8;
+      --muted: #8f6f7a;
+      --line: #efd4dc;
+      --blue: #d95f8d;
+      --yellow: #ffe5ec;
+      --green: #c8efe2;
+      --orange: #f4a261;
+      --rose-deep: #ad476c;
+      --rose-soft: #ffdbe6;
+      --cream: #fffaf1;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      overflow: hidden;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, Helvetica, Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.42;
+      background-image:
+        radial-gradient(circle at 18px 18px, rgba(217, 95, 141, 0.16) 1.5px, transparent 2px),
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 36px 36px, 72px 72px, 72px 72px;
+      pointer-events: none;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .slide {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      padding: 5.5vh 5vw;
+      position: absolute;
+      inset: 0;
+    }
+
+    .slide.active {
+      display: grid;
+      animation: enter 180ms ease-out;
+    }
+
+    @media screen {
+      .slide:not(.active) {
+        display: none !important;
+        visibility: hidden !important;
+      }
+
+      .slide.active {
+        display: grid !important;
+        visibility: visible !important;
+      }
+    }
+
+    @media print {
+      @page {
+        size: 16in 9in;
+        margin: 0;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+        background: var(--paper);
+      }
+
+      body::before {
+        display: none;
+      }
+
+      main {
+        width: 100%;
+        height: auto;
+      }
+
+      .slide,
+      .slide.active {
+        display: grid !important;
+        position: relative;
+        inset: auto;
+        width: 100vw;
+        height: 100vh;
+        page-break-after: always;
+        break-after: page;
+        animation: none;
+      }
+
+      .slide:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateX(14px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      border-top: 3px solid var(--rose-deep);
+      padding-top: 14px;
+      font-size: clamp(12px, 1.1vw, 16px);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .page {
+      color: var(--rose-deep);
+      font-variant-numeric: tabular-nums;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 11ch;
+      font-size: clamp(62px, 9vw, 148px);
+      line-height: 0.92;
+      font-weight: 200;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      max-width: 13ch;
+      font-size: clamp(44px, 6.4vw, 104px);
+      line-height: 0.96;
+      font-weight: 220;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: clamp(22px, 2.2vw, 38px);
+      line-height: 1.05;
+      font-weight: 520;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 48ch;
+      font-size: clamp(20px, 2vw, 36px);
+      line-height: 1.32;
+      font-weight: 360;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: clamp(14px, 1.1vw, 18px);
+      line-height: 1.55;
+      font-weight: 500;
+    }
+
+    .mono {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      letter-spacing: 0;
+    }
+
+    .accent {
+      color: var(--blue);
+    }
+
+    .layout-cover {
+      grid-template-rows: auto 1fr auto;
+      gap: 4vh;
+    }
+
+    .notebook-icon.cover-icon {
+      position: absolute;
+      top: 28.5vh;
+      right: 12.5vw;
+      width: 168px;
+      height: 190px;
+      border-width: 3px;
+      box-shadow: 13px 13px 0 var(--rose-soft);
+    }
+
+    .notebook-icon.cover-icon::before {
+      left: 21px;
+      border-left-width: 3px;
+    }
+
+    .notebook-icon.cover-icon::after {
+      font-size: 82px;
+    }
+
+    .cover-grid {
+      display: grid;
+      grid-template-columns: 1fr minmax(260px, 0.42fr);
+      gap: 5vw;
+      align-items: end;
+    }
+
+    .cover-card {
+      align-self: stretch;
+      display: grid;
+      align-content: end;
+      gap: 18px;
+      border-left: 18px solid var(--blue);
+      background: var(--rose-deep);
+      color: var(--paper);
+      padding: 32px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 5vw;
+      align-items: center;
+    }
+
+    .stack {
+      display: grid;
+      gap: 24px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      min-height: 180px;
+      border: 2px solid var(--ink);
+      background: rgba(255, 255, 255, 0.82);
+      padding: 22px;
+      display: grid;
+      align-content: space-between;
+      gap: 24px;
+    }
+
+    .card.blue {
+      background: var(--blue);
+      color: var(--white);
+      border-color: var(--blue);
+    }
+
+    .card.yellow {
+      background: var(--yellow);
+      border-color: var(--rose-deep);
+    }
+
+    .kpi {
+      font-size: clamp(56px, 7.8vw, 124px);
+      line-height: 0.9;
+      font-weight: 190;
+      color: var(--blue);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .card.blue .kpi {
+      color: var(--white);
+    }
+
+    .sample-slide {
+      grid-template-rows: auto 1fr;
+    }
+
+    .sample-content {
+      display: grid;
+      gap: 1.8vh;
+      align-content: start;
+      padding-top: 4vh;
+    }
+
+    .sample-content h2 {
+      max-width: none;
+    }
+
+    .sample-cards {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .sample-cards .card {
+      min-height: 138px;
+      padding: 18px 22px;
+      gap: 10px;
+    }
+
+    .sample-cards .kpi {
+      font-size: clamp(52px, 6.2vw, 98px);
+    }
+
+    .sample-note {
+      max-width: 92ch;
+      color: var(--muted);
+      font-size: clamp(18px, 1.35vw, 24px);
+      line-height: 1.38;
+      font-weight: 560;
+      margin-top: 1.2vh;
+    }
+
+    .steps {
+      display: grid;
+      gap: 14px;
+    }
+
+    .method-slide {
+      grid-template-rows: auto 1fr;
+      gap: 0;
+      align-content: start;
+    }
+
+    .method-content {
+      display: grid;
+      gap: 3.2vh;
+      align-content: start;
+      padding-top: 6vh;
+    }
+
+    .method-title {
+      display: grid;
+      gap: 12px;
+    }
+
+    .method-title h2 {
+      max-width: none;
+      font-size: clamp(38px, 4.7vw, 82px);
+    }
+
+    .method-title .lead {
+      max-width: 66ch;
+      font-size: clamp(18px, 1.55vw, 28px);
+    }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      align-items: start;
+    }
+
+    .method-card {
+      border: 2px solid var(--rose-deep);
+      background: var(--white);
+      display: grid;
+      gap: 11px;
+      padding: 14px;
+    }
+
+    .method-card img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .method-card .step-number {
+      color: var(--rose-deep);
+      font-size: clamp(28px, 2.7vw, 48px);
+      line-height: 0.9;
+    }
+
+    .method-card h3 {
+      font-size: clamp(18px, 1.45vw, 26px);
+      line-height: 1.08;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      align-items: center;
+      border-top: 2px solid var(--ink);
+      padding-top: 16px;
+      min-height: 74px;
+    }
+
+    .step-number {
+      color: var(--blue);
+      font-size: 38px;
+      font-weight: 240;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bar-chart {
+      display: grid;
+      gap: 22px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 150px 1fr 90px;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .bar-track {
+      height: 44px;
+      background: var(--line);
+      border: 2px solid var(--ink);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--blue);
+    }
+
+    .findings-slide {
+      grid-template-rows: auto 1fr;
+      align-content: start;
+      gap: 0;
+    }
+
+    .findings-layout {
+      display: grid;
+      gap: 5.2vh;
+      align-content: start;
+      padding-top: 10vh;
+    }
+
+    .findings-main {
+      display: grid;
+      gap: 3.2vh;
+    }
+
+    .findings-main h2 {
+      max-width: none;
+    }
+
+    .findings-main .lead {
+      max-width: none;
+    }
+
+    .findings-summary .cards {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .findings-summary .card {
+      min-height: 122px;
+      padding: 22px;
+    }
+
+    .question-slide {
+      grid-template-rows: auto auto 1fr;
+      gap: 3vh;
+      align-content: start;
+    }
+
+    .question-slide .support-line {
+      max-width: 58ch;
+      color: var(--muted);
+      font-size: clamp(24px, 2.2vw, 40px);
+      line-height: 1.18;
+      font-weight: 360;
+    }
+
+    .research-question {
+      max-width: 26ch;
+      color: var(--ink);
+      font-size: clamp(42px, 4.25vw, 78px);
+      line-height: 1.1;
+      font-weight: 230;
+    }
+
+    .answer-cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .answer-cards .card {
+      min-height: 178px;
+      align-content: start;
+      gap: 22px;
+      padding: 26px;
+    }
+
+    .answer-cards h3 {
+      color: var(--rose-deep);
+      font-size: clamp(30px, 2.8vw, 50px);
+    }
+
+    .answer-cards .small {
+      color: var(--ink);
+      font-size: clamp(22px, 1.75vw, 31px);
+      line-height: 1.38;
+    }
+
+    .limitation-card {
+      min-height: 210px;
+      border: 2px solid var(--rose-deep);
+      background: var(--white);
+      padding: 26px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .limitation-card h3 {
+      color: var(--rose-deep);
+      font-size: clamp(26px, 2.5vw, 42px);
+    }
+
+    .limitation-card p {
+      font-size: clamp(18px, 1.45vw, 26px);
+      line-height: 1.42;
+      color: var(--ink);
+      font-weight: 470;
+    }
+
+    .meaning-slide {
+      grid-template-rows: auto auto 1fr;
+      gap: 2.6vh;
+    }
+
+    .meaning-slide .meaning-header h2 {
+      max-width: 34ch;
+      font-size: clamp(30px, 3vw, 56px);
+      line-height: 1.02;
+    }
+
+    .meaning-slide .meaning-header .lead {
+      max-width: 52ch;
+      font-size: clamp(18px, 1.35vw, 24px);
+    }
+
+    .meaning-cards {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .meaning-cards .limitation-card {
+      min-height: 156px;
+      padding: 28px;
+    }
+
+    .meaning-cards .limitation-card h3 {
+      font-size: clamp(34px, 3.1vw, 58px);
+    }
+
+    .meaning-cards .limitation-card p {
+      font-size: clamp(24px, 1.9vw, 36px);
+      line-height: 1.34;
+    }
+
+    .screenshot-wrap {
+      height: 60vh;
+      background: var(--white);
+      border: 2px solid var(--rose-deep);
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .screenshot-wrap img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .feature-item {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 20px;
+      align-items: start;
+      border-top: 2px solid var(--rose-deep);
+      padding-top: 18px;
+    }
+
+    .feature-index {
+      color: var(--rose-deep);
+      font-size: clamp(32px, 3.6vw, 58px);
+      line-height: 0.9;
+      font-weight: 220;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .product-slide {
+      grid-template-rows: auto auto 1fr;
+      gap: 3vh;
+    }
+
+    .product-slide h2 {
+      max-width: none;
+      font-size: clamp(38px, 4.4vw, 76px);
+      line-height: 0.98;
+    }
+
+    .product-slide .stack {
+      gap: 22px;
+    }
+
+    .product-slide .small {
+      font-size: clamp(18px, 1.28vw, 24px);
+      line-height: 1.44;
+    }
+
+    .product-title {
+      display: grid;
+      gap: 12px;
+      max-width: 980px;
+    }
+
+    .product-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 1fr);
+      gap: 4.2vw;
+      align-items: start;
+    }
+
+    .product-slide .feature-list {
+      gap: 28px;
+    }
+
+    .product-slide .feature-index {
+      font-size: clamp(40px, 3.7vw, 62px);
+    }
+
+    .product-slide h3 {
+      font-size: clamp(26px, 2.25vw, 40px);
+    }
+
+    .closing-note {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+      gap: 5vw;
+      align-items: center;
+      margin-top: 5vh;
+    }
+
+    .closing-panel {
+      border: 2px solid var(--rose-deep);
+      background: var(--cream);
+      padding: 34px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .thanks-slide {
+      grid-template-rows: auto 1fr;
+      gap: 5vh;
+    }
+
+    .thanks-content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.42fr);
+      gap: 5vw;
+      align-items: center;
+    }
+
+    .thanks-copy {
+      display: grid;
+      gap: 30px;
+    }
+
+    .thanks-copy h2 {
+      max-width: 10ch;
+      font-size: clamp(72px, 8.6vw, 148px);
+    }
+
+    .site-url {
+      color: var(--rose-deep);
+      font-size: clamp(30px, 3vw, 54px);
+      font-weight: 650;
+    }
+
+    .notebook-icon {
+      width: 150px;
+      height: 170px;
+      position: relative;
+      border: 4px solid var(--rose-deep);
+      background: var(--yellow);
+      box-shadow: 14px 14px 0 var(--rose-soft);
+    }
+
+    .notebook-icon::before {
+      content: "";
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      border-left: 4px solid var(--rose-deep);
+    }
+
+    .notebook-icon::after {
+      content: "♡";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: var(--rose-deep);
+      font-size: 74px;
+      font-weight: 700;
+    }
+
+    .qr-panel {
+      border: 2px solid var(--rose-deep);
+      background: var(--white);
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+      justify-items: center;
+    }
+
+    .qr-panel img {
+      width: min(100%, 280px);
+      aspect-ratio: 1;
+      object-fit: contain;
+    }
+
+    .qr-panel p {
+      color: var(--muted);
+      font-size: clamp(16px, 1.2vw, 22px);
+      font-weight: 600;
+    }
+
+    .mini-bars {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      align-items: end;
+      height: 240px;
+      border-bottom: 3px solid var(--ink);
+      padding-inline: 4px;
+    }
+
+    .mini-bar {
+      display: grid;
+      align-content: end;
+      gap: 8px;
+      height: 100%;
+      text-align: center;
+    }
+
+    .mini-bar i {
+      display: block;
+      background: var(--orange);
+      border: 2px solid var(--ink);
+      min-height: 18px;
+    }
+
+    .demo-frame {
+      width: 100%;
+      height: 62vh;
+      border: 3px solid var(--ink);
+      background: var(--white);
+    }
+
+    .footer {
+      position: absolute;
+      left: 5vw;
+      right: 5vw;
+      bottom: 3.2vh;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .nav-hint {
+      position: fixed;
+      right: 18px;
+      bottom: 14px;
+      z-index: 5;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 820px) {
+      .slide {
+        padding: 4vh 5vw 7vh;
+      }
+
+      .cover-grid,
+      .grid-2,
+      .cards,
+      .product-body,
+      .closing-note {
+        grid-template-columns: 1fr;
+      }
+
+      h1,
+      h2 {
+        max-width: 100%;
+      }
+
+      .bar-row {
+        grid-template-columns: 88px 1fr 58px;
+      }
+
+      .demo-frame {
+        height: 48vh;
+      }
+
+      .screenshot-wrap {
+        height: 38vh;
+      }
+    }
+
+    @media print {
+      @page {
+        size: 16in 9in;
+        margin: 0;
+      }
+
+      html,
+      body {
+        overflow: visible;
+      }
+
+      body::before,
+      .nav-hint,
+      .footer {
+        display: none;
+      }
+
+      main {
+        height: auto;
+      }
+
+      .slide,
+      .slide.active {
+        position: relative;
+        display: grid;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        padding: 3.6vh 4vw;
+        page-break-after: always;
+        animation: none;
+      }
+
+      h1 { font-size: 8vw; }
+      h2 { font-size: 5.2vw; }
+      .research-question { font-size: 3.75vw; max-width: 28ch; line-height: 1.1; }
+      .question-slide .support-line { font-size: 1.85vw; }
+      .answer-cards .card { min-height: 188px; padding: 22px; gap: 18px; }
+      .answer-cards h3 { font-size: 2.1vw; }
+      .answer-cards .small { font-size: 1.85vw; line-height: 1.3; }
+      .method-content { padding-top: 6.2vh; }
+      .method-title h2 { font-size: 4.1vw; }
+      .method-title .lead { font-size: 1.25vw; }
+      .method-grid { gap: 9px; }
+      .method-card { padding: 9px; gap: 7px; }
+      .method-card .step-number { font-size: 2.2vw; }
+      .method-card h3 { font-size: 1.12vw; }
+      .findings-layout { padding-top: 8vh; gap: 4.4vh; }
+      .findings-main { gap: 2.7vh; }
+      .findings-main h2 { font-size: 4.2vw; }
+      .findings-main .lead { font-size: 1.45vw; }
+      .findings-slide .bar-chart { gap: 2.2vh; }
+      .findings-slide .bar-row { grid-template-columns: 92px 1fr 64px; gap: 16px; }
+      .findings-slide .bar-track { height: 38px; }
+      .findings-summary .cards { gap: 8px; }
+      .findings-summary .card { min-height: 92px; padding: 14px 18px; gap: 8px; }
+      .findings-summary .card h3 { font-size: 1.75vw; }
+      .findings-summary .small { font-size: 0.98vw; }
+      .meaning-slide { gap: 1.8vh; grid-template-rows: auto auto auto; }
+      .meaning-slide .meaning-header { gap: 10px; }
+      .meaning-slide .meaning-header h2 { font-size: 2.85vw; max-width: 36ch; line-height: 1.04; }
+      .meaning-slide .meaning-header .lead { font-size: 1.12vw; max-width: 62ch; }
+      .meaning-cards { gap: 1.7vh; }
+      .meaning-cards .limitation-card { min-height: 118px; padding: 18px 22px; gap: 10px; }
+      .meaning-cards .limitation-card h3 { font-size: 2.35vw; }
+      .meaning-cards .limitation-card p { font-size: 1.42vw; line-height: 1.28; }
+      .product-slide h2 { font-size: 3.8vw; max-width: none; }
+      h3 { font-size: 1.85vw; }
+      .lead { font-size: 1.7vw; }
+      .small { font-size: 0.95vw; }
+      .stack { gap: 14px; }
+      .cards { gap: 10px; }
+      .card { min-height: 120px; padding: 16px; gap: 12px; }
+      .sample-content { padding-top: 3.2vh; gap: 1.45vh; }
+      .sample-content h2 { font-size: 4.65vw; }
+      .sample-cards { gap: 9px; }
+      .sample-cards .card { min-height: 104px; padding: 14px 18px; gap: 6px; }
+      .sample-cards .kpi { font-size: 5.4vw; }
+      .sample-note { font-size: 1.18vw; line-height: 1.35; margin-top: 1vh; }
+      .slide:last-of-type .card { min-height: 82px; }
+      .cover-card { padding: 22px; }
+      .kpi { font-size: 6.4vw; }
+      .step { min-height: 54px; padding-top: 10px; }
+      .step-number { font-size: 28px; }
+      .demo-frame { height: 24vh; }
+      .screenshot-wrap { height: 43vh; padding: 12px; }
+      .limitation-card { min-height: 130px; padding: 18px; }
+      .product-slide .small { font-size: 0.85vw; }
+      .product-body {
+        grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr) !important;
+        gap: 3vw;
+      }
+      .feature-item { grid-template-columns: 72px 1fr; gap: 18px; padding-top: 13px; }
+      .feature-list { gap: 18px; }
+      .feature-index { font-size: 3.2vw; }
+      .product-slide h3 { font-size: 1.95vw; }
+      .product-slide .small { font-size: 0.95vw; line-height: 1.36; }
+    }
+  </style>
+</head>
+<body>
+  <main id="deck">
+    <section class="slide active layout-cover" aria-label="Title slide">
+      <div class="topline"><span>AI for Social Sciences</span><span class="page">01 / 08</span></div>
+      <div class="notebook-icon cover-icon" aria-hidden="true"></div>
+      <div class="cover-grid">
+        <div class="stack">
+          <h1>Value-Aligned AI Reflective Diaries</h1>
+          <p class="lead">An anonymous web prototype for adolescent early emotional support</p>
+        </div>
+        <div class="cover-card">
+          <p class="small" style="color:rgba(255,255,255,.72)">Prototype study</p>
+          <h3>Ava Zhang</h3>
+          <p class="small" style="color:rgba(255,255,255,.72)">Anonymous · non-diagnostic · safer next step</p>
+        </div>
+      </div>
+      <p class="small">Keywords: generative AI / adolescent support / privacy-first design / value alignment</p>
+    </section>
+
+    <section class="slide question-slide" aria-label="Research question">
+      <div class="topline"><span>Research Question</span><span class="page">02 / 08</span></div>
+      <div class="stack">
+        <p class="support-line">AI can support, but it cannot pretend to be therapy.</p>
+        <h2 class="research-question">Can a value-aligned AI reflective diary help students feel understood and identify one safer next step?</h2>
+      </div>
+      <div class="answer-cards">
+        <div class="card yellow">
+          <h3>Why it matters</h3>
+          <p class="small">Many students are not ready to talk to a parent, teacher, or counselor, but may be willing to write anonymously first.</p>
+        </div>
+        <div class="card">
+          <h3>Safety boundary</h3>
+          <p class="small">No diagnosis, no identity labels, no identity prediction, no school/name collection, and no replacement for counseling.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide method-slide" aria-label="Method">
+      <div class="topline"><span>Method</span><span class="page">03 / 08</span></div>
+      <div class="method-content">
+        <div class="method-title">
+          <h2>Pre-test → AI diary → Post-test</h2>
+          <p class="lead">The same five 1-5 items measured perceived support before and after the experience.</p>
+        </div>
+        <div class="method-grid">
+          <div class="method-card">
+            <div class="step-number">01</div>
+            <h3>Consent and privacy</h3>
+            <img src="assets/method-step-1-consent.png" alt="Consent and privacy screen">
+          </div>
+          <div class="method-card">
+            <div class="step-number">02</div>
+            <h3>Five-item pre-survey</h3>
+            <img src="assets/method-step-2-survey.png" alt="Five-item pre-survey screen">
+          </div>
+          <div class="method-card">
+            <div class="step-number">03</div>
+            <h3>Select or enter a concern</h3>
+            <img src="assets/method-step-3-concern.png" alt="Concern selection screen">
+          </div>
+          <div class="method-card">
+            <div class="step-number">04</div>
+            <h3>Generate AI diary</h3>
+            <img src="assets/method-step-4-diary.png" alt="AI diary generation screen">
+          </div>
+          <div class="method-card">
+            <div class="step-number">05</div>
+            <h3>Post-survey + feedback</h3>
+            <img src="assets/method-step-5-feedback.png" alt="Post-survey and feedback screen">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide sample-slide" aria-label="Sample">
+      <div class="topline"><span>Sample & Cleaning</span><span class="page">04 / 08</span></div>
+      <div class="sample-content">
+        <h2>From 44 records to the core sample</h2>
+        <div class="cards sample-cards">
+          <div class="card blue">
+            <p class="small" style="color:rgba(255,255,255,.74)">Formal release dataset</p>
+            <div class="kpi">44</div>
+            <h3>participant records</h3>
+          </div>
+          <div class="card">
+            <p class="small">Core valid sample</p>
+            <div class="kpi">24</div>
+            <h3>pre-post + AI diary</h3>
+          </div>
+          <div class="card yellow">
+            <p class="small">Full feedback subset</p>
+            <div class="kpi">10</div>
+            <h3>complete open feedback</h3>
+          </div>
+        </div>
+        <p class="sample-note">Analyzed high-school student records submitted after the final confirmed revision of the website. Core complete means pre-survey + post-survey + generated AI diary.</p>
+      </div>
+    </section>
+
+    <section class="slide findings-slide" aria-label="Findings">
+      <div class="topline" style="grid-column:1 / -1"><span>Findings</span><span class="page">05 / 08</span></div>
+      <div class="findings-layout">
+        <div class="findings-main">
+          <h2>Core sample increased by +2.04 points</h2>
+          <p class="lead">Core complete sample: N = 24. Total score range: 5-25.</p>
+          <div class="bar-chart">
+            <div class="bar-row">
+              <h3>Pre</h3>
+              <div class="bar-track"><div class="bar-fill" style="width:74%"></div></div>
+              <div class="small mono">18.46</div>
+            </div>
+            <div class="bar-row">
+              <h3>Post</h3>
+              <div class="bar-track"><div class="bar-fill" style="width:82%"></div></div>
+              <div class="small mono">20.50</div>
+            </div>
+          </div>
+        </div>
+        <div class="findings-summary">
+          <div class="cards">
+            <div class="card blue">
+              <p class="small" style="color:rgba(255,255,255,.74)">Direction</p>
+              <h3>14 improved · 8 unchanged · 2 decreased</h3>
+            </div>
+            <div class="card">
+              <p class="small">Open feedback subset</p>
+              <h3>9 / 10 felt understood</h3>
+              <p class="small">Useful as early usability feedback, not proof of clinical effectiveness.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide meaning-slide" aria-label="Meaning">
+      <div class="topline"><span>Meaning</span><span class="page">06 / 08</span></div>
+      <div class="stack meaning-header">
+        <h2>The product value is not therapy. It is lowering the first barrier to help-seeking.</h2>
+        <p class="lead">A better route is B2B: schools, youth programs, and mental health education platforms.</p>
+      </div>
+      <div class="meaning-cards">
+        <div class="limitation-card">
+          <h3>Product position</h3>
+          <p class="small">Anonymous reflection + risk-aware language + resource navigation + escalation to human support when needed.</p>
+        </div>
+        <div class="limitation-card" style="background:var(--yellow)">
+          <h3>Honest limitation</h3>
+          <p>Because this was a small convenience sample without a comparison/control condition, the results show promising feedback, not causal proof.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide product-slide" aria-label="Product updates">
+      <div class="topline"><span>Product Updates</span><span class="page">07 / 08</span></div>
+      <div class="product-title">
+        <h2>Built for return visits.</h2>
+        <p class="lead">The next version turns one-time reflection into a calmer habit students can revisit.</p>
+      </div>
+      <div class="product-body">
+        <div class="screenshot-wrap">
+          <img src="assets/site-entry-screenshot-card.png" alt="Anonymous Diary website entry screenshot">
+        </div>
+        <div class="feature-list">
+          <div class="feature-item">
+            <div class="feature-index">01</div>
+            <div><h3>Anonymous diary library</h3><p class="small">A directory page records saved anonymous diaries, so students can look back and notice patterns over time.</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-index">02</div>
+            <div><h3>Bubble sound feedback</h3><p class="small">Soft bubble sounds make writing feel warmer, calmer, and less like a formal survey.</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-index">03</div>
+            <div><h3>Online rollout</h3><p class="small">The next step is publishing the tool online for more high-school students to try.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide thanks-slide" aria-label="Thank you">
+      <div class="topline"><span>Thank You</span><span class="page">08 / 08</span></div>
+      <div class="thanks-content">
+        <div class="thanks-copy">
+          <div class="notebook-icon" aria-hidden="true"></div>
+          <h2>Thank you.</h2>
+          <p class="lead">Scan the QR code to try the anonymous diary website now.</p>
+          <p class="site-url">www.ava-design.net</p>
+        </div>
+        <div class="qr-panel">
+          <img src="assets/poster-demo-qr.png" alt="QR code for www.ava-design.net">
+          <p>Open the prototype on your phone</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">
+    <span>Value-aligned AI reflective diary</span>
+    <span>Use arrow keys / space to navigate</span>
+  </div>
+  <div class="nav-hint">← → / space</div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    let index = 0;
+
+    function show(nextIndex) {
+      index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === index);
+      });
+    }
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "ArrowRight" || event.key === " " || event.key === "PageDown") {
+        event.preventDefault();
+        show(index + 1);
+      }
+      if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        event.preventDefault();
+        show(index - 1);
+      }
+      if (event.key === "Home") {
+        show(0);
+      }
+      if (event.key === "End") {
+        show(slides.length - 1);
+      }
+    });
+
+    let touchStartX = null;
+    document.addEventListener("touchstart", event => {
+      touchStartX = event.changedTouches[0].clientX;
+    }, { passive: true });
+    document.addEventListener("touchend", event => {
+      if (touchStartX === null) return;
+      const dx = event.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 48) show(index + (dx < 0 ? 1 : -1));
+      touchStartX = null;
+    }, { passive: true });
+  </script>
+</body>
+</html>
