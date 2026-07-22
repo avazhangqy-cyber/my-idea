@@ -11,9 +11,24 @@ select
   pre_total_score as "前测总分",
   post_answers as "后测答案",
   post_total_score as "后测总分",
-  changes as "每题变化",
-  total_change as "总分变化",
-  average_change as "平均变化",
+  case
+    when pre_answers is not null and post_answers is not null then jsonb_build_array(
+      nullif(post_answers->>0, '')::int - nullif(pre_answers->>0, '')::int,
+      nullif(post_answers->>1, '')::int - nullif(pre_answers->>1, '')::int,
+      nullif(post_answers->>2, '')::int - nullif(pre_answers->>2, '')::int,
+      nullif(post_answers->>3, '')::int - nullif(pre_answers->>3, '')::int,
+      nullif(post_answers->>4, '')::int - nullif(pre_answers->>4, '')::int
+    )
+    else changes
+  end as "每题变化",
+  case
+    when pre_total_score is not null and post_total_score is not null then post_total_score - pre_total_score
+    else total_change
+  end as "总分变化",
+  case
+    when pre_total_score is not null and post_total_score is not null then round((post_total_score - pre_total_score) / 5.0, 2)
+    else average_change
+  end as "平均变化",
   diary_topic as "日记方向",
   ai_diary as "AI匿名日记",
   feedback_choice as "快捷反馈",

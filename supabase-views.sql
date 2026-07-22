@@ -176,9 +176,24 @@ select
   nullif(post_answers->>3, '')::int as post_q4_safer_next_step,
   nullif(post_answers->>4, '')::int as post_q5_patience,
   post_total_score,
-  changes,
-  total_change,
-  average_change,
+  case
+    when pre_answers is not null and post_answers is not null then jsonb_build_array(
+      nullif(post_answers->>0, '')::int - nullif(pre_answers->>0, '')::int,
+      nullif(post_answers->>1, '')::int - nullif(pre_answers->>1, '')::int,
+      nullif(post_answers->>2, '')::int - nullif(pre_answers->>2, '')::int,
+      nullif(post_answers->>3, '')::int - nullif(pre_answers->>3, '')::int,
+      nullif(post_answers->>4, '')::int - nullif(pre_answers->>4, '')::int
+    )
+    else changes
+  end as changes,
+  case
+    when pre_total_score is not null and post_total_score is not null then post_total_score - pre_total_score
+    else total_change
+  end as total_change,
+  case
+    when pre_total_score is not null and post_total_score is not null then round((post_total_score - pre_total_score) / 5.0, 2)
+    else average_change
+  end as average_change,
   diary_topic,
   ai_diary,
   feedback_choice,
