@@ -46,6 +46,18 @@ function hasDirectPerspectiveLanguage(text) {
   return /我|你|咱们/.test(text);
 }
 
+function sanitizeDirectPerspectiveLanguage(text) {
+  return String(text || "")
+    .replace(/我自己/g, "自己")
+    .replace(/我的/g, "自己的")
+    .replace(/我们/g, "很多人")
+    .replace(/咱们/g, "这位同学和身边的人")
+    .replace(/我/g, "自己")
+    .replace(/你的/g, "这位同学的")
+    .replace(/你们/g, "同学们")
+    .replace(/你/g, "这位同学");
+}
+
 module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") {
     setCorsHeaders(res);
@@ -217,6 +229,10 @@ module.exports = async function handler(req, res) {
         data.choices[0] &&
         data.choices[0].message &&
         data.choices[0].message.content;
+    }
+
+    if (answer && hasDirectPerspectiveLanguage(answer)) {
+      answer = sanitizeDirectPerspectiveLanguage(answer);
     }
 
     sendJson(res, 200, {
