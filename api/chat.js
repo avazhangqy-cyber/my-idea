@@ -43,9 +43,7 @@ function setCorsHeaders(res) {
 }
 
 function hasDirectPerspectiveLanguage(text) {
-  const directFirstPerson = /(^|[\s，。！？、；：,.!?"'“”‘’（(])我(们|的|自己|觉得|想|会|很|也|不|能|可以|应该|知道|需要|正在|是|有|没有|要|把|在|跟|和|对|被|最|真|只|还|就|却|都|来|去|写|读|看|听|说|问|怕|担心|喜欢|讨厌|希望|感觉|明明|为什么|该|连|像|不是|真的|到底)?/;
-  const directAddress = /(^|[\s，。！？、；：,.!?"'“”‘’（(])(你|你的|你们|咱们)/;
-  return directFirstPerson.test(text) || directAddress.test(text);
+  return /我|你|咱们/.test(text);
 }
 
 module.exports = async function handler(req, res) {
@@ -184,7 +182,7 @@ module.exports = async function handler(req, res) {
       data.choices[0].message &&
       data.choices[0].message.content;
 
-    if (answer && hasDirectPerspectiveLanguage(answer)) {
+    for (let rewriteAttempt = 0; answer && hasDirectPerspectiveLanguage(answer) && rewriteAttempt < 2; rewriteAttempt += 1) {
       deepseekResponse = await fetch(DEEPSEEK_API_URL, {
         method: "POST",
         headers: {
@@ -200,7 +198,7 @@ module.exports = async function handler(req, res) {
             },
             {
               role: "user",
-              content: "请重写。上一版使用了第一人称或直接代入用户。必须全程第三人称，给主角一个中性匿名名字，使用这个名字或这位同学，不要出现 我、我的、我们、咱们、你、你的、他、她、TA。保留三个纯文本标题：匿名日记、换个角度看、可以先做的一小步。"
+              content: "请重写。上一版使用了直接代入的代词。必须全程第三人称，给主角一个中性匿名名字，使用这个名字或这位同学。不要引用原句，不要写直接内心独白，不要出现任何第一人称或第二人称代词。保留三个纯文本标题：匿名日记、换个角度看、可以先做的一小步。"
             }
           ])
         })
