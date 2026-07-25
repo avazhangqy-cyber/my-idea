@@ -42,6 +42,12 @@ function setCorsHeaders(res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
+function hasDirectPerspectiveLanguage(text) {
+  const directFirstPerson = /(^|[\s，。！？、；：,.!?"'“”‘’（(])我(们|的|自己|觉得|想|会|很|也|不|能|可以|应该|知道|需要|正在|是|有|没有|要|把|在|跟|和|对|被|最|真|只|还|就|却|都|来|去|写|读|看|听|说|问|怕|担心|喜欢|讨厌|希望|感觉|明明|为什么|该|连|像|不是|真的|到底)?/;
+  const directAddress = /(^|[\s，。！？、；：,.!?"'“”‘’（(])(你|你的|你们|咱们)/;
+  return directFirstPerson.test(text) || directAddress.test(text);
+}
+
 module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") {
     setCorsHeaders(res);
@@ -104,59 +110,67 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const deepseekResponse = await fetch(DEEPSEEK_API_URL, {
+    const systemPrompt = [
+      "You help a high school web prototype turn a user's concern into an anonymous reflective diary.",
+      "Reply in Simplified Chinese.",
+      "The page already explains the AI and safety boundaries, so do not add a separate transparency or disclaimer section in the answer.",
+      "Do not diagnose, label, or predict the user's identity.",
+      "Do not ask for real names, school, address, contact details, or other identifying information.",
+      "Do not provide sexual content. Keep guidance age-appropriate, calm, and practical.",
+      "Do not pretend the diary came from a real peer, an anonymous database, or a search.",
+      "Avoid exact locations, school names, contact details, and identifying details.",
+      "Rewrite the user's concern as a de-identified diary entry that helps them feel seen while creating some distance from the situation.",
+      "The entire answer must use a third-person distancing perspective. Never write the anonymous diary in first person.",
+      "Do not use first-person Chinese expressions such as 我, 我的, 我们, 我自己, or 咱们 in the generated answer, even inside quoted thoughts.",
+      "Do not directly address the user with 你 or 你的 except in an emergency safety sentence. Prefer the chosen name, 这位同学, or 这位学生 in all three sections.",
+      "Do not infer or guess the user's gender. Randomly choose a neutral anonymous name for the diary's main person, such as 小禾, 阿林, 小屿, 小南, 小安, or another non-identifying name.",
+      "Throughout the answer, prefer that chosen name or 这位同学. Completely avoid 他 and 她, and do not use TA, Ta, or ta, so the diary stays concrete without assigning gender.",
+      "When appropriate, add one brief fictional peer mirror, using another neutral anonymous name, to show that someone nearby might be caught in a similar feeling or habit. Keep it subtle and do not pretend this peer is a real person, a searched case, or proof that everyone feels the same.",
+      "Do not directly repeat self-attacking first-person sentences like 我很差劲 or 我没用 as facts. Convert them into third-person feeling language, for example: 小禾开始觉得自己很差劲, or 这位同学心里浮出一种很差劲的感觉.",
+      "After the diary, add a brief objective reflection that names what may be happening emotionally and socially without diagnosing.",
+      "Then give one small safe next step, phrased in third person, such as 小禾可以先..., 这位同学可以试着.... The next step should protect privacy and avoid pushing risky disclosure.",
+      "If self-assessment scores are provided, use them only to choose a calmer or more cautious tone. Do not diagnose. Do not say the scores prove anything about identity or mental health.",
+      "When distress is high, support is low, or expression safety is low, prioritize privacy, trusted adults, school counselors, hotlines, and delaying risky disclosure.",
+      "If the user mentions violence, threats, coercion, self-harm, or emergency risk, tell them to contact a trusted adult, school counselor, local hotline, or emergency services.",
+      "Structure the answer with three plain-text section labels only: 匿名日记, 换个角度看, 可以先做的一小步.",
+      "Do not include a section named 透明说明.",
+      "Do not use Markdown formatting. Do not use #, *, bold, bullet symbols, horizontal rules, or decorative separators.",
+      "Keep the anonymous diary around 300-500 Chinese characters. Keep the whole answer warm, non-authoritative, non-clinical, and suitable for a minor."
+    ].join(" ");
+    const userPrompt = [
+      "日记方向：" + (topic || "未选择"),
+      scaleContext,
+      "用户的一句话困惑：" + question
+    ].join("\n\n");
+
+    const requestBody = {
+      model: "deepseek-v4-flash",
+      messages: [
+        {
+          role: "system",
+          content: systemPrompt
+        },
+        {
+          role: "user",
+          content: userPrompt
+        }
+      ],
+      thinking: { type: "disabled" },
+      max_tokens: 700,
+      temperature: 0.6,
+      stream: false
+    };
+
+    let deepseekResponse = await fetch(DEEPSEEK_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + apiKey
       },
-      body: JSON.stringify({
-        model: "deepseek-v4-flash",
-        messages: [
-          {
-            role: "system",
-            content: [
-              "You help a high school web prototype turn a user's concern into an anonymous reflective diary.",
-              "Reply in Simplified Chinese.",
-              "The page already explains the AI and safety boundaries, so do not add a separate transparency or disclaimer section in the answer.",
-              "Do not diagnose, label, or predict the user's identity.",
-              "Do not ask for real names, school, address, contact details, or other identifying information.",
-              "Do not provide sexual content. Keep guidance age-appropriate, calm, and practical.",
-              "Do not pretend the diary came from a real peer, an anonymous database, or a search.",
-              "Avoid exact locations, school names, contact details, and identifying details.",
-              "Rewrite the user's concern as a de-identified diary entry that helps them feel seen while creating some distance from the situation.",
-              "Do not infer or guess the user's gender. Randomly choose a neutral anonymous name for the diary's main person, such as 小禾, 阿林, 小屿, 小南, 小安, or another non-identifying name.",
-              "Throughout the answer, prefer that chosen name or 这位同学. Completely avoid 他 and 她, and do not use TA, Ta, or ta, so the diary stays concrete without assigning gender.",
-              "When appropriate, add one brief fictional peer mirror, using another neutral anonymous name, to show that someone nearby might be caught in a similar feeling or habit. Keep it subtle and do not pretend this peer is a real person, a searched case, or proof that everyone feels the same.",
-              "Do not directly repeat self-attacking first-person sentences like 我很差劲 or 我没用 as facts. If such feelings appear, describe them as the anonymous person's feeling, not as truth.",
-              "After the diary, add a brief objective reflection that names what may be happening emotionally and socially without diagnosing.",
-              "Then give one small safe next step. The next step should protect privacy and avoid pushing risky disclosure.",
-              "If self-assessment scores are provided, use them only to choose a calmer or more cautious tone. Do not diagnose. Do not say the scores prove anything about identity or mental health.",
-              "When distress is high, support is low, or expression safety is low, prioritize privacy, trusted adults, school counselors, hotlines, and delaying risky disclosure.",
-              "If the user mentions violence, threats, coercion, self-harm, or emergency risk, tell them to contact a trusted adult, school counselor, local hotline, or emergency services.",
-              "Structure the answer with three plain-text section labels only: 匿名日记, 换个角度看, 可以先做的一小步.",
-              "Do not include a section named 透明说明.",
-              "Do not use Markdown formatting. Do not use #, *, bold, bullet symbols, horizontal rules, or decorative separators.",
-              "Keep the anonymous diary around 300-500 Chinese characters. Keep the whole answer warm, non-authoritative, non-clinical, and suitable for a minor."
-            ].join(" ")
-          },
-          {
-            role: "user",
-            content: [
-              "日记方向：" + (topic || "未选择"),
-              scaleContext,
-              "用户的一句话困惑：" + question
-            ].join("\n\n")
-          }
-        ],
-        thinking: { type: "disabled" },
-        max_tokens: 700,
-        temperature: 0.6,
-        stream: false
-      })
+      body: JSON.stringify(requestBody)
     });
 
-    const data = await deepseekResponse.json();
+    let data = await deepseekResponse.json();
 
     if (!deepseekResponse.ok) {
       sendJson(res, deepseekResponse.status, {
@@ -165,10 +179,47 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    const answer = data.choices &&
+    let answer = data.choices &&
       data.choices[0] &&
       data.choices[0].message &&
       data.choices[0].message.content;
+
+    if (answer && hasDirectPerspectiveLanguage(answer)) {
+      deepseekResponse = await fetch(DEEPSEEK_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + apiKey
+        },
+        body: JSON.stringify({
+          ...requestBody,
+          messages: requestBody.messages.concat([
+            {
+              role: "assistant",
+              content: answer
+            },
+            {
+              role: "user",
+              content: "请重写。上一版使用了第一人称或直接代入用户。必须全程第三人称，给主角一个中性匿名名字，使用这个名字或这位同学，不要出现 我、我的、我们、咱们、你、你的、他、她、TA。保留三个纯文本标题：匿名日记、换个角度看、可以先做的一小步。"
+            }
+          ])
+        })
+      });
+
+      data = await deepseekResponse.json();
+
+      if (!deepseekResponse.ok) {
+        sendJson(res, deepseekResponse.status, {
+          error: data.error && data.error.message ? data.error.message : "DeepSeek request failed."
+        });
+        return;
+      }
+
+      answer = data.choices &&
+        data.choices[0] &&
+        data.choices[0].message &&
+        data.choices[0].message.content;
+    }
 
     sendJson(res, 200, {
       answer: answer || "DeepSeek returned an empty answer.",
